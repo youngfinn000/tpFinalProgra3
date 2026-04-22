@@ -1,6 +1,4 @@
-import os
-
-readme_content = """# 🍦 GelatoSoft - API de Gestión para Heladerías
+ 🍦 GelatoSoft - API de Gestión para Heladerías
 
 ## 📋 Descripción del Proyecto
 Este proyecto consiste en el desarrollo de una **API RESTful** robusta y escalable diseñada para optimizar la gestión integral de una heladería[cite: 4, 8]. Permite la administración de inventario, ventas, usuarios y reportes, asegurando la integridad de los datos y una experiencia de usuario fluida mediante una arquitectura moderna en **Spring Boot**[cite: 22].

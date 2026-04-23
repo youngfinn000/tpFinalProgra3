@@ -1,82 +1,77 @@
- 🍦 GelatoSoft - API de Gestión para Heladerías
+Tu README ya está muy bien estructurado, pero para cumplir **estrictamente** con la consigna de la imagen, vamos a darle un enfoque más narrativo a la presentación del proyecto y asegurarnos de que las secciones solicitadas (Presentación, Problemáticas, Reglas de Negocio y Pasos de Ejecución) sean las protagonistas.
 
-## 📋 Descripción del Proyecto
-Este proyecto consiste en el desarrollo de una **API RESTful** robusta y escalable diseñada para optimizar la gestión integral de una heladería[cite: 4, 8]. Permite la administración de inventario, ventas, usuarios y reportes, asegurando la integridad de los datos y una experiencia de usuario fluida mediante una arquitectura moderna en **Spring Boot**[cite: 22].
+Aquí tienes la versión ajustada:
 
 ---
 
-## 👥 Integrantes del Equipo
-* **Manuel Pelegrino**
-* **Melody Aizpirarte**
-* **Emanuel Bustos**
-* **Laureano Martin**
+# 🍦 GelatoSoft - API de Gestión para Heladerías
 
-**Docente:** Tec. Mango Eduardo [cite: 3]
-**Institución:** Universidad Tecnológica Nacional - Mar del Plata [cite: 1]
+## 📖 Presentación del Proyecto
+**GelatoSoft** es una solución integral desarrollada en Java con Spring Boot, diseñada para digitalizar y optimizar la operación diaria de heladerías artesanales y comerciales. El sistema nace como respuesta a la necesidad de centralizar la gestión de ventas, el control de stock por sabores y la administración de usuarios en una única plataforma robusta. 
+
+A través de una arquitectura basada en microservicios y una interfaz de programación de aplicaciones (API) RESTful, GelatoSoft permite a los propietarios de negocios tener una visión clara y en tiempo real de su inventario y transacciones, garantizando la escalabilidad y el mantenimiento a largo plazo mediante el uso de estándares modernos de desarrollo.
 
 ---
 
 ## 🚀 Problemáticas que Resuelve
-1.  **Control de Stock Ineficiente:** Automatización del seguimiento de sabores y suministros para evitar quiebres de stock[cite: 8].
-2.  **Seguridad de la Información:** Implementación de acceso granular mediante roles para proteger operaciones sensibles[cite: 24].
-3.  **Falta de Trazabilidad:** Registro detallado de cada transacción y auditoría de cambios en el sistema[cite: 17].
+El desarrollo de este software aborda directamente los siguientes desafíos del sector:
+
+* **Descontrol en el Inventario de Sabores:** Automatiza el seguimiento de suministros y productos finales, eliminando la incertidumbre sobre el stock disponible y evitando quiebres de inventario en horas pico.
+* **Vulnerabilidad de Datos:** Resuelve la falta de seguridad mediante un sistema de autenticación basado en roles, asegurando que solo el personal autorizado pueda modificar precios o acceder a reportes financieros.
+* **Ausencia de Trazabilidad:** Registra cada movimiento y transacción, permitiendo auditar quién, cuándo y qué acción realizó, lo que reduce drásticamente los errores operativos y las pérdidas no justificadas.
 
 ---
 
-## 🛠️ Reglas de Negocio
-* **Gestión de Ventas:** Cada venta debe registrar los sabores, cantidades y el empleado responsable.
-* **Autenticación Obligatoria:** Solo usuarios autenticados mediante **JWT** pueden realizar pedidos o modificar el catálogo[cite: 24].
-* **Validación de Datos:** No se permiten ingresos de productos con precios negativos o nombres vacíos[cite: 26].
-* **Auditoría (AOP):** Todas las eliminaciones de productos críticos deben ser registradas automáticamente en los logs[cite: 17].
+## 💼 Reglas de Negocio
+Para garantizar el correcto funcionamiento del ecosistema de la heladería, se han implementado las siguientes reglas:
+
+1.  **Integridad de Ventas:** No se puede procesar una venta si no se especifica el sabor, la cantidad y el ID del empleado responsable.
+2.  **Seguridad JWT:** El acceso a cualquier endpoint de gestión (stock o catálogo) requiere un token **JSON Web Token** válido y activo.
+3.  **Validación de Dominios:** El sistema rechaza automáticamente cualquier intento de cargar productos con valores negativos en precio o stock, o campos obligatorios vacíos.
+4.  **Política de Auditoría (AOP):** Cualquier eliminación de registros críticos (como un sabor del catálogo o un usuario) genera un log automático para fines de auditoría técnica.
 
 ---
 
-## 💻 Stack Tecnológico
-* **Backend:** Java con Spring Boot[cite: 22].
-* **Persistencia:** Spring Data JPA con MySQL/PostgreSQL[cite: 23].
-* **Seguridad:** Spring Security + JSON Web Tokens (JWT)[cite: 24].
-* **Documentación:** Swagger / OpenAPI[cite: 19].
-* **Testing:** JUnit y Mockito para servicios críticos[cite: 61].
-* **Contenerización:** Docker Compose para despliegue simplificado[cite: 59, 60].
+## ⚙️ Pasos Requeridos para la Ejecución
+Siga estas instrucciones para poner en marcha el entorno de desarrollo:
 
----
+### 1. Requisitos Previos
+* **Java 17+** instalado.
+* **MySQL** o **PostgreSQL** (según configuración).
+* **Maven** (opcional, se incluye el wrapper `./mvnw`).
 
-## 🏗️ Arquitectura y Estándares
-El proyecto sigue una estructura **Package by Feature** para máxima modularidad[cite: 67]:
-* **Capas:** Separación estricta entre Controllers, Services (Interfaces), Repositories y DTOs[cite: 13, 16].
-* **Patrones de Diseño:** Implementación de Builder, Factory y Singleton según necesidad[cite: 14].
-* **Manejo de Errores:** Centralizado mediante `@ControllerAdvice`[cite: 25, 42].
-* **Git Flow:** Uso estricto de ramas `main`, `develop` y `feature/US-XX`[cite: 83, 85, 91].
-
----
-
-## ⚙️ Pasos para la Ejecución
+### 2. Instalación y Configuración
 1.  **Clonar el repositorio:**
     ```bash
-    git clone [https://github.com/tu-usuario/nombre-del-repo.git](https://github.com/tu-usuario/nombre-del-repo.git)
+    git clone https://github.com/tu-usuario/gelato-soft.git
+    cd gelato-soft
     ```
-2.  **Configurar la Base de Datos:**
-    Asegúrate de tener MySQL corriendo o utiliza el archivo `docker-compose.yml` provisto[cite: 60].
-3.  **Configurar el `application.properties`:**
-    Ajusta las credenciales de la base de datos y la clave secreta para el JWT.
-4.  **Ejecutar la aplicación:**
-    ```bash
-    ./mvnw spring-boot:run
+2.  **Configurar Base de Datos:**
+    Cree una base de datos local y actualice las credenciales en el archivo:
+    `src/main/resources/application.properties`
+    ```properties
+    spring.datasource.url=jdbc:mysql://localhost:3306/gelatosoft_db
+    spring.datasource.username=tu_usuario
+    spring.datasource.password=tu_contraseña
     ```
-5.  **Acceder a la Documentación:**
-    Visita `http://localhost:8080/swagger-ui.html` para interactuar con los endpoints[cite: 19].
+
+### 3. Ejecución
+Ejecute el siguiente comando en la terminal desde la raíz del proyecto:
+```bash
+./mvnw spring-boot:run
+```
+
+### 4. Verificación
+Una vez que el servicio esté corriendo en el puerto **8080**, puede acceder a la documentación interactiva de la API para realizar pruebas:
+* **Swagger UI:** `http://localhost:8080/swagger-ui.html`
 
 ---
 
-### 📂 Colección de Postman
-En la raíz del proyecto encontrarás el archivo `GelatoSoft_Postman_Collection.json` con todas las peticiones necesarias para probar el sistema[cite: 30].
+## 👥 Equipo de Desarrollo
+* **Manuel Pelegrino**
+* **Melody Aizpirarte**
+* **Emanuel Bustos**
+* **Laureano Martin**
+* **Laureano Martin**
 
----
-*Este proyecto fue desarrollado bajo los estándares de calidad de la UTN MdP[cite: 113].*
-"""
-
-file_path = "README.md"
-with open(file_path, "w", encoding="utf-8") as f:
-    f.write(readme_content)
-
-print(f"File created: {file_path}")
+**Institución:** Universidad Tecnológica Nacional (UTN) - Facultad Regional Mar del Plata.

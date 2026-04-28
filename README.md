@@ -68,6 +68,5 @@ Una vez que el servicio esté corriendo en el puerto **8080**, puede acceder a l
 * **Melody Aizpirarte**
 * **Emanuel Bustos**
 * **Laureano Martin**
-* **Laureano Martin**
-
+* 
 **Institución:** Universidad Tecnológica Nacional (UTN) - Facultad Regional Mar del Plata.

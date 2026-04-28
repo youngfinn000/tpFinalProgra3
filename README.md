@@ -1,8 +1,4 @@
-Tu README ya está muy bien estructurado, pero para cumplir **estrictamente** con la consigna de la imagen, vamos a darle un enfoque más narrativo a la presentación del proyecto y asegurarnos de que las secciones solicitadas (Presentación, Problemáticas, Reglas de Negocio y Pasos de Ejecución) sean las protagonistas.
 
-Aquí tienes la versión ajustada:
-
----
 
 # 🍦 stretto - API de Gestión para Heladerías
 

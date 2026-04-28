@@ -4,7 +4,7 @@ Aquí tienes la versión ajustada:
 
 ---
 
-# 🍦 GelatoSoft - API de Gestión para Heladerías
+# 🍦 stretto - API de Gestión para Heladerías
 
 ## 📖 Presentación del Proyecto
 **GelatoSoft** es una solución integral desarrollada en Java con Spring Boot, diseñada para digitalizar y optimizar la operación diaria de heladerías artesanales y comerciales. El sistema nace como respuesta a la necesidad de centralizar la gestión de ventas, el control de stock por sabores y la administración de usuarios en una única plataforma robusta. 

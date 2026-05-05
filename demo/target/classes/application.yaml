@@ -1,8 +1,8 @@
 spring:
   datasource:
     url: jdbc:mysql://localhost:3306/strettogelato
-    username: ${ db_usuario }
-    password: ${ db_contraseña }
+    username: ${db_usuario}
+    password: ${db_contraseña}
     driver-class-name: com.mysql.cj.jdbc.Driver
 
   jpa:

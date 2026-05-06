@@ -1,5 +1,6 @@
-package com.stretto.demo.features.stock;
+package com.stretto.demo.features.stock.domain;
 
+import com.stretto.demo.features.ingredient.domain.IngredientEntity;
 import com.stretto.demo.features.recipe.domain.Enum.UnitMeasurement;
 import com.stretto.demo.features.stock.domain.Enum.StockStatusEnum;
 import jakarta.persistence.*;
@@ -32,7 +33,7 @@ public class StockEntity {
 
 
     @OneToOne(mappedBy = "stock")
-    private Ingredient ingredient ;
+    private IngredientEntity ingredient ;
 
     public Long getId() {
         return id;
@@ -90,11 +91,11 @@ public class StockEntity {
         this.status = status;
     }
 
-    public Ingredient getIngredient() {
+    public IngredientEntity getIngredient() {
         return ingredient;
     }
 
-    public void setIngredient(Ingredient ingredient) {
+    public void setIngredient(IngredientEntity ingredient) {
         this.ingredient = ingredient;
     }
 }

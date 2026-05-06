@@ -1,13 +1,13 @@
-package com.stretto.demo.features.recipe;
+package com.stretto.demo.features.recipe.domain;
 
 
+import com.stretto.demo.features.ingredient.domain.IngredientEntity;
 import com.stretto.demo.features.product.ProductEntity;
 import com.stretto.demo.features.recipe.domain.Enum.UnitMeasurement;
 import jakarta.persistence.*;
 import lombok.*;
 
 import java.util.List;
-import java.util.UUID;
 
 @Entity
 @Table(name = "recipe")
@@ -31,7 +31,7 @@ private Double baseAmount;
 private UnitMeasurement unitMeasurement;
 
 @OneToMany(mappedBy = "recipe",cascade = CascadeType.ALL)
-    private List<Ingredients> ingredient;
+    private List<IngredientEntity> ingredient;
 
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL)
     private List<ProductEntity> product;

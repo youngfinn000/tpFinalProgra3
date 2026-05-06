@@ -1,4 +1,4 @@
-package com.stretto.demo.features.ingredient;
+package com.stretto.demo.features.ingredient.domain;
 
 import com.stretto.demo.features.recipe.domain.Enum.UnitMeasurement;
 import jakarta.persistence.*;

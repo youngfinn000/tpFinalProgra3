@@ -72,7 +72,7 @@ public class WholesaleCustomerController {
     //Get orders dependiendo un id de mayorista
     @GetMapping("/{id}/orders")
     public ResponseEntity<?>  getWholesaleCustomerOrders(@PathVariable Long id){
-        return ResponseEntity.ok(wholesaleCustomerService.getWholesaleCustomerOrders(id));
+        return ResponseEntity.ok(wholesaleCustomerService.getWholesaleCustomerById(id));
     }
 
 }

@@ -6,6 +6,7 @@ import com.stretto.demo.features.wholesaleCustomer.domain.WholesaleCustomerEntit
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 
 @Entity
@@ -25,15 +26,17 @@ public class WholesaleOrderEntity {
 
     private LocalDate deliveryDate;
 
-    private double discount;
+    private BigDecimal discount;
+
+    private boolean active;
 
     //pedido mayorista - pedido (oneToOne)
-    @OneToOne (cascade = CascadeType.ALL)
+    @OneToOne (cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinColumn (name = "order_id")
     private OrderEntity order;
 
     //pedido mayorista - solicitud (onetoOne)
-    @OneToOne (cascade = CascadeType.ALL)
+    @OneToOne (cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinColumn (name = "request_budget_id")
     private RequestBudgetEntity requestBudget;
 

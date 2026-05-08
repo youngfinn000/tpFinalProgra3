@@ -5,6 +5,11 @@ import com.stretto.demo.features.wholesaleCustomer.domain.WholesaleCustomerEntit
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.Optional;
+
 @Repository
 public interface WholesaleCustomerRepository extends JpaRepository<WholesaleCustomerEntity, Long> {
+
+
+    Optional<WholesaleCustomerEntity> findByEmail(String email);
 }

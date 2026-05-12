@@ -1,9 +1,11 @@
 package com.stretto.demo.features.product.domain;
 
 import com.stretto.demo.features.flavors.domain.FlavorsEntity;
+import com.stretto.demo.features.stock.StockEntity;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @Entity
@@ -23,7 +25,10 @@ public class ProductEntity {
     private String name;
 
     @Column (nullable = false)
-    private double price;
+    private BigDecimal price;
+
+    @Column(nullable = false)
+    private boolean active;
 
     //productos - stock (onetoOne)
     @OneToOne (cascade = CascadeType.ALL)
@@ -38,7 +43,7 @@ public class ProductEntity {
     @ManyToMany
     @JoinTable (name =  "product_flavors",
             joinColumns = @JoinColumn(name = "product_id"),
-            inverseJoinColumns = @JoinColumn(name = "flavors_id"))
+            inverseJoinColumns = @JoinColumn(name = "flavor_id"))
     private List<FlavorsEntity> flavors;
 
 

@@ -1,5 +1,6 @@
 package com.stretto.demo.features.order.domain;
 
+import com.stretto.demo.features.internalUser.domain.InternalUserEntity;
 import com.stretto.demo.features.order.domain.enums.PaymentMethodEnum;
 import com.stretto.demo.features.order.domain.enums.SaleChannelEnum;
 import com.stretto.demo.features.order.domain.enums.StateOrderEnum;
@@ -53,7 +54,7 @@ public class OrderEntity {
     //pedidos - usuario
     @ManyToOne
     @JoinColumn(name = "user_id")
-    private InternalUser internalUser;
+    private InternalUserEntity internalUser;
 
     //pedidos - pedidos mayoristas (OnetoOne) UNIDIRECCIONAL
 

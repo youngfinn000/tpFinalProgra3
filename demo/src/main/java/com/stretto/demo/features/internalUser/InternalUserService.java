@@ -18,5 +18,5 @@ public interface InternalUserService {
 
     void delete(Long id);
 
-    InternalUserDTOResponse active(Long id);
+    InternalUserDTOResponse activate(Long id);
 }

@@ -1,5 +1,6 @@
 package com.stretto.demo.features.order;
 
+import com.stretto.demo.features.internalUser.InternalUserRepository;
 import com.stretto.demo.features.order.domain.OrderEntity;
 import com.stretto.demo.features.order.domain.dto.OrderDTORequest;
 import com.stretto.demo.features.order.domain.dto.OrderDTOResponse;
@@ -83,7 +84,7 @@ public class OrderServiceImpl implements OrderService{
                 .orElseThrow(()-> new RuntimeException("Order not found with id: " + id));
         if (entity.getStateOrderEnum() == StateOrderEnum.CANCELLED)
         {
-            throw new RuntimeException()"Order is already cancelled";
+            throw new RuntimeException("Order is already cancelled");
         }
 
         entity.setStateOrderEnum(StateOrderEnum.CANCELLED);

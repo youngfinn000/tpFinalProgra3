@@ -13,7 +13,7 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class StockModificationRequest {
+public class StockModificationDTORequest {
     @NotNull(message = "Adjustment type is required")
     private AdjustmentTypeEnum adjustmentType;
 

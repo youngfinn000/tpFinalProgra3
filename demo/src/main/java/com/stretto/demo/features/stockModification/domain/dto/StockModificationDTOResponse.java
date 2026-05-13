@@ -10,7 +10,7 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class StockModificationResponse {
+public class StockModificationDTOResponse {
     private Long id;
     private AdjustmentTypeEnum adjustmentType;
     private Double amount;

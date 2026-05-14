@@ -7,6 +7,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
@@ -26,7 +27,7 @@ public class RequestBudgetEntity {
     private int  quantityKg;
 
     @Column (nullable = false)
-    private LocalDate requestDate;
+    private LocalDateTime requestDateTime;
 
     @Column (nullable = false)
     private double budget;

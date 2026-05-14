@@ -1,6 +1,5 @@
-package com.stretto.demo.features.productionLot.domain;
+package com.stretto.demo.features.productionLot;
 
-import com.stretto.demo.features.recipe.RecipeEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

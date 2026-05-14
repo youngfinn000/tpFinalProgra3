@@ -1,4 +1,4 @@
-package com.stretto.demo.features.productionLot;
+package com.stretto.demo.features.productionLot.domain;
 
 import com.stretto.demo.features.productionLot.domain.Enum.statusLotEnum;
 import jakarta.persistence.*;

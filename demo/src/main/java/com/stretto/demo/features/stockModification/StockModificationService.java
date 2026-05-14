@@ -16,7 +16,5 @@ public interface StockModificationService {
 
     StockModificationDTOResponse update(Long id, StockModificationDTORequest request);
 
-    void delete(Long id);
-
     List<StockModificationDTOResponse> findByDate(LocalDate date);
 }

@@ -4,7 +4,7 @@ import com.stretto.demo.features.internalUser.domain.InternalUserEntity;
 import com.stretto.demo.features.productionLot.domain.ProductionLotEntity;
 import com.stretto.demo.features.productionLot.domain.dto.ProductionLotDTORequest;
 import com.stretto.demo.features.productionLot.domain.dto.ProductionLotDTOResponse;
-import com.stretto.demo.features.recipe.RecipeEntity;
+import com.stretto.demo.features.recipe.domain.RecipeEntity;
 
 public class ProductionLotMapper {
 

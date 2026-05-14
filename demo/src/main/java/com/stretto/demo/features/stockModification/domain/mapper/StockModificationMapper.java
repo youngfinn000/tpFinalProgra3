@@ -1,7 +1,6 @@
 package com.stretto.demo.features.stockModification.domain.mapper;
 
 import com.stretto.demo.features.internalUser.domain.InternalUserEntity;
-import com.stretto.demo.features.internalUser.domain.dto.InternalUserDTOResponse;
 import com.stretto.demo.features.stock.StockEntity;
 import com.stretto.demo.features.stockModification.domain.StockModificationEntity;
 import com.stretto.demo.features.stockModification.domain.dto.StockModificationDTORequest;

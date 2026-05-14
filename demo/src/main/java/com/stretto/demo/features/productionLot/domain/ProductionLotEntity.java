@@ -1,31 +1,36 @@
 package com.stretto.demo.features.productionLot.domain;
 
-import com.stretto.demo.features.productionLot.domain.Enum.statusLotEnum;
+import com.stretto.demo.features.internalUser.domain.InternalUserEntity;
+import com.stretto.demo.features.productionLot.domain.enums.StatusLotEnum;
+import com.stretto.demo.features.recipe.RecipeEntity;
 import jakarta.persistence.*;
 import lombok.*;
 
 @Entity
-@Table(name = "ProductionLotEntity")
+@Table(name = "production_lot")
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
 public class ProductionLotEntity {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long ProductionLotEntityId;
+    private Double amountProduced;
 
-    // anotar receta id usuario id
+    @Enumerated(EnumType.STRING)
+    private StatusLotEnum status;
 
-    private double amountProduced;
+    private Double performancePct;
 
-    private statusLotEnum status;
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private InternalUserEntity internalUser;
 
-    private double percentageReturn;
-
-
+    @OneToOne
+    @JoinColumn(name = "recipe_id")
+    private RecipeEntity recipe;
 }

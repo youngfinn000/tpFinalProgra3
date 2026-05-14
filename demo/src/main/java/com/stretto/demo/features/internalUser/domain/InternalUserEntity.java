@@ -4,7 +4,7 @@ package com.stretto.demo.features.internalUser.domain;
 
 import com.stretto.demo.features.internalUser.domain.enums.RolEnum;
 import com.stretto.demo.features.order.domain.OrderEntity;
-import com.stretto.demo.features.productionLot.ProductionLotEntity;
+import com.stretto.demo.features.productionLot.domain.ProductionLotEntity;
 import com.stretto.demo.features.stockModification.domain.StockModificationEntity;
 import jakarta.persistence.*;
 import lombok.*;

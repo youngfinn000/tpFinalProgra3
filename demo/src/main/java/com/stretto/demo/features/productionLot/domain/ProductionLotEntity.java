@@ -2,7 +2,7 @@ package com.stretto.demo.features.productionLot.domain;
 
 import com.stretto.demo.features.internalUser.domain.InternalUserEntity;
 import com.stretto.demo.features.productionLot.domain.enums.StatusLotEnum;
-import com.stretto.demo.features.recipe.RecipeEntity;
+import com.stretto.demo.features.recipe.domain.RecipeEntity;
 import jakarta.persistence.*;
 import lombok.*;
 

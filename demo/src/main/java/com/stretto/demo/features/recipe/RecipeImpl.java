@@ -1,4 +1,4 @@
 package com.stretto.demo.features.recipe;
 
-public class RecipeServiceImpl {
+public class RecipeImpl {
 }

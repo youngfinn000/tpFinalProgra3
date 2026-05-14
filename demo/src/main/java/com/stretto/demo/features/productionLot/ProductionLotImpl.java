@@ -6,8 +6,8 @@ import com.stretto.demo.features.productionLot.domain.ProductionLotEntity;
 import com.stretto.demo.features.productionLot.domain.dto.ProductionLotDTORequest;
 import com.stretto.demo.features.productionLot.domain.dto.ProductionLotDTOResponse;
 import com.stretto.demo.features.productionLot.domain.mapper.ProductionLotMapper;
-import com.stretto.demo.features.recipe.RecipeEntity;
-import com.stretto.demo.features.recipe.domain.RecipeRepository;
+import com.stretto.demo.features.recipe.domain.RecipeEntity;
+import com.stretto.demo.features.recipe.RecipeRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

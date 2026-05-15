@@ -1,7 +1,7 @@
 package com.stretto.demo.features.product.domain;
 
 import com.stretto.demo.features.flavors.domain.FlavorsEntity;
-import com.stretto.demo.features.stock.StockEntity;
+import com.stretto.demo.features.stock.domain.StockEntity;
 import jakarta.persistence.*;
 import lombok.*;
 

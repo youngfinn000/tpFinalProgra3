@@ -4,7 +4,7 @@ import com.stretto.demo.features.ingredient.domain.IngredientEntity;
 import com.stretto.demo.features.ingredient.domain.dto.IngredientDTORequest;
 import com.stretto.demo.features.ingredient.domain.dto.IngredientDTOResponse;
 import com.stretto.demo.features.recipe.domain.RecipeEntity;
-import com.stretto.demo.features.stock.StockEntity;
+import com.stretto.demo.features.stock.domain.StockEntity;
 
 public class IngredientMapper {
 

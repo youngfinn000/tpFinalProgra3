@@ -6,8 +6,8 @@ import com.stretto.demo.features.ingredient.domain.dto.IngredientDTOResponse;
 import com.stretto.demo.features.ingredient.domain.mapper.IngredientMapper;
 import com.stretto.demo.features.recipe.RecipeRepository;
 import com.stretto.demo.features.recipe.domain.RecipeEntity;
-import com.stretto.demo.features.stock.StockEntity;
-import com.stretto.demo.features.stock.domain.StockRepository;
+import com.stretto.demo.features.stock.domain.StockEntity;
+import com.stretto.demo.features.stock.StockRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

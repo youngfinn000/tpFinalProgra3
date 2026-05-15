@@ -1,6 +1,6 @@
-package com.stretto.demo.features.stock.domain;
+package com.stretto.demo.features.stock;
 
-import com.stretto.demo.features.stock.StockEntity;
+import com.stretto.demo.features.stock.domain.StockEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

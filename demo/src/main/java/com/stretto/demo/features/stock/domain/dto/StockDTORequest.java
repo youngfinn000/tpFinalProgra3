@@ -2,6 +2,7 @@ package com.stretto.demo.features.stock.domain.dto;
 
 import com.stretto.demo.features.recipe.domain.enums.UnitMeasurementEnum;
 import com.stretto.demo.features.stock.domain.enums.StatusEnum;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
@@ -11,6 +12,9 @@ import lombok.*;
 @NoArgsConstructor
 @Builder
 public class StockDTORequest {
+
+    @NotBlank(message = "Name is required")
+    private String name;
 
     @NotNull(message = "Current Stock is required")
     private Double currentStock;

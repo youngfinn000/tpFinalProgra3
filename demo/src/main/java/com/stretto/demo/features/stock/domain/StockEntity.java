@@ -20,6 +20,9 @@ public class StockEntity {
     private Long id;
 
     @Column(nullable = false)
+    private String name;
+
+    @Column(nullable = false)
     private Double currentStock;
 
     @Column(nullable = false)

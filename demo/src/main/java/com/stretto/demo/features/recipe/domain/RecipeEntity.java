@@ -1,6 +1,6 @@
 package com.stretto.demo.features.recipe.domain;
 
-import com.stretto.demo.features.ingredient.IngredientEntity;
+import com.stretto.demo.features.ingredient.domain.IngredientEntity;
 import com.stretto.demo.features.product.domain.ProductEntity;
 import com.stretto.demo.features.productionLot.domain.ProductionLotEntity;
 import com.stretto.demo.features.recipe.domain.enums.UnitMeasurementEnum;

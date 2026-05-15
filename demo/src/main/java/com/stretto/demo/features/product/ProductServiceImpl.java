@@ -6,8 +6,8 @@ import com.stretto.demo.features.product.domain.ProductEntity;
 import com.stretto.demo.features.product.domain.dto.ProductDTORequest;
 import com.stretto.demo.features.product.domain.dto.ProductDTOResponse;
 import com.stretto.demo.features.product.domain.mapper.ProductMapper;
-import com.stretto.demo.features.stock.StockEntity;
-import com.stretto.demo.features.stock.domain.StockRepository;
+import com.stretto.demo.features.stock.domain.StockEntity;
+import com.stretto.demo.features.stock.StockRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

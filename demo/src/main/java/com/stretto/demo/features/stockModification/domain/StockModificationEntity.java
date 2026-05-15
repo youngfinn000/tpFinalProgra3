@@ -1,7 +1,7 @@
 package com.stretto.demo.features.stockModification.domain;
 
 import com.stretto.demo.features.internalUser.domain.InternalUserEntity;
-import com.stretto.demo.features.stock.StockEntity;
+import com.stretto.demo.features.stock.domain.StockEntity;
 import com.stretto.demo.features.stockModification.domain.enums.AdjustmentTypeEnum;
 import jakarta.persistence.*;
 import lombok.*;

@@ -2,7 +2,7 @@ package com.stretto.demo.features.ingredient.domain;
 
 import com.stretto.demo.features.recipe.domain.RecipeEntity;
 import com.stretto.demo.features.recipe.domain.enums.UnitMeasurementEnum;
-import com.stretto.demo.features.stock.StockEntity;
+import com.stretto.demo.features.stock.domain.StockEntity;
 import jakarta.persistence.*;
 import lombok.*;
 

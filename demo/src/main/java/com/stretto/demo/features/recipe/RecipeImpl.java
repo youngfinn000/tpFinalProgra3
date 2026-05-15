@@ -1,7 +1,7 @@
 package com.stretto.demo.features.recipe;
 
-import com.stretto.demo.features.ingredient.IngredientEntity;
-import com.stretto.demo.features.ingredient.domain.IngredientRepository;
+import com.stretto.demo.features.ingredient.domain.IngredientEntity;
+import com.stretto.demo.features.ingredient.IngredientRepository;
 import com.stretto.demo.features.product.ProductRepository;
 import com.stretto.demo.features.product.domain.ProductEntity;
 import com.stretto.demo.features.productionLot.ProductionLotRepository;

@@ -1,4 +1,4 @@
 package com.stretto.demo.features.ingredient.domain.mapper;
 
-public class voidMapper {
+public class IngredientMapper {
 }

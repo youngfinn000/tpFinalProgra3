@@ -9,6 +9,7 @@ import com.stretto.demo.features.productionLot.domain.ProductionLotEntity;
 import com.stretto.demo.features.recipe.domain.RecipeEntity;
 import com.stretto.demo.features.recipe.domain.dto.RecipeDTORequest;
 import com.stretto.demo.features.recipe.domain.dto.RecipeDTOResponse;
+import com.stretto.demo.features.recipe.domain.dto.RecipeSuppliesDTOResponse;
 import com.stretto.demo.features.recipe.domain.mapper.RecipeMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -68,4 +69,24 @@ public class RecipeImpl implements RecipeService{
         RecipeEntity saved = repository.save(entity);
         return RecipeMapper.toResponse(saved);
     }
+
+    @Override
+    public List<RecipeSuppliesDTOResponse> calculateIngredients(Long recipeId, Double kg) {
+
+        RecipeEntity entity = repository.findById(recipeId)
+                .orElseThrow(() -> new RuntimeException("Recipe not found"));
+
+        List<RecipeSuppliesDTOResponse> amount = entity.getIngredients()
+                .stream()
+                .map((i) -> RecipeSuppliesDTOResponse.builder()
+                        .id(i.getId())
+                        .ingredientName(i.getStock().getName())
+                        .requiredQuantity((kg / entity.getBaseQuantity()) * i.getRequiredAmount())
+                        .build()
+                )
+                .toList();
+
+        return amount;
+    }
+
 }

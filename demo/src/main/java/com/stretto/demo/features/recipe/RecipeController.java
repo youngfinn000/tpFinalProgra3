@@ -2,6 +2,7 @@ package com.stretto.demo.features.recipe;
 
 import com.stretto.demo.features.recipe.domain.dto.RecipeDTORequest;
 import com.stretto.demo.features.recipe.domain.dto.RecipeDTOResponse;
+import com.stretto.demo.features.recipe.domain.dto.RecipeSuppliesDTOResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -42,6 +43,13 @@ public class RecipeController {
     public ResponseEntity<RecipeDTOResponse> update(@PathVariable Long id, @RequestBody RecipeDTORequest request)
     {
         RecipeDTOResponse response = recipeService.update(request,id);
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/{id}/calculate-inputs")
+    public ResponseEntity<List<RecipeSuppliesDTOResponse>> calculateIngredients(@PathVariable Long id, @RequestParam Double kg)
+    {
+        List<RecipeSuppliesDTOResponse> response = recipeService.calculateIngredients(id, kg);
         return ResponseEntity.ok(response);
     }
 }

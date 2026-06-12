@@ -32,7 +32,7 @@ public class WholesaleCustomerEntity {
     @Column (nullable = true, unique = true)
     private String cuit;
 
-    private boolean activity;
+    private boolean active;
 
     // cliente mayorista - solicitud presupuesto (onetomany) UNIDIRECCIONAL
 

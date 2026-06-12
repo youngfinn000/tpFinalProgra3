@@ -14,7 +14,7 @@ public class FlavorsEntity {
 
     @Id
     @GeneratedValue (strategy = GenerationType.IDENTITY)
-    private Long Id;
+    private Long id;
 
     @Column (nullable = false)
     private String name;
@@ -22,4 +22,10 @@ public class FlavorsEntity {
     private boolean active_inactive;
 
     //RELACION A DISTANCIA CON LA TABLA PRODUCTOS (UNIDIRECCIONAL)
+
+
+
+
+
+
 }

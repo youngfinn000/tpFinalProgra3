@@ -1,0 +1,15 @@
+# Claude Code
+CLAUDE.md
+
+# Maven
+demo/target/
+
+# IDE
+.idea/
+*.iml
+
+# Environment
+.env
+
+# Claude
+.claude/

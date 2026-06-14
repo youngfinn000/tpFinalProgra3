@@ -1,9 +1,15 @@
 package com.stretto.demo.features.requestBudget.domain.mapper;
 
+import com.stretto.demo.features.flavors.domain.FlavorsEntity;
 import com.stretto.demo.features.requestBudget.domain.RequestBudgetEntity;
 import com.stretto.demo.features.requestBudget.domain.dto.RequestBudgetDtoRequest;
 import com.stretto.demo.features.requestBudget.domain.dto.RequestBudgetDtoResponse;
+import com.stretto.demo.features.wholesaleCustomer.domain.WholesaleCustomerEntity;
+import org.springframework.stereotype.Component;
 
+import java.util.List;
+
+@Component
 public class RequestBudgetMapper {
 
 
@@ -24,14 +30,14 @@ public class RequestBudgetMapper {
                 ;
     }
 
-    public static RequestBudgetEntity toEntity(RequestBudgetDtoRequest request){
+    public static RequestBudgetEntity toEntity(RequestBudgetDtoRequest request, WholesaleCustomerEntity customer, List<FlavorsEntity> flavors){
 
         return RequestBudgetEntity.builder()
                 .quantityKg(request.getQuantity())
                 .requestDateTime(request.getRequestDatetime())
                 .advancePayment(request.isAdvancePayment())
-                .customer(request.getCustomer())
-                .listflavors(request.getFlavors())
+                .customer(customer)
+                .listflavors(flavors)
                 .build();
     }
 

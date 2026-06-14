@@ -30,9 +30,9 @@ public class RequestBudgetDtoRequest {
 
     @NotNull(message = "Client is obligatory")
     @Positive(message = "ID must be valid")
-    private WholesaleCustomerEntity customer;
+    private Long customerId;
 
     @NotEmpty (message = "Minimum one flavor per request")
-    private List<FlavorsEntity>  flavors;
+    private List<Long> flavorsId;
 
 }

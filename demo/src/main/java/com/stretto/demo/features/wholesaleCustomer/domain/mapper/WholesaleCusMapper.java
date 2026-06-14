@@ -3,7 +3,9 @@ package com.stretto.demo.features.wholesaleCustomer.domain.mapper;
 import com.stretto.demo.features.wholesaleCustomer.domain.WholesaleCustomerEntity;
 import com.stretto.demo.features.wholesaleCustomer.domain.dto.WholesaleCusDtoRequest;
 import com.stretto.demo.features.wholesaleCustomer.domain.dto.WholesaleCusDtoResponse;
+import org.springframework.stereotype.Component;
 
+@Component
 public class WholesaleCusMapper {
 
     public static WholesaleCustomerEntity toEntity (WholesaleCusDtoRequest request){

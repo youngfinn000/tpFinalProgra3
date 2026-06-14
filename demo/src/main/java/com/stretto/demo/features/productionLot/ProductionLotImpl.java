@@ -3,8 +3,10 @@ package com.stretto.demo.features.productionLot;
 import com.stretto.demo.features.internalUser.InternalUserRepository;
 import com.stretto.demo.features.internalUser.domain.InternalUserEntity;
 import com.stretto.demo.features.productionLot.domain.ProductionLotEntity;
+import com.stretto.demo.features.productionLot.domain.dto.ProductionLotActivityDTOResponse;
 import com.stretto.demo.features.productionLot.domain.dto.ProductionLotDTORequest;
 import com.stretto.demo.features.productionLot.domain.dto.ProductionLotDTOResponse;
+import com.stretto.demo.features.productionLot.domain.enums.StatusLotEnum;
 import com.stretto.demo.features.productionLot.domain.mapper.ProductionLotMapper;
 import com.stretto.demo.features.recipe.domain.RecipeEntity;
 import com.stretto.demo.features.recipe.RecipeRepository;
@@ -60,5 +62,56 @@ public class ProductionLotImpl implements ProductionLotService {
         entity.setPerformancePct(request.getPerformancePCT());
         ProductionLotEntity saved = repository.save(entity);
         return ProductionLotMapper.toResponse(saved);
+    }
+
+    @Override
+    public ProductionLotDTOResponse confirm(Long id) {
+        ProductionLotEntity entity = repository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Production lot not found"));
+
+        if(entity.getStatus() != StatusLotEnum.IN_PROGRESS){
+            throw new RuntimeException("Cannot confirm a lot that is not IN_PROGRESS");
+        }
+
+        entity.setStatus(StatusLotEnum.COMPLETED);
+        ProductionLotEntity saved = repository.save(entity);
+
+        return ProductionLotMapper.toResponse(saved);
+    }
+
+    @Override
+    public ProductionLotDTOResponse cancel(Long id) {
+        ProductionLotEntity entity = repository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Production lot not found"));
+
+        if(entity.getStatus() == StatusLotEnum.COMPLETED){
+            throw new RuntimeException("Cannot canceled a lot that is COMPLETED");
+        }
+
+        if(entity.getStatus() == StatusLotEnum.CANCELLED){
+            throw new RuntimeException("Cannot canceled a lot that is CANCELED");
+        }
+
+        entity.setStatus(StatusLotEnum.CANCELLED);
+        ProductionLotEntity saved = repository.save(entity);
+
+        return ProductionLotMapper.toResponse(saved);
+    }
+
+    @Override
+    public ProductionLotDTOResponse calculatePerformance(Long id) {
+        ProductionLotEntity entity = repository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Production lot not found"));
+
+        entity.setPerformancePct((entity.getAmountProduced() / entity.getRecipe().getBaseQuantity()) * 100);
+        ProductionLotEntity saved = repository.save(entity);
+        return ProductionLotMapper.toResponse(saved);
+    }
+
+    @Override
+    public ProductionLotActivityDTOResponse activityLog(Long id) {
+        ProductionLotEntity entity = repository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Production lot not found"));
+        return ProductionLotMapper.toActivityResponse(entity);
     }
 }

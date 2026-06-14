@@ -6,6 +6,8 @@ import com.stretto.demo.features.recipe.domain.RecipeEntity;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.LocalDate;
+
 @Entity
 @Table(name = "production_lot")
 @Getter
@@ -25,6 +27,8 @@ public class ProductionLotEntity {
     private StatusLotEnum status;
 
     private Double performancePct;
+
+    private LocalDate productionDate;
 
     @ManyToOne
     @JoinColumn(name = "user_id")

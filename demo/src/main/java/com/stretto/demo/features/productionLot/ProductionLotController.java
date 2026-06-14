@@ -1,5 +1,7 @@
 package com.stretto.demo.features.productionLot;
 
+import com.stretto.demo.features.productionLot.domain.ProductionLotEntity;
+import com.stretto.demo.features.productionLot.domain.dto.ProductionLotActivityDTOResponse;
 import com.stretto.demo.features.productionLot.domain.dto.ProductionLotDTORequest;
 import com.stretto.demo.features.productionLot.domain.dto.ProductionLotDTOResponse;
 import jakarta.validation.Valid;
@@ -41,6 +43,34 @@ public class ProductionLotController {
     public ResponseEntity<ProductionLotDTOResponse> update(@PathVariable Long id, @RequestBody ProductionLotDTORequest request)
     {
         ProductionLotDTOResponse response = productionLotService.update(request, id);
+        return ResponseEntity.ok(response);
+    }
+
+    @PatchMapping("/{id}/confirm")
+    public ResponseEntity<ProductionLotDTOResponse> confirm(@PathVariable Long id)
+    {
+        ProductionLotDTOResponse response = productionLotService.confirm(id);
+        return ResponseEntity.ok(response);
+    }
+
+    @PatchMapping("/{id}/cancel")
+    public ResponseEntity<ProductionLotDTOResponse> cancel(@PathVariable Long id)
+    {
+        ProductionLotDTOResponse response = productionLotService.cancel(id);
+        return ResponseEntity.ok(response);
+    }
+
+    @PatchMapping("/{id}/calculate-performance")
+    public ResponseEntity<ProductionLotDTOResponse> calcularPerformance(@PathVariable Long id)
+    {
+        ProductionLotDTOResponse response = productionLotService.calculatePerformance(id);
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/{id}/activity")
+    public ResponseEntity<ProductionLotActivityDTOResponse> activityLog(@PathVariable Long id)
+    {
+        ProductionLotActivityDTOResponse response = productionLotService.activityLog(id);
         return ResponseEntity.ok(response);
     }
 }

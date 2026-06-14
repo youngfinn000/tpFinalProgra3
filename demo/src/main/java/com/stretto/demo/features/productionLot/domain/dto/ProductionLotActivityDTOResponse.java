@@ -5,19 +5,21 @@ import lombok.*;
 
 import java.time.LocalDate;
 
+
 @Getter
 @Setter
-@AllArgsConstructor
 @NoArgsConstructor
+@AllArgsConstructor
 @Builder
-public class ProductionLotDTOResponse {
+public class ProductionLotActivityDTOResponse {
     private Long id;
-    private RecipeSummary recipe;
-    private InternalUserSummary internalUser;
-    private Double amountProduced;
     private StatusLotEnum status;
+    private Double amountProduced;
     private Double performancePCT;
+    private RecipeSummary recipe;
+    private InternalUserSummary user;
     private LocalDate productionDate;
+
 
     @Getter
     @Builder

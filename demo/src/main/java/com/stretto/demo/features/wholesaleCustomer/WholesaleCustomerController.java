@@ -61,6 +61,7 @@ public class WholesaleCustomerController {
         return ResponseEntity.noContent().build();
     }
 
+
     //Search by EMAIL
     @GetMapping("/search")
     public ResponseEntity <WholesaleCusDtoResponse> getWholesaleCustomerByEmail(@RequestParam String email){

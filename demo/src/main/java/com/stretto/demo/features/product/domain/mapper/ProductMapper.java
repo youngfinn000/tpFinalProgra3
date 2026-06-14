@@ -1,39 +1,35 @@
 package com.stretto.demo.features.product.domain.mapper;
 
-import com.stretto.demo.features.flavors.domain.FlavorsEntity;
+import com.stretto.demo.features.flavors.domain.mapper.FlavorsMapper;
 import com.stretto.demo.features.product.domain.ProductEntity;
 import com.stretto.demo.features.product.domain.dto.ProductDTORequest;
 import com.stretto.demo.features.product.domain.dto.ProductDTOResponse;
 import com.stretto.demo.features.stock.domain.StockEntity;
+import org.springframework.stereotype.Component;
 
-import java.util.List;
 
+@Component
 public class ProductMapper {
 
-    public static ProductDTOResponse toResponse (ProductEntity entity)
+    public ProductDTOResponse toResponse(ProductEntity entity)
     {
         return ProductDTOResponse.builder()
                 .id(entity.getId())
                 .name(entity.getName())
                 .price(entity.getPrice())
                 .active(entity.isActive())
-                .stockId(entity.getStock().getId())
-                .flavorIds(entity.getFlavors()
-                        .stream()
-                        .map(FlavorsEntity::getId)
-                        .toList())
+                .maxFlavors(entity.getMaxFlavors())
+                .stock(entity.getStock())
                 .build();
     }
 
-    public static ProductEntity toEntity (ProductDTORequest request,
-                                          StockEntity stock,
-                                          List<FlavorsEntity> flavors)
+    public ProductEntity toEntity (ProductDTORequest request)
     {
         return ProductEntity.builder()
                 .name(request.getName())
                 .price(request.getPrice())
-                .stock(stock)
-                .flavors(flavors)
+                .maxFlavors(request.getMaxFlavors())
+                .stock(request.getStock())
                 .build();
     }
 }

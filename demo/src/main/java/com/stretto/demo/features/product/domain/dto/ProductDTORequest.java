@@ -1,12 +1,9 @@
 package com.stretto.demo.features.product.domain.dto;
 
-import jakarta.validation.constraints.DecimalMin;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.*;
 import lombok.*;
 
 import java.math.BigDecimal;
-import java.util.List;
 
 @Getter
 @Setter
@@ -18,11 +15,15 @@ public class ProductDTORequest {
     @NotBlank(message = "Product name is required")
     private String name;
 
+    @NotNull(message = "Price is required")
     @DecimalMin(value = "0.0", message = "Price cannot be negative")
     private BigDecimal price;
 
-    @NotNull(message = "Stock id is required")
-    private Long stockId;
+    @NotNull(message = "Max flavors is required")
+    @Min(1)
+    @Max(4)
+    private Integer maxFlavors;
 
-    private List<Long> flavorIds;
+    @Min(0)
+    private Integer stock;
 }

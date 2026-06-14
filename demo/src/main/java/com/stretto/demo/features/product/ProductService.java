@@ -19,5 +19,5 @@ public interface ProductService {
 
     ProductDTOResponse activate(Long id);
 
-    List<ProductDTOResponse> findByFlavor(Long flavorId);
+
 }

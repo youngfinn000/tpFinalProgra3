@@ -16,7 +16,7 @@ public class FlavorsController {
 
     private final FlavorsService flavorsService;
 
-    //crear
+    //CREAR SABOR
    @PostMapping
     public ResponseEntity<FlavorsDTOResponse> create (@Valid @RequestBody FlavorsDTORequest request)
    {
@@ -24,7 +24,7 @@ public class FlavorsController {
        return ResponseEntity.status(HttpStatus.CREATED).body(response);
    }
 
-   //listar todos
+   //LISTAR TODOS
     @GetMapping
     public ResponseEntity<List<FlavorsDTOResponse>> findAll()
     {
@@ -32,7 +32,7 @@ public class FlavorsController {
        return ResponseEntity.ok(response);
     }
 
-    //buscar por ID
+    //BUSCAR POR ID
     @GetMapping("/{id}")
     public ResponseEntity<FlavorsDTOResponse> findById (@PathVariable Long id)
     {
@@ -40,7 +40,7 @@ public class FlavorsController {
         return ResponseEntity.ok(response);
     }
 
-    //actualizar
+    //ACTUALIZAR
     @PutMapping("/{id}")
     public ResponseEntity<FlavorsDTOResponse> update(@PathVariable Long id,
                                                      @Valid @RequestBody FlavorsDTORequest request)
@@ -49,7 +49,7 @@ public class FlavorsController {
         return ResponseEntity.ok(response);
     }
 
-    //eliminar
+    //ELIMINAR
     @DeleteMapping("/{id}")
     public ResponseEntity <Void> delete (@PathVariable Long id)
     {
@@ -57,11 +57,35 @@ public class FlavorsController {
         return ResponseEntity.noContent().build();
     }
 
-    //reactivar flavor
+    //REACTIVAR SABOR
     @PatchMapping("/{id}/activate")
     public ResponseEntity<FlavorsDTOResponse> activate (@PathVariable Long id)
     {
         FlavorsDTOResponse response = flavorsService.activate(id);
+        return ResponseEntity.ok(response);
+    }
+
+    //BUSCAR POR NOMBRE
+    @GetMapping("/name/{name}")
+    public ResponseEntity<FlavorsDTOResponse> findByName (@PathVariable String name)
+    {
+        FlavorsDTOResponse response = flavorsService.findByName(name);
+        return ResponseEntity.ok(response);
+    }
+
+    //BUSCAR INACTIVOS
+    @GetMapping("/inactive")
+    public ResponseEntity<List<FlavorsDTOResponse>> findInactive ()
+    {
+        List<FlavorsDTOResponse> response = flavorsService.findInactive();
+        return ResponseEntity.ok(response);
+    }
+
+    //BUSCAR POR TEXTO
+    @GetMapping("/search")
+    public ResponseEntity<List<FlavorsDTOResponse>> searchByName (@RequestParam String name)
+    {
+        List<FlavorsDTOResponse> response = flavorsService.searchByName(name);
         return ResponseEntity.ok(response);
     }
 

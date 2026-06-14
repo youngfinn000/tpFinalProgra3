@@ -30,21 +30,9 @@ public class ProductEntity {
     @Column(nullable = false)
     private boolean active;
 
-    //productos - stock (onetoOne)
-    @OneToOne (cascade = CascadeType.ALL)
-    @JoinColumn (name = "stock_id")
-    private StockEntity stock;
+    @Column(nullable = false)
+    private Integer maxFlavors;
 
-    //productos- receta (onetoOne) UNIDIRECCIONAL
-
-    //productos - pedido (many to many) UNIDIRECCIONAL
-
-    //productos - sabores (many to many)
-    @ManyToMany
-    @JoinTable (name =  "product_flavors",
-            joinColumns = @JoinColumn(name = "product_id"),
-            inverseJoinColumns = @JoinColumn(name = "flavor_id"))
-    private List<FlavorsEntity> flavors;
-
-
+    @Column
+    private Integer stock;
 }

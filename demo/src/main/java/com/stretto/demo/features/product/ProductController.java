@@ -18,43 +18,45 @@ public class ProductController {
 
     private final ProductService productService;
 
+    //CREAR
     @PostMapping
     public ResponseEntity<ProductDTOResponse> create(@Valid @RequestBody ProductDTORequest request) {
         ProductDTOResponse response = productService.create(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
+    //BUSCAR TODOS
     @GetMapping
     public ResponseEntity<List<ProductDTOResponse>> findAll() {
         return ResponseEntity.ok(productService.findAll());
     }
 
+    //BUSCAR POR ID
     @GetMapping("/{id}")
     public ResponseEntity<ProductDTOResponse> findById(@PathVariable Long id) {
         return ResponseEntity.ok(productService.findById(id));
     }
 
+    //ACTUALIZAR PRODUCTO
     @PutMapping("/{id}")
     public ResponseEntity<ProductDTOResponse> update(@PathVariable Long id,
                                                      @Valid @RequestBody ProductDTORequest request) {
         return ResponseEntity.ok(productService.update(id, request));
     }
 
+    //BAJA DE PRODUCTO POR ID
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
         productService.delete(id);
         return ResponseEntity.noContent().build();
     }
 
+    //ACTIVAR PRODUCTO
     @PatchMapping("/{id}/activate")
     public ResponseEntity<ProductDTOResponse> activate(@PathVariable Long id) {
         return ResponseEntity.ok(productService.activate(id));
     }
 
-    @GetMapping("/flavor/{flavorId}")
-    public ResponseEntity<List<ProductDTOResponse>> findByFlavor(@PathVariable Long flavorId) {
-        return ResponseEntity.ok(productService.findByFlavor(flavorId));
-    }
 
     }
 

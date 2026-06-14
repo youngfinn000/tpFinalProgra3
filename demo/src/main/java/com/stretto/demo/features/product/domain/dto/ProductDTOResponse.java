@@ -1,9 +1,10 @@
 package com.stretto.demo.features.product.domain.dto;
 
+import com.stretto.demo.features.stock.domain.dto.StockDTOResponse;
 import lombok.*;
 
 import java.math.BigDecimal;
-import java.util.List;
+
 
 @Getter
 @Setter
@@ -16,6 +17,7 @@ public class ProductDTOResponse {
     private String name;
     private BigDecimal price;
     private boolean active;
-    private Long stockId;
-    private List<Long> flavorIds;
+    private Integer maxFlavors;
+    private Integer stock;
+
 }

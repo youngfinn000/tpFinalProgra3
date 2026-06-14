@@ -1,4 +1,4 @@
-package com.stretto.demo.features.orderDetail.domain;
+package com.stretto.demo.features.orderDetail;
 
 public class OrderDetailController {
 }

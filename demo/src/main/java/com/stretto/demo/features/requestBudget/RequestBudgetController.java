@@ -3,6 +3,7 @@ package com.stretto.demo.features.requestBudget;
 
 import com.stretto.demo.features.requestBudget.domain.dto.RequestBudgetDtoRequest;
 import com.stretto.demo.features.requestBudget.domain.dto.RequestBudgetDtoResponse;
+import com.stretto.demo.features.requestBudget.domain.dto.RequestBudgetStateDto;
 import com.stretto.demo.features.wholesaleCustomer.WholesaleCustomerService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -21,28 +22,23 @@ public class RequestBudgetController {
     private final RequestBudgetService requestBudgetService;
 
     @PostMapping
-    public ResponseEntity<RequestBudgetDtoResponse> createRequestBudget(
-            @Valid @RequestBody RequestBudgetDtoRequest request) {
-        RequestBudgetDtoResponse response = requestBudgetService.createRequestBudget(request);
-        return  ResponseEntity.status(HttpStatus.CREATED).body(response);
+    public ResponseEntity<RequestBudgetDtoResponse> createRequestBudget(@Valid @RequestBody RequestBudgetDtoRequest request) {
+        return  ResponseEntity.status(HttpStatus.CREATED).body(requestBudgetService.createRequestBudget(request));
+    }
+
+    @GetMapping("/customer/{customerId}")
+    public ResponseEntity<List<RequestBudgetDtoResponse>> getRequestBudgetByCustomer(@Valid @PathVariable Long customerId) {
+        return ResponseEntity.status(HttpStatus.OK).body(requestBudgetService.getRequestBudgetByCustomer(customerId));
     }
 
     @GetMapping
-    public ResponseEntity<List<RequestBudgetDtoResponse>> getAllRequestBudget(){
-        List<RequestBudgetDtoResponse> requests = requestBudgetService.getAllRequestBudget();
-        return ResponseEntity.status(HttpStatus.OK).body(requests);
+    public ResponseEntity<List<RequestBudgetDtoResponse>> getAllRequest(@RequestParam(required = false) String state){
+        return ResponseEntity.status(HttpStatus.OK).body(requestBudgetService.getAllRequest(state));
     }
 
-    @GetMapping
-    public ResponseEntity< RequestBudgetDtoResponse> getRequestBudgetById (@PathVariable Long id){
-        RequestBudgetDtoResponse request = requestBudgetService.getRequestBudgetById(id);
-        return ResponseEntity.status(HttpStatus.OK).body(request);
-    }
-
-    @PutMapping
-    public ResponseEntity<RequestBudgetDtoResponse> updateRequestBudget(@PathVariable Long id, @Valid @RequestBody RequestBudgetDtoRequest request) {
-        RequestBudgetDtoResponse response = requestBudgetService.updateRequestBudget(id, request);
-        return  ResponseEntity.status(HttpStatus.OK).body(response);
+    @PatchMapping("/{id}/state")
+    public ResponseEntity<RequestBudgetDtoResponse> updateState(@PathVariable Long id, @Valid @RequestBody RequestBudgetStateDto statedto) {
+        return  ResponseEntity.status(HttpStatus.OK).body(requestBudgetService.updateRequestBudget(id, statedto));
     }
 
 

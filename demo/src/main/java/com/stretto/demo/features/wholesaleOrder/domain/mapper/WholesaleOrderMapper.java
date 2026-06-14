@@ -6,7 +6,9 @@ import com.stretto.demo.features.wholesaleCustomer.domain.WholesaleCustomerEntit
 import com.stretto.demo.features.wholesaleOrder.domain.WholesaleOrderEntity;
 import com.stretto.demo.features.wholesaleOrder.domain.dto.WholesaleOrderRequest;
 import com.stretto.demo.features.wholesaleOrder.domain.dto.WholesaleOrderResponse;
+import org.springframework.stereotype.Component;
 
+@Component
 public class WholesaleOrderMapper {
 
     public static WholesaleOrderEntity toEntity (WholesaleOrderRequest request, OrderEntity order, RequestBudgetEntity  requestBudget, WholesaleCustomerEntity  customer) {

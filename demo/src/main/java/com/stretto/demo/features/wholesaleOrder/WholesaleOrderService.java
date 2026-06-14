@@ -8,8 +8,11 @@ import java.util.List;
 
 public interface WholesaleOrderService {
 
-        WholesaleOrderResponse createWholesaleOrder(WholesaleOrderRequest wholesaleOrderRequest);
+        public WholesaleOrderResponse  createFromRequestBudget(Long requestBudgetId);
         List<WholesaleOrderResponse> getallWholesaleOrders();
         WholesaleOrderResponse getWholesaleOrderById(Long id);
-        void deleteWholesaleOrder(Long id);
+        public void deleteWholesaleOrder(Long id);
+        public WholesaleOrderResponse registerAdvancePayment(Long wholesaleOrderId, Long customerId);
+        public List<WholesaleOrderResponse> getOrdersByCustomer (Long customerId);
+
 }

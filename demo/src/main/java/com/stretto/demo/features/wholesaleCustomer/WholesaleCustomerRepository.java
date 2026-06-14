@@ -5,6 +5,7 @@ import com.stretto.demo.features.wholesaleCustomer.domain.WholesaleCustomerEntit
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -12,4 +13,7 @@ public interface WholesaleCustomerRepository extends JpaRepository<WholesaleCust
 
 
     Optional<WholesaleCustomerEntity> findByEmail(String email);
+    List<WholesaleCustomerEntity> findByActiveTrue();
+    boolean existsByEmailAndIdNot(String email, Long id);
+    boolean existsByCuitAndIdNot(String cuit, Long id);
 }

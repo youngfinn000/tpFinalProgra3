@@ -11,7 +11,10 @@ import com.stretto.demo.features.requestBudget.domain.enums.StateRequestEnum;
 import com.stretto.demo.features.requestBudget.domain.mapper.RequestBudgetMapper;
 import com.stretto.demo.features.wholesaleCustomer.WholesaleCustomerRepository;
 import com.stretto.demo.features.wholesaleCustomer.domain.WholesaleCustomerEntity;
+import com.stretto.demo.features.wholesaleOrder.WholesaleOrderRepository;
+import com.stretto.demo.features.wholesaleOrder.WholesaleOrderService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,6 +28,8 @@ public class RequestBudgetServiceImpl implements RequestBudgetService {
     private final RequestBudgetRepository requestBudgetRepository;
     private final WholesaleCustomerRepository wholesaleCustomerRepository;
     private final FlavorsRepository flavorsRepository;
+    @Lazy
+    private final WholesaleOrderService wholesaleOrderService;
 
 
     @Override
@@ -39,6 +44,7 @@ public class RequestBudgetServiceImpl implements RequestBudgetService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<RequestBudgetDtoResponse> getRequestBudgetByCustomer(Long customerId){
         WholesaleCustomerEntity customer=wholesaleCustomerRepository.findById(customerId).orElseThrow(()-> new WholeSaleCustomerNotFoundException("Customer not found with id: "+customerId));
 
@@ -49,6 +55,7 @@ public class RequestBudgetServiceImpl implements RequestBudgetService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<RequestBudgetDtoResponse> getAllRequest(String state){
         List<RequestBudgetEntity> results;
         if(!state.isBlank()){
@@ -63,6 +70,7 @@ public class RequestBudgetServiceImpl implements RequestBudgetService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public RequestBudgetDtoResponse getRequestById(Long id){
         RequestBudgetEntity entity=requestBudgetRepository.findById(id).orElseThrow(()->new RuntimeException("Request id not found with id: "+id));
         return RequestBudgetMapper.toResponse(entity);
@@ -81,13 +89,18 @@ public class RequestBudgetServiceImpl implements RequestBudgetService {
 
         if(newState.equals(StateRequestEnum.CONFIRMED)){
             if(statedto.getBudget() <=0) {
-                throw new IllegalStateException("Request budget state is CONFIRMED");
+                throw new IllegalStateException("The budget must be greater than 0 when accepting request budget");
             }
                 entity.setBudget(statedto.getBudget());
+                entity.setStateRequestEnum(StateRequestEnum.CONFIRMED);
+                //se crea automaticamente el wholesale order al aceptar
+                requestBudgetRepository.save(entity);
+                wholesaleOrderService.createFromRequestBudget(entity.getId());
+        }else{
+            entity.setStateRequestEnum(newState);
+            requestBudgetRepository.save(entity);
         }
-        entity.setStateRequestEnum(newState);
-        RequestBudgetEntity updated=requestBudgetRepository.save(entity);
-        return RequestBudgetMapper.toResponse(updated);
+        return RequestBudgetMapper.toResponse(entity);
     }
 
 

@@ -1,5 +1,6 @@
 package com.stretto.demo.features.productionLot;
 
+import com.stretto.demo.features.productionLot.domain.dto.ProductionLotActivityDTOResponse;
 import com.stretto.demo.features.productionLot.domain.dto.ProductionLotDTORequest;
 import com.stretto.demo.features.productionLot.domain.dto.ProductionLotDTOResponse;
 import jakarta.validation.Valid;
@@ -41,6 +42,13 @@ public class ProductionLotController {
     public ResponseEntity<ProductionLotDTOResponse> update(@PathVariable Long id, @RequestBody ProductionLotDTORequest request)
     {
         ProductionLotDTOResponse response = productionLotService.update(request, id);
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/{id}/activity")
+    public ResponseEntity<ProductionLotActivityDTOResponse> activityLog(@PathVariable Long id)
+    {
+        ProductionLotActivityDTOResponse response = productionLotService.activityLog(id);
         return ResponseEntity.ok(response);
     }
 }

@@ -1,5 +1,6 @@
 package com.stretto.demo.features.productionLot;
 
+import com.stretto.demo.features.productionLot.domain.dto.ProductionLotActivityDTOResponse;
 import com.stretto.demo.features.productionLot.domain.dto.ProductionLotDTORequest;
 import com.stretto.demo.features.productionLot.domain.dto.ProductionLotDTOResponse;
 
@@ -13,4 +14,12 @@ public interface ProductionLotService {
     ProductionLotDTOResponse findById(Long id);
 
     ProductionLotDTOResponse update(ProductionLotDTORequest request, Long id);
+
+    ProductionLotDTOResponse confirm(Long id);
+
+    ProductionLotDTOResponse cancel(Long id);
+
+    ProductionLotDTOResponse calculatePerformance(Long id);
+
+    ProductionLotActivityDTOResponse activityLog(Long id);
 }

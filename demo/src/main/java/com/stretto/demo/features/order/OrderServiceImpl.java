@@ -17,7 +17,6 @@ import com.stretto.demo.features.product.ProductRepository;
 import com.stretto.demo.features.product.domain.ProductEntity;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import org.hibernate.mapping.Map;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
@@ -25,8 +24,9 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -57,6 +57,11 @@ public class OrderServiceImpl implements OrderService {
 
                     List<FlavorsEntity> flavors = flavorsRepository.findAllById(d.getFlavorsId());
 
+                    if (product.getStock() < d.getQuantity())
+                    {
+                        throw new RuntimeException("Not enough stock for product id: " + d.getProductId());
+                    }
+
                     if (flavors.size() != d.getFlavorsId().size()) {
                         throw new RuntimeException("One or more flavors not found with ids: " + d.getFlavorsId());
                     }
@@ -64,6 +69,9 @@ public class OrderServiceImpl implements OrderService {
                     if (flavors.size() > product.getMaxFlavors()) {
                         throw new RuntimeException("The product" + product.getName() + "allows a maximum of" + product.getMaxFlavors() + "flavors");
                     }
+
+                    product.setStock(product.getStock() - d.getQuantity());
+                    productRepository.save(product);
 
                     return OrderDetailEntity.builder()
                             .quantity(d.getQuantity())
@@ -129,6 +137,14 @@ public class OrderServiceImpl implements OrderService {
 
         if (entity.getStateOrderEnum() == StateOrderEnum.CANCELLED) {
             throw new RuntimeException("Order is already cancelled");
+        }
+
+        for(OrderDetailEntity detail : entity.getOrderDetails())
+        {
+            ProductEntity product = detail.getProduct();
+
+            product.setStock(product.getStock() + detail.getQuantity());
+            productRepository.save(product);
         }
 
         entity.setStateOrderEnum(StateOrderEnum.CANCELLED);
@@ -223,6 +239,18 @@ public class OrderServiceImpl implements OrderService {
                 .map(OrderEntity :: getTotal)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
 
+
+        Map<SaleChannelEnum, BigDecimal> revenueByChannel = orders.stream()
+                .filter(o -> o.getStateOrderEnum() != StateOrderEnum.CANCELLED)
+                .collect(Collectors.groupingBy(
+                        OrderEntity::getSaleChannelEnum,
+                        Collectors.reducing(
+                                BigDecimal.ZERO,
+                                OrderEntity::getTotal,
+                                BigDecimal::add
+                        )
+                ));
+
             return DailyReportDTO.builder()
                     .date(today)
                     .totalOrders(totalOrders)
@@ -255,6 +283,17 @@ public class OrderServiceImpl implements OrderService {
                         StateOrderEnum.CANCELLED)
                 .map(OrderEntity :: getTotal)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+        Map<SaleChannelEnum, BigDecimal> revenueByChannel = orders.stream()
+                .filter(o -> o.getStateOrderEnum() != StateOrderEnum.CANCELLED)
+                .collect(Collectors.groupingBy(
+                        OrderEntity::getSaleChannelEnum,
+                        Collectors.reducing(
+                                BigDecimal.ZERO,
+                                OrderEntity::getTotal,
+                                BigDecimal::add
+                        )
+                ));
 
         return MonthlyReportDTO.builder()
                 .year(year)

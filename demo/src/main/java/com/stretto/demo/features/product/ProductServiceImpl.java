@@ -8,6 +8,7 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @Service
@@ -96,5 +97,47 @@ public class ProductServiceImpl implements ProductService {
         return productMapper.toResponse(updated);
     }
 
+    //BUSCAR PRODUCTO POR NOMBRE
+    @Override
+    public List<ProductDTOResponse> searchByName (String name)
+    {
+        return  productRepository.findByNameContainingIgnoreCase(name)
+                .stream()
+                .map(productMapper::toResponse)
+                .toList();
+    }
+
+    //STOCK BAJO
+    @Override
+    public List<ProductDTOResponse> getLowStock (Integer limit)
+    {
+        return productRepository.findByStockLessThanEqual(limit)
+                .stream()
+                .map(productMapper::toResponse)
+                .toList();
+    }
+
+    //STOCK DISPONIBLE
+    @Override
+    public List<ProductDTOResponse> getAvailable()
+    {
+        return productRepository.findByStockGreaterThan(0)
+                .stream()
+                .map(productMapper::toResponse)
+                .toList();
+    }
+
+    //ACTUALIZAR SOLO PRECIO
+    @Override
+    @Transactional
+    public ProductDTOResponse updatePrice (Long id, BigDecimal price)
+    {
+        ProductEntity entity = productRepository.findById(id)
+                .orElseThrow(()-> new RuntimeException("Product not found with id: " + id));
+
+        entity.setPrice(price);
+
+        return productMapper.toResponse(productRepository.save(entity));
+    }
 }
 

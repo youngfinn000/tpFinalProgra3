@@ -24,7 +24,7 @@ public class OrderDetailServiceImpl implements OrderDetailService{
     private final OrderRepository orderRepository;
     private final ProductRepository productRepository;
     private final FlavorsRepository flavorsRepository;
-    private OrderDetailMapper orderDetailMapper;
+    private final OrderDetailMapper orderDetailMapper;
 
     //CREAR DETALLE DE ORDEN
     @Override
@@ -37,7 +37,21 @@ public class OrderDetailServiceImpl implements OrderDetailService{
         ProductEntity product = productRepository.findById(dto.getProductId())
                 .orElseThrow(() -> new RuntimeException("Product not found"));
 
-        List<FlavorsEntity> flavors = flavorsRepository.findAllById(dto.getFlavorsId());
+        List<Long> requestedIds = dto.getFlavorsId();
+
+        List<FlavorsEntity> flavors = flavorsRepository.findAllById(requestedIds);
+
+        List<Long> foundIds = flavors.stream()
+                .map(FlavorsEntity::getId)
+                .toList();
+
+        List<Long> missingIds = requestedIds.stream()
+                .filter((id -> !foundIds.contains(id)))
+                .toList();
+
+        if(!missingIds.isEmpty()){
+            throw new RuntimeException("Flavors not found with ids: " + missingIds);
+        }
 
         OrderDetailEntity entity = orderDetailMapper.toEntity(dto, product, flavors);
 

@@ -1,5 +1,7 @@
 package com.stretto.demo.features.productionLot;
 
+import com.stretto.demo.common.exception.InvalidStateException;
+import com.stretto.demo.common.exception.NotFoundException;
 import com.stretto.demo.features.internalUser.InternalUserRepository;
 import com.stretto.demo.features.internalUser.domain.InternalUserEntity;
 import com.stretto.demo.features.productionLot.domain.ProductionLotEntity;
@@ -27,10 +29,10 @@ public class ProductionLotImpl implements ProductionLotService {
     @Override
     public ProductionLotDTOResponse create(ProductionLotDTORequest request) {
         RecipeEntity recipeId = recipeRepository.findById(request.getRecipeId())
-                .orElseThrow(() -> new RuntimeException("Recipe not found"));
+                .orElseThrow(() -> new NotFoundException("Recipe not found"));
 
         InternalUserEntity internalUserId = internalUserRepository.findById(request.getUserId())
-                .orElseThrow(() -> new RuntimeException("Internal user not found"));
+                .orElseThrow(() -> new NotFoundException("Internal user not found"));
 
         ProductionLotEntity entity = ProductionLotMapper.toEntity(request, internalUserId, recipeId);
         ProductionLotEntity saved = repository.save(entity);
@@ -48,7 +50,7 @@ public class ProductionLotImpl implements ProductionLotService {
     @Override
     public ProductionLotDTOResponse findById(Long id) {
         ProductionLotEntity entity = repository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Production lot not found"));
+                .orElseThrow(() -> new NotFoundException("Production lot not found"));
 
         return ProductionLotMapper.toResponse(entity);
     }
@@ -56,7 +58,7 @@ public class ProductionLotImpl implements ProductionLotService {
     @Override
     public ProductionLotDTOResponse update(ProductionLotDTORequest request, Long id) {
         ProductionLotEntity entity = repository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Production lot not found"));
+                .orElseThrow(() -> new NotFoundException("Production lot not found"));
 
         entity.setAmountProduced(request.getAmountProduced());
         entity.setStatus(request.getStatus());
@@ -68,10 +70,10 @@ public class ProductionLotImpl implements ProductionLotService {
     @Override
     public ProductionLotDTOResponse confirm(Long id) {
         ProductionLotEntity entity = repository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Production lot not found"));
+                .orElseThrow(() -> new NotFoundException("Production lot not found"));
 
         if(entity.getStatus() != StatusLotEnum.IN_PROGRESS){
-            throw new RuntimeException("Cannot confirm a lot that is not IN_PROGRESS");
+            throw new InvalidStateException("Cannot confirm a lot that is not IN_PROGRESS");
         }
 
         entity.setStatus(StatusLotEnum.COMPLETED);
@@ -83,14 +85,14 @@ public class ProductionLotImpl implements ProductionLotService {
     @Override
     public ProductionLotDTOResponse cancel(Long id) {
         ProductionLotEntity entity = repository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Production lot not found"));
+                .orElseThrow(() -> new NotFoundException("Production lot not found"));
 
         if(entity.getStatus() == StatusLotEnum.COMPLETED){
-            throw new RuntimeException("Cannot canceled a lot that is COMPLETED");
+            throw new InvalidStateException("Cannot canceled a lot that is COMPLETED");
         }
 
         if(entity.getStatus() == StatusLotEnum.CANCELLED){
-            throw new RuntimeException("Cannot canceled a lot that is CANCELED");
+            throw new InvalidStateException("Cannot canceled a lot that is CANCELED");
         }
 
         entity.setStatus(StatusLotEnum.CANCELLED);
@@ -102,7 +104,7 @@ public class ProductionLotImpl implements ProductionLotService {
     @Override
     public ProductionLotDTOResponse calculatePerformance(Long id) {
         ProductionLotEntity entity = repository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Production lot not found"));
+                .orElseThrow(() -> new NotFoundException("Production lot not found"));
 
         entity.setPerformancePct((entity.getAmountProduced() / entity.getRecipe().getBaseQuantity()) * 100);
         ProductionLotEntity saved = repository.save(entity);

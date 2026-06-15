@@ -1,5 +1,6 @@
 package com.stretto.demo.features.recipe;
 
+import com.stretto.demo.common.exception.NotFoundException;
 import com.stretto.demo.features.ingredient.domain.IngredientEntity;
 import com.stretto.demo.features.ingredient.IngredientRepository;
 import com.stretto.demo.features.product.ProductRepository;
@@ -27,10 +28,10 @@ public class RecipeImpl implements RecipeService{
     @Override
     public RecipeDTOResponse create(RecipeDTORequest request) {
         ProductEntity productId = productRepository.findById(request.getProductId())
-                .orElseThrow(() -> new RuntimeException("Product not found"));
+                .orElseThrow(() -> new NotFoundException("Product not found"));
 
         ProductionLotEntity productionLotId = productionLotRepository.findById(request.getProductionLotId())
-                .orElseThrow(() -> new RuntimeException("Prodctuion Lot not found"));
+                .orElseThrow(() -> new NotFoundException("Production Lot not found"));
 
         List<IngredientEntity> ingredients = ingredientRepository.findAllById(request.getIngredientIds());
 
@@ -52,7 +53,7 @@ public class RecipeImpl implements RecipeService{
     @Override
     public RecipeDTOResponse findById(Long id) {
         RecipeEntity entity = repository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Recipe not found"));
+                .orElseThrow(() -> new NotFoundException("Recipe not found"));
 
         return RecipeMapper.toResponse(entity);
     }
@@ -60,7 +61,7 @@ public class RecipeImpl implements RecipeService{
     @Override
     public RecipeDTOResponse update(RecipeDTORequest request, Long id) {
         RecipeEntity entity = repository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Recipe not found"));
+                .orElseThrow(() -> new NotFoundException("Recipe not found"));
 
         entity.setName(request.getName());
         entity.setBaseQuantity(request.getBaseQuantity());
@@ -74,7 +75,7 @@ public class RecipeImpl implements RecipeService{
     public List<RecipeSuppliesDTOResponse> calculateIngredients(Long recipeId, Double kg) {
 
         RecipeEntity entity = repository.findById(recipeId)
-                .orElseThrow(() -> new RuntimeException("Recipe not found"));
+                .orElseThrow(() -> new NotFoundException("Recipe not found"));
 
         List<RecipeSuppliesDTOResponse> amount = entity.getIngredients()
                 .stream()

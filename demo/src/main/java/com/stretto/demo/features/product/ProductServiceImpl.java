@@ -1,5 +1,7 @@
 package com.stretto.demo.features.product;
 
+import com.stretto.demo.common.exception.AlreadyExistsException;
+import com.stretto.demo.common.exception.NotFoundException;
 import com.stretto.demo.features.product.domain.ProductEntity;
 import com.stretto.demo.features.product.domain.dto.ProductDTORequest;
 import com.stretto.demo.features.product.domain.dto.ProductDTOResponse;
@@ -23,13 +25,14 @@ public class ProductServiceImpl implements ProductService {
     @Override
     @Transactional
     public ProductDTOResponse create(ProductDTORequest request) {
+
         if (productRepository.existsByNameIgnoreCase(request.getName())) {
-            throw new RuntimeException("A product with that name already exists");
+            throw new AlreadyExistsException("A product with that name already exists");
         }
 
         ProductEntity entity = productMapper.toEntity(request);
 
-        entity.setActive(true);  // siempre arranca activo
+        entity.setActive(true);
 
         ProductEntity saved = productRepository.save(entity);
 
@@ -49,7 +52,7 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public ProductDTOResponse findById(Long id) {
         ProductEntity entity = productRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Product not found with id: " + id));
+                .orElseThrow(() -> new NotFoundException("Product not found with id: " + id));
         return productMapper.toResponse(entity);
     }
 
@@ -59,7 +62,13 @@ public class ProductServiceImpl implements ProductService {
     public ProductDTOResponse update(Long id, ProductDTORequest request)
     {
         ProductEntity entity = productRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Product not found with id: " + id));
+                .orElseThrow(() -> new NotFoundException("Product not found with id: " + id));
+
+        if (!entity.getName().equalsIgnoreCase(request.getName()) &&
+                productRepository.existsByNameIgnoreCase(request.getName())) {
+
+            throw new AlreadyExistsException("A product with that name already exists");
+        }
 
         entity.setName(request.getName());
         entity.setPrice(request.getPrice());
@@ -76,7 +85,7 @@ public class ProductServiceImpl implements ProductService {
     @Transactional
     public void delete(Long id) {
         ProductEntity entity = productRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Product not found with id: " + id));
+                .orElseThrow(() -> new NotFoundException("Product not found with id: " + id));
 
         entity.setActive(false);
 
@@ -88,7 +97,7 @@ public class ProductServiceImpl implements ProductService {
     @Transactional
     public ProductDTOResponse activate(Long id) {
         ProductEntity entity = productRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Product not found with id: " + id));
+                .orElseThrow(() -> new NotFoundException("Product not found with id: " + id));
 
         entity.setActive(true);
 
@@ -133,7 +142,7 @@ public class ProductServiceImpl implements ProductService {
     public ProductDTOResponse updatePrice (Long id, BigDecimal price)
     {
         ProductEntity entity = productRepository.findById(id)
-                .orElseThrow(()-> new RuntimeException("Product not found with id: " + id));
+                .orElseThrow(()-> new NotFoundException("Product not found with id: " + id));
 
         entity.setPrice(price);
 

@@ -1,5 +1,7 @@
 package com.stretto.demo.features.flavors;
 
+import com.stretto.demo.common.exception.AlreadyExistsException;
+import com.stretto.demo.common.exception.NotFoundException;
 import com.stretto.demo.features.flavors.domain.FlavorsEntity;
 import com.stretto.demo.features.flavors.domain.dto.FlavorsDTORequest;
 import com.stretto.demo.features.flavors.domain.dto.FlavorsDTOResponse;
@@ -24,7 +26,7 @@ public class FlavorsServiceImpl implements FlavorsService{
     {
         if (flavorsRepository.existsByNameIgnoreCase(request.getName()))
         {
-            throw new RuntimeException("A flavor with that name already exists");
+            throw new AlreadyExistsException("A flavor with that name already exists");
         }
 
         FlavorsEntity entity = flavorsMapper.toEntity(request);
@@ -47,7 +49,7 @@ public class FlavorsServiceImpl implements FlavorsService{
     public FlavorsDTOResponse findById (Long id)
     {
         FlavorsEntity entity = flavorsRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Flavor not found with id: " + id));
+                .orElseThrow(() -> new NotFoundException("Flavor not found with id: " + id));
         return flavorsMapper.toResponse((entity));
     }
 
@@ -57,12 +59,12 @@ public class FlavorsServiceImpl implements FlavorsService{
     public FlavorsDTOResponse update (Long id, FlavorsDTORequest request)
     {
         FlavorsEntity entity = flavorsRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Flavor not found with id: " + id));
+                .orElseThrow(() -> new NotFoundException("Flavor not found with id: " + id));
 
         if(!entity.getName().equalsIgnoreCase(request.getName()) &&
                 flavorsRepository.existsByNameIgnoreCase(request.getName()))
         {
-            throw new RuntimeException("A flavor with that name already exists");
+            throw new AlreadyExistsException("A flavor with that name already exists");
         }
 
         entity.setName(request.getName());
@@ -77,7 +79,7 @@ public class FlavorsServiceImpl implements FlavorsService{
     public void delete (Long id)
     {
         FlavorsEntity entity = flavorsRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Flavor not found with id: " + id));
+                .orElseThrow(() -> new NotFoundException("Flavor not found with id: " + id));
 
         entity.setActive_inactive(false);
 
@@ -89,7 +91,7 @@ public class FlavorsServiceImpl implements FlavorsService{
     public FlavorsDTOResponse activate (Long id)
     {
         FlavorsEntity entity = flavorsRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Flavor not found with id: " + id));
+                .orElseThrow(() -> new NotFoundException("Flavor not found with id: " + id));
 
         entity.setActive_inactive(true);
 
@@ -103,7 +105,7 @@ public class FlavorsServiceImpl implements FlavorsService{
     public FlavorsDTOResponse findByName (String name)
     {
         FlavorsEntity entity = flavorsRepository.findByNameIgnoreCase(name)
-                .orElseThrow(()-> new RuntimeException("Flavor not found: " + name));
+                .orElseThrow(()-> new NotFoundException("Flavor not found: " + name));
 
         return flavorsMapper.toResponse(entity);
     }

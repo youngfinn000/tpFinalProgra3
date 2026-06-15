@@ -29,7 +29,7 @@ public class WholesaleOrderServiceImpl implements WholesaleOrderService {
     private final RequestBudgetRepository requestBudgetRepository;
     private final WholesaleCustomerRepository wholesaleCustomerRepository;
 
-    //Create wsorder
+
     @Override
     public WholesaleOrderResponse  createFromRequestBudget(Long requestId){
 

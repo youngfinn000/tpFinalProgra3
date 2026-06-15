@@ -1,5 +1,7 @@
 package com.stretto.demo.features.orderDetail;
 
+import com.stretto.demo.common.exception.FlavorLimitExceededException;
+import com.stretto.demo.common.exception.NotFoundException;
 import com.stretto.demo.features.flavors.FlavorsRepository;
 import com.stretto.demo.features.flavors.domain.FlavorsEntity;
 import com.stretto.demo.features.order.OrderRepository;
@@ -32,10 +34,10 @@ public class OrderDetailServiceImpl implements OrderDetailService{
     public OrderDetailDTOResponse create (Long orderId, OrderDetailDTORequest dto)
     {
         OrderEntity order = orderRepository.findById(orderId)
-                .orElseThrow(() -> new RuntimeException("Order not found"));
+                .orElseThrow(() -> new NotFoundException("Order not found"));
 
         ProductEntity product = productRepository.findById(dto.getProductId())
-                .orElseThrow(() -> new RuntimeException("Product not found"));
+                .orElseThrow(() -> new NotFoundException("Product not found"));
 
         List<Long> requestedIds = dto.getFlavorsId();
 
@@ -50,7 +52,16 @@ public class OrderDetailServiceImpl implements OrderDetailService{
                 .toList();
 
         if(!missingIds.isEmpty()){
-            throw new RuntimeException("Flavors not found with ids: " + missingIds);
+            throw new NotFoundException("Flavors not found with ids: " + missingIds);
+        }
+
+        if (flavors.size() > product.getMaxFlavors()) {
+            throw new FlavorLimitExceededException(
+                    "The product " + product.getName()
+                            + " allows a maximum of "
+                            + product.getMaxFlavors()
+                            + " flavors"
+            );
         }
 
         OrderDetailEntity entity = orderDetailMapper.toEntity(dto, product, flavors);
@@ -77,6 +88,8 @@ public class OrderDetailServiceImpl implements OrderDetailService{
     @Transactional
     public void delete (Long id)
     {
-        orderDetailRepository.deleteById(id);
+        OrderDetailEntity entity = orderDetailRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("Order detail not found with id: " + id));
+        orderDetailRepository.delete(entity);
     }
 }

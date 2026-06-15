@@ -1,14 +1,14 @@
 package com.stretto.demo.features.internalUser;
 
 
+import com.stretto.demo.common.exception.InvalidRoleException;
+import com.stretto.demo.common.exception.NotFoundException;
 import com.stretto.demo.features.internalUser.domain.InternalUserEntity;
 import com.stretto.demo.features.internalUser.domain.dto.InternalUserDTORequest;
 import com.stretto.demo.features.internalUser.domain.dto.InternalUserDTOResponse;
 import com.stretto.demo.features.internalUser.domain.enums.RolEnum;
 import com.stretto.demo.features.internalUser.domain.mapper.InternalUserMapper;
 import com.stretto.demo.features.order.OrderService;
-import com.stretto.demo.features.order.OrderServiceImpl;
-import com.stretto.demo.features.order.domain.OrderEntity;
 import com.stretto.demo.features.order.domain.dto.OrderDTORequest;
 import com.stretto.demo.features.order.domain.dto.OrderDTOResponse;
 import com.stretto.demo.features.productionLot.ProductionLotService;
@@ -46,7 +46,7 @@ public class InternalUserImpl implements InternalUserService {
     public InternalUserDTOResponse findById(Long id)
     {
         InternalUserEntity entity = repository.findById(id)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new NotFoundException("User not found"));
 
         return InternalUserMapper.toResponse(entity);
     }
@@ -55,7 +55,7 @@ public class InternalUserImpl implements InternalUserService {
     public InternalUserDTOResponse update(Long id, InternalUserDTORequest request)
     {
         InternalUserEntity entity = repository.findById(id)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new NotFoundException("User not found"));
 
         entity.setName(request.getName());
         entity.setEmail(request.getEmail());
@@ -68,7 +68,7 @@ public class InternalUserImpl implements InternalUserService {
     public void delete(Long id){
         InternalUserEntity entity = repository.findById(id)
 
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new NotFoundException("User not found"));
         entity.setActive(false);
         repository.save(entity);
     }
@@ -76,7 +76,7 @@ public class InternalUserImpl implements InternalUserService {
     @Override
     public InternalUserDTOResponse activate(Long id){
         InternalUserEntity entity = repository.findById(id)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new NotFoundException("User not found"));
         entity.setActive(true);
         InternalUserEntity updated = repository.save(entity);
         return InternalUserMapper.toResponse(updated);
@@ -85,10 +85,10 @@ public class InternalUserImpl implements InternalUserService {
     @Override
     public OrderDTOResponse createOrder(Long userId, OrderDTORequest request) {
         InternalUserEntity entity = repository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new NotFoundException("User not found"));
 
         if(entity.getRol() != RolEnum.EMPLOYEE){
-            throw new RuntimeException("Only employees can perform this action");
+            throw new InvalidRoleException("Only employees can perform this action");
         }
 
         return orderService.create(request);
@@ -97,10 +97,10 @@ public class InternalUserImpl implements InternalUserService {
     @Override
     public ProductionLotDTOResponse registerLot(Long userId, ProductionLotDTORequest request) {
         InternalUserEntity entity = repository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new NotFoundException("User not found"));
 
         if(entity.getRol() != RolEnum.EMPLOYEE){
-            throw new RuntimeException("Only employees can perform this action");
+            throw new InvalidRoleException("Only employees can perform this action");
         }
 
         return productionLotService.create(request);

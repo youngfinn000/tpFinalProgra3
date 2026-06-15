@@ -19,7 +19,6 @@ import java.util.List;
 public class WholesaleOrderController {
 
     private final WholesaleOrderService wholesaleOrderService;
-    private final WholesaleOrderRepository wholesaleOrderRepository;
 
     @PostMapping("/request-budget/{requestbudgetId}")
     public ResponseEntity<WholesaleOrderResponse> createWholesaleOrder(@PathVariable Long requestId){

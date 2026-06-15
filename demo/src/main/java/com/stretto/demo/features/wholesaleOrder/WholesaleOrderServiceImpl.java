@@ -33,13 +33,13 @@ public class WholesaleOrderServiceImpl implements WholesaleOrderService {
     @Override
     public WholesaleOrderResponse  createFromRequestBudget(Long requestId){
 
-        RequestBudgetEntity requestBudget= requestBudgetRepository.findById(requestId).orElseThrow(()->new RuntimeException("RequestBudget not found"));
+        RequestBudgetEntity requestBudget= requestBudgetRepository.findById(requestId).orElseThrow(()->new NotFoundException("RequestBudget not found with id "+requestId));
         if(!requestBudget.getStateRequestEnum().equals(StateRequestEnum.CONFIRMED)){
             throw new InvalidStateException("An order can only be generated from a CONFIRMED request.");
         }
 
         wholesaleOrderRepository.findByRequestBudgetId(requestId).ifPresent(o->{
-            throw new IllegalArgumentException("Only accepted request budgets can generate wholesale orders.");
+            throw new NotFoundException("Only accepted request budgets can generate wholesale orders.");
         });
 
         WholesaleOrderEntity entity= WholesaleOrderMapper.toEntity(requestBudget,requestBudget.getCustomer());
@@ -58,19 +58,19 @@ public class WholesaleOrderServiceImpl implements WholesaleOrderService {
     @Override
     @Transactional(readOnly = true)
     public WholesaleOrderResponse getWholesaleOrderById(Long id){
-        WholesaleOrderEntity entity= wholesaleOrderRepository.findById(id).orElseThrow(()->new NotFoundException("Wholesale Order not found"));
+        WholesaleOrderEntity entity= wholesaleOrderRepository.findById(id).orElseThrow(()->new NotFoundException("Wholesale Order not found with id "+id));
         return WholesaleOrderMapper.toResponse(entity);
     }
 
     @Override
     public void deleteWholesaleOrder(Long id){
-        WholesaleOrderEntity entity= wholesaleOrderRepository.findById(id).orElseThrow(()->new NotFoundException("Wholesale Order not found"));
+        WholesaleOrderEntity entity= wholesaleOrderRepository.findById(id).orElseThrow(()->new NotFoundException("Wholesale Order not found with id: "+id));
         entity.setActive(false);
     }
 
     @Override
     public WholesaleOrderResponse updateWholesaleOrder(Long id, WholesaleOrderRequest request){
-        WholesaleOrderEntity entity=wholesaleOrderRepository.findById(id).orElseThrow(()->new NotFoundException("Wholesale Order not found"));
+        WholesaleOrderEntity entity=wholesaleOrderRepository.findById(id).orElseThrow(()->new NotFoundException("Wholesale Order not found with id: "+id));
         if(!entity.isActive()){
             throw new InvalidStateException("Wholesale Order is inactive.");
         }
@@ -88,7 +88,7 @@ public class WholesaleOrderServiceImpl implements WholesaleOrderService {
 
     @Override
     public WholesaleOrderResponse registerAdvancePayment(Long wholesaleOrderId, Long customerId, BigDecimal amount){
-        WholesaleOrderEntity entity=wholesaleOrderRepository.findById(wholesaleOrderId).orElseThrow(()->new NotFoundException("Wholesale Order not found"));
+        WholesaleOrderEntity entity=wholesaleOrderRepository.findById(wholesaleOrderId).orElseThrow(()->new NotFoundException("Wholesale Order not found with id: "+wholesaleOrderId));
         if(!entity.getWholesaleCustomer().getId().equals(customerId)){
             //bussines
             throw new InvalidStateException("The order does not belong to the specified customer.");

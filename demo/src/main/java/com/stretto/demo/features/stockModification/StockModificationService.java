@@ -22,4 +22,8 @@ public interface StockModificationService {
 
     List<StockModificationDTOResponse> findByDate(LocalDate date);
 
+    StockModificationDTOResponse register(StockModificationDTORequest request);
+
+    Boolean validateStock(Long stockId, Double qty);
+
 }

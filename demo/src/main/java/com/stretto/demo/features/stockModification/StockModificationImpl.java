@@ -71,4 +71,14 @@ public class StockModificationImpl implements StockModificationService{
                 .map(StockModificationMapper::toResponse)
                 .toList();
     }
+
+    @Override
+    public StockModificationDTOResponse register(StockModificationDTORequest request) {
+        return null;
+    }
+
+    @Override
+    public Boolean validateStock(Long stockId, Double qty) {
+        return null;
+    }
 }

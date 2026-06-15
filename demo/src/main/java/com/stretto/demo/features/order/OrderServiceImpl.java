@@ -1,5 +1,9 @@
 package com.stretto.demo.features.order;
 
+import com.stretto.demo.common.exception.FlavorLimitExceededException;
+import com.stretto.demo.common.exception.InsufficientStockException;
+import com.stretto.demo.common.exception.InvalidStateException;
+import com.stretto.demo.common.exception.NotFoundException;
 import com.stretto.demo.features.flavors.FlavorsRepository;
 import com.stretto.demo.features.flavors.domain.FlavorsEntity;
 import com.stretto.demo.features.internalUser.InternalUserRepository;
@@ -44,7 +48,7 @@ public class OrderServiceImpl implements OrderService {
     @Transactional
     public OrderDTOResponse create(OrderDTORequest request) {
         InternalUserEntity user = internalUserRepository.findById(request.getUserID())
-                .orElseThrow(() -> new RuntimeException("User not found with id: " + request.getUserID()));
+                .orElseThrow(() -> new NotFoundException("User not found with id: " + request.getUserID()));
 
         OrderEntity order = orderMapper.toEntity(request, user);
 
@@ -53,21 +57,21 @@ public class OrderServiceImpl implements OrderService {
                 .map(d -> {
 
                     ProductEntity product = productRepository.findById(d.getProductId())
-                            .orElseThrow(() -> new RuntimeException("Product not found with id: " + d.getProductId()));
+                            .orElseThrow(() -> new NotFoundException("Product not found with id: " + d.getProductId()));
 
                     List<FlavorsEntity> flavors = flavorsRepository.findAllById(d.getFlavorsId());
 
                     if (product.getStock() < d.getQuantity())
                     {
-                        throw new RuntimeException("Not enough stock for product id: " + d.getProductId());
+                        throw new InsufficientStockException("Not enough stock for product id: " + d.getProductId());
                     }
 
                     if (flavors.size() != d.getFlavorsId().size()) {
-                        throw new RuntimeException("One or more flavors not found with ids: " + d.getFlavorsId());
+                        throw new NotFoundException("One or more flavors not found with ids: " + d.getFlavorsId());
                     }
 
                     if (flavors.size() > product.getMaxFlavors()) {
-                        throw new RuntimeException("The product" + product.getName() + "allows a maximum of" + product.getMaxFlavors() + "flavors");
+                        throw new FlavorLimitExceededException("The product" + product.getName() + "allows a maximum of" + product.getMaxFlavors() + "flavors");
                     }
 
                     product.setStock(product.getStock() - d.getQuantity());
@@ -108,7 +112,7 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public OrderDTOResponse findById(Long id) {
         OrderEntity entity = orderRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Order not found with id: " + id));
+                .orElseThrow(() -> new NotFoundException("Order not found with id: " + id));
         return orderMapper.toResponse(entity);
     }
 
@@ -117,10 +121,10 @@ public class OrderServiceImpl implements OrderService {
     @Transactional
     public OrderDTOResponse updateState(Long id, StateOrderEnum state) {
         OrderEntity entity = orderRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Order not found with id: " + id));
+                .orElseThrow(() -> new NotFoundException("Order not found with id: " + id));
 
         if (entity.getStateOrderEnum() == StateOrderEnum.CANCELLED) {
-            throw new RuntimeException("Cannot update a cancelled order");
+            throw new InvalidStateException("Cannot update a cancelled order");
         }
 
         entity.setStateOrderEnum(state);
@@ -133,10 +137,10 @@ public class OrderServiceImpl implements OrderService {
     @Transactional
     public void cancel(Long id) {
         OrderEntity entity = orderRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Order not found with id: " + id));
+                .orElseThrow(() -> new NotFoundException("Order not found with id: " + id));
 
         if (entity.getStateOrderEnum() == StateOrderEnum.CANCELLED) {
-            throw new RuntimeException("Order is already cancelled");
+            throw new InvalidStateException("Order is already cancelled");
         }
 
         for(OrderDetailEntity detail : entity.getOrderDetails())

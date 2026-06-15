@@ -21,6 +21,8 @@ import com.stretto.demo.features.product.ProductRepository;
 import com.stretto.demo.features.product.domain.ProductEntity;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
@@ -41,6 +43,7 @@ public class OrderServiceImpl implements OrderService {
     private final InternalUserRepository internalUserRepository;
     private final FlavorsRepository flavorsRepository;
     private final OrderMapper orderMapper;
+    private final JavaMailSender mailSender;
 
 
     //CREAR PEDIDO
@@ -76,6 +79,14 @@ public class OrderServiceImpl implements OrderService {
 
                     product.setStock(product.getStock() - d.getQuantity());
                     productRepository.save(product);
+
+                    if(product.getStock() == 5)
+                    {
+                        sendMail("Low Stock Alert",
+                                "Product:" + product.getName()+
+                                        "\nCurrent stock: " + product.getStock()
+                        );
+                    }
 
                     return OrderDetailEntity.builder()
                             .quantity(d.getQuantity())
@@ -203,7 +214,16 @@ public class OrderServiceImpl implements OrderService {
     @Scheduled(cron = "0 59 23 * * *")
     public void scheduledDailyReport()
     {
-        generateDailyReport();
+        DailyReportDTO report = generateDailyReport();
+
+        String body =
+                "Daily Report\n\n" +
+                "Date: " + report.getDate() + "\n" +
+                "Total orders: " + report.getTotalOrders() + "\n" +
+                "Canceled orders: " + report.getCancellOrders() + "\n" +
+                "Total Revenue: " + report.getTotalRevenue();
+
+        sendMail("Daily Report Stretto", body);
     }
 
     //REPORTE MENSUAL DE PEDIDOS PROGRAMADO
@@ -212,10 +232,21 @@ public class OrderServiceImpl implements OrderService {
     {
         LocalDate previosMonth = LocalDate.now().minusMonths(1);
 
-        int year = previosMonth.getYear();
-        int month = previosMonth.getMonthValue();
+        MonthlyReportDTO report = generateMonthlyReport(
+                previosMonth.getYear(),
+                previosMonth.getMonthValue()
+        );
 
-        generateMonthlyReport(year,month);
+        String body =
+                "Monthly Report\n\n" +
+                "Month: " + report.getMonth() + "\n" +
+                "Year: " + report.getYear() + "\n" +
+                "Total orders: " + report.getTotalOrders() + "\n" +
+                "Canceled orders: " + report.getCancelleOrders() + "\n" +
+                "Total Revenue: " + report.getTotalRevenue();
+
+        sendMail("Monthly Report Stretto", body);
+
     }
 
     //GENERAR REPORTE DIARIO
@@ -260,6 +291,7 @@ public class OrderServiceImpl implements OrderService {
                     .totalOrders(totalOrders)
                     .cancellOrders(cancellOrders)
                     .totalRevenue(totalRevenue)
+                    .revenueByChannel(revenueByChannel)
                     .build();
     }
 
@@ -305,6 +337,19 @@ public class OrderServiceImpl implements OrderService {
                 .totalOrders(totalOrders)
                 .cancelleOrders(cancellOrders)
                 .totalRevenue(totalRevenue)
+                .revenueByChannel(revenueByChannel)
                 .build();
     }
+
+    private void sendMail (String subject, String body)
+    {
+        SimpleMailMessage message = new SimpleMailMessage();
+
+        message.setTo("strettoheladeria@gmail.com");
+        message.setSubject(subject);
+        message.setText(body);
+
+        mailSender.send(message);
+    }
+
 }

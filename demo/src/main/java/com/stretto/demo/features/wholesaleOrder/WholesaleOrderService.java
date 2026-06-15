@@ -19,7 +19,7 @@ public interface WholesaleOrderService {
         // Baja lógica
         void deleteWholesaleOrder(Long id);
         // Admin actualiza deliveryDate y/o discount
-        WholesaleOrderResponse updateWholesaleOrder(Long id,WholesaleOrderRequest wholesaleOrderRequest);
+        WholesaleOrderResponse updateWholesaleOrder(Long id,WholesaleOrderRequest request);
 
 
         ///wholesalecustomer

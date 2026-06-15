@@ -1,5 +1,8 @@
 package com.stretto.demo.features.wholesaleCustomer;
 
+import com.stretto.demo.common.exception.AlreadyExistsException;
+import com.stretto.demo.common.exception.InvalidStateException;
+import com.stretto.demo.common.exception.NotFoundException;
 import com.stretto.demo.features.wholesaleCustomer.domain.WholesaleCustomerEntity;
 import com.stretto.demo.features.wholesaleCustomer.domain.dto.WholesaleCusDtoRequest;
 import com.stretto.demo.features.wholesaleCustomer.domain.dto.WholesaleCusDtoResponse;
@@ -8,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.rmi.AlreadyBoundException;
 import java.util.List;
 
 @Service
@@ -20,7 +24,7 @@ public class WholesaleCustomerServiceImpl implements WholesaleCustomerService {
 
     @Override
     public WholesaleCusDtoResponse createWholesaleCustomer(WholesaleCusDtoRequest request) {
-        wholesaleCustomerRepository.findByEmail(request.getEmail()).orElseThrow(()-> new IllegalArgumentException("There is already a customer with an email: " + request.getEmail()));
+        wholesaleCustomerRepository.findByEmail(request.getEmail()).orElseThrow(()-> new AlreadyExistsException("There is already a customer with an email: " + request.getEmail()));
         WholesaleCustomerEntity entity = WholesaleCusMapper.toEntity(request);
         return WholesaleCusMapper.toResponse(wholesaleCustomerRepository.save(entity));
     }
@@ -29,10 +33,10 @@ public class WholesaleCustomerServiceImpl implements WholesaleCustomerService {
     public WholesaleCusDtoResponse updateWholesaleCustomer(Long id, WholesaleCusDtoRequest request) {
         WholesaleCustomerEntity customer= findActiveOrThrow(id);
         if(wholesaleCustomerRepository.existsByEmailAndIdNot(request.getCuit(), id)){
-            throw new IllegalStateException("There is already a customer with an email: " + request.getEmail());
+            throw new AlreadyExistsException("There is already a customer with an email: " + request.getEmail());
         }
         if(request.getCuit() != null && wholesaleCustomerRepository.existsByCuitAndIdNot(request.getCuit(), id)){
-            throw new IllegalArgumentException("There cuit is already registered for another client: "+request.getCuit());
+            throw new AlreadyExistsException("There cuit is already registered for another client: "+request.getCuit());
         }
         customer.setCompanyName(request.getCompanyName());
         customer.setEmail(request.getEmail());
@@ -51,7 +55,7 @@ public class WholesaleCustomerServiceImpl implements WholesaleCustomerService {
     @Override
     @Transactional(readOnly = true)
     public WholesaleCusDtoResponse getWholesaleCustomerById(Long id) {
-        WholesaleCustomerEntity customer= wholesaleCustomerRepository.findById(id).orElseThrow(()->new RuntimeException("WholesaleCustomer not found"));
+        WholesaleCustomerEntity customer= wholesaleCustomerRepository.findById(id).orElseThrow(()->new NotFoundException("WholesaleCustomer not found with id: "+id));
         return WholesaleCusMapper.toResponse(customer);
     }
 
@@ -67,14 +71,14 @@ public class WholesaleCustomerServiceImpl implements WholesaleCustomerService {
     @Override
     @Transactional(readOnly = true)
     public WholesaleCusDtoResponse getWholesaleCustomerByEmail(String email) {
-        WholesaleCustomerEntity customer = wholesaleCustomerRepository.findByEmail(email).orElseThrow(()->new RuntimeException("WholesaleCustomer not found"));
+        WholesaleCustomerEntity customer = wholesaleCustomerRepository.findByEmail(email).orElseThrow(()->new NotFoundException("WholesaleCustomer not found with email: "+email));
         return WholesaleCusMapper.toResponse(customer);
     }
 
     private WholesaleCustomerEntity findActiveOrThrow(Long id) {
-        WholesaleCustomerEntity customer= wholesaleCustomerRepository.findById(id).orElseThrow(()->new RuntimeException("WholesaleCustomer not found"));
+        WholesaleCustomerEntity customer= wholesaleCustomerRepository.findById(id).orElseThrow(()->new NotFoundException("WholesaleCustomer not found with id: "+id));
         if(customer.isActive()){
-            throw new IllegalStateException("Wholesale Customer with id "+id+ " its inactive. " );
+            throw new InvalidStateException("Wholesale Customer with id "+id+ " its inactive. " );
         }
         return customer;
     }

@@ -1,5 +1,7 @@
 package com.stretto.demo.features.requestBudget;
 
+import com.stretto.demo.common.exception.InvalidStateException;
+import com.stretto.demo.common.exception.NotFoundException;
 import com.stretto.demo.features.flavors.FlavorsRepository;
 import com.stretto.demo.features.flavors.domain.FlavorsEntity;
 import com.stretto.demo.features.requestBudget.domain.RequestBudgetEntity;
@@ -33,10 +35,10 @@ public class RequestBudgetServiceImpl implements RequestBudgetService {
 
     @Override
     public RequestBudgetDtoResponse createRequestBudget(RequestBudgetDtoRequest request) {
-        WholesaleCustomerEntity customer= wholesaleCustomerRepository.findById(request.getCustomerId()).orElseThrow(()-> new WholeSaleCustomerNotFoundException("Customer not found with id: "+request.getCustomerId()));
+        WholesaleCustomerEntity customer= wholesaleCustomerRepository.findById(request.getCustomerId()).orElseThrow(()-> new NotFoundException("Customer not found with id: "+request.getCustomerId()));
         List<FlavorsEntity> flavors = flavorsRepository.findAllById(request.getFlavorsId());
         if (flavors.isEmpty()) {
-            throw new IllegalArgumentException("You must select an available flavor");
+            throw new InvalidStateException("You must select an available flavor");
         }
         RequestBudgetEntity entity = RequestBudgetMapper.toEntity(request, customer, flavors);
         return RequestBudgetMapper.toResponse(requestBudgetRepository.save(entity));
@@ -45,7 +47,7 @@ public class RequestBudgetServiceImpl implements RequestBudgetService {
     @Override
     @Transactional(readOnly = true)
     public List<RequestBudgetDtoResponse> getRequestBudgetByCustomer(Long customerId){
-        WholesaleCustomerEntity customer=wholesaleCustomerRepository.findById(customerId).orElseThrow(()-> new WholeSaleCustomerNotFoundException("Customer not found with id: "+customerId));
+        WholesaleCustomerEntity customer=wholesaleCustomerRepository.findById(customerId).orElseThrow(()-> new NotFoundException("Customer not found with id: "+customerId));
 
         return requestBudgetRepository.findByCustomerId(customerId)
                 .stream()
@@ -71,24 +73,24 @@ public class RequestBudgetServiceImpl implements RequestBudgetService {
     @Override
     @Transactional(readOnly = true)
     public RequestBudgetDtoResponse getRequestById(Long id){
-        RequestBudgetEntity entity=requestBudgetRepository.findById(id).orElseThrow(()->new RuntimeException("Request id not found with id: "+id));
+        RequestBudgetEntity entity=requestBudgetRepository.findById(id).orElseThrow(()->new NotFoundException("Request id not found with id: "+id));
         return RequestBudgetMapper.toResponse(entity);
     }
 
     @Override
     @Transactional
     public RequestBudgetDtoResponse updateRequestBudget(Long id, RequestBudgetStateDto statedto){
-        RequestBudgetEntity entity = requestBudgetRepository.findById(id).orElseThrow(()-> new RuntimeException("RequestBudgetEntity not found")) ;
+        RequestBudgetEntity entity = requestBudgetRepository.findById(id).orElseThrow(()-> new NotFoundException("RequestBudgetEntity not found")) ;
 
         if(entity.getStateRequestEnum().equals(StateRequestEnum.PENDING)){
-            throw new IllegalStateException("Request budget state is PENDING");
+            throw new InvalidStateException("Request budget state is PENDING");
         }
 
         StateRequestEnum newState = StateRequestEnum.valueOf(statedto.getState().toUpperCase());
 
         if(newState.equals(StateRequestEnum.CONFIRMED)){
             if(statedto.getBudget() <=0) {
-                throw new IllegalStateException("The budget must be greater than 0 when accepting request budget");
+                throw new InvalidStateException("The budget must be greater than 0 when accepting request budget");
             }
                 entity.setBudget(statedto.getBudget());
                 entity.setStateRequestEnum(StateRequestEnum.CONFIRMED);

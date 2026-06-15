@@ -4,6 +4,7 @@ import com.stretto.demo.features.productionLot.domain.dto.ProductionLotActivityD
 import com.stretto.demo.features.productionLot.domain.dto.ProductionLotDTORequest;
 import com.stretto.demo.features.productionLot.domain.dto.ProductionLotDTOResponse;
 
+import java.time.LocalDate;
 import java.util.List;
 
 public interface ProductionLotService {
@@ -21,5 +22,5 @@ public interface ProductionLotService {
 
     ProductionLotDTOResponse calculatePerformance(Long id);
 
-    ProductionLotActivityDTOResponse activityLog(Long id);
+    List<ProductionLotActivityDTOResponse> getProductionHistory(LocalDate date, Long flavorId);
 }

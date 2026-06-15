@@ -10,6 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @RestController
@@ -67,10 +68,12 @@ public class ProductionLotController {
         return ResponseEntity.ok(response);
     }
 
-    @GetMapping("/{id}/activity")
-    public ResponseEntity<ProductionLotActivityDTOResponse> activityLog(@PathVariable Long id)
-    {
-        ProductionLotActivityDTOResponse response = productionLotService.activityLog(id);
+    @GetMapping("/history")
+    public ResponseEntity<List<ProductionLotActivityDTOResponse>> getProductionHistory(
+            @RequestParam(required = false) LocalDate date,
+            @RequestParam(required = false) Long flavorId
+    ) {
+        List<ProductionLotActivityDTOResponse> response = productionLotService.getProductionHistory(date, flavorId);
         return ResponseEntity.ok(response);
     }
 }

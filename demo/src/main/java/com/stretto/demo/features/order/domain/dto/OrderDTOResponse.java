@@ -3,6 +3,7 @@ package com.stretto.demo.features.order.domain.dto;
 import com.stretto.demo.features.order.domain.enums.PaymentMethodEnum;
 import com.stretto.demo.features.order.domain.enums.SaleChannelEnum;
 import com.stretto.demo.features.order.domain.enums.StateOrderEnum;
+import com.stretto.demo.features.orderDetail.domain.dto.OrderDetailDTOResponse;
 import lombok.*;
 
 import java.math.BigDecimal;
@@ -22,7 +23,7 @@ public class OrderDTOResponse {
     private PaymentMethodEnum paymentMethodEnum;
     private BigDecimal total;
     private LocalDateTime date;
-    private List<Long> productIds;
-    private Long userId;
+    private List<OrderDetailDTOResponse> details;
+    private String username;
 
 }

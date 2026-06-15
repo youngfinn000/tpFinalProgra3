@@ -1,101 +1,143 @@
 package com.stretto.demo.features.product;
 
-import com.stretto.demo.features.flavors.FlavorsRepository;
-import com.stretto.demo.features.flavors.domain.FlavorsEntity;
 import com.stretto.demo.features.product.domain.ProductEntity;
 import com.stretto.demo.features.product.domain.dto.ProductDTORequest;
 import com.stretto.demo.features.product.domain.dto.ProductDTOResponse;
 import com.stretto.demo.features.product.domain.mapper.ProductMapper;
-import com.stretto.demo.features.stock.domain.StockEntity;
-import com.stretto.demo.features.stock.StockRepository;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class ProductServiceImpl implements ProductService{
+public class ProductServiceImpl implements ProductService {
 
     private final ProductRepository productRepository;
-    private final FlavorsRepository flavorsRepository;
-    private final StockRepository stockRepository;
+    private final ProductMapper productMapper;
 
+
+    //CREAR PRODUCTO
     @Override
+    @Transactional
     public ProductDTOResponse create(ProductDTORequest request) {
-        if (productRepository.existsByName(request.getName())) {
+        if (productRepository.existsByNameIgnoreCase(request.getName())) {
             throw new RuntimeException("A product with that name already exists");
         }
 
-        StockEntity stock = stockRepository.findById(request.getStockId())
-                .orElseThrow(() -> new RuntimeException("Stock not found with id: " + request.getStockId()));
+        ProductEntity entity = productMapper.toEntity(request);
 
-        List<FlavorsEntity> flavors = flavorsRepository.findAllById(request.getFlavorIds());
-
-        ProductEntity entity = ProductMapper.toEntity(request, stock, flavors);
         entity.setActive(true);  // siempre arranca activo
 
         ProductEntity saved = productRepository.save(entity);
-        return ProductMapper.toResponse(saved);
+
+        return productMapper.toResponse(saved);
     }
 
+    //BUSCAR TODOS
     @Override
     public List<ProductDTOResponse> findAll() {
         return productRepository.findByActiveTrue()
                 .stream()
-                .map(ProductMapper::toResponse)
+                .map(productMapper::toResponse)
                 .toList();
     }
 
+    //BUSCAR POR ID
     @Override
     public ProductDTOResponse findById(Long id) {
         ProductEntity entity = productRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Product not found with id: " + id));
-        return ProductMapper.toResponse(entity);
+        return productMapper.toResponse(entity);
     }
 
+    //ACTUALIZAR PRODUCTO
     @Override
-    public ProductDTOResponse update(Long id, ProductDTORequest request) {
+    @Transactional
+    public ProductDTOResponse update(Long id, ProductDTORequest request)
+    {
         ProductEntity entity = productRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Product not found with id: " + id));
-
-        StockEntity stock = stockRepository.findById(request.getStockId())
-                .orElseThrow(() -> new RuntimeException("Stock not found with id: " + request.getStockId()));
-
-        List<FlavorsEntity> flavors = flavorsRepository.findAllById(request.getFlavorIds());
 
         entity.setName(request.getName());
         entity.setPrice(request.getPrice());
-        entity.setStock(stock);
-        entity.setFlavors(flavors);
+        entity.setMaxFlavors(request.getMaxFlavors());
+        entity.setStock(request.getStock());
 
         ProductEntity updated = productRepository.save(entity);
-        return ProductMapper.toResponse(updated);
+
+        return productMapper.toResponse(updated);
     }
 
+    //DAR DE BAJA UN PRODUCTO
     @Override
+    @Transactional
     public void delete(Long id) {
         ProductEntity entity = productRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Product not found with id: " + id));
+
         entity.setActive(false);
+
         productRepository.save(entity);
     }
 
+    //DAR DE ALTA UN PRODUCTO
     @Override
+    @Transactional
     public ProductDTOResponse activate(Long id) {
         ProductEntity entity = productRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Product not found with id: " + id));
+
         entity.setActive(true);
+
         ProductEntity updated = productRepository.save(entity);
-        return ProductMapper.toResponse(updated);
+
+        return productMapper.toResponse(updated);
     }
 
+    //BUSCAR PRODUCTO POR NOMBRE
     @Override
-    public List<ProductDTOResponse> findByFlavor(Long flavorId) {
-        return productRepository.findByFlavors_Id(flavorId)
+    public List<ProductDTOResponse> searchByName (String name)
+    {
+        return  productRepository.findByNameContainingIgnoreCase(name)
                 .stream()
-                .map(ProductMapper::toResponse)
+                .map(productMapper::toResponse)
                 .toList();
+    }
+
+    //STOCK BAJO
+    @Override
+    public List<ProductDTOResponse> getLowStock (Integer limit)
+    {
+        return productRepository.findByStockLessThanEqual(limit)
+                .stream()
+                .map(productMapper::toResponse)
+                .toList();
+    }
+
+    //STOCK DISPONIBLE
+    @Override
+    public List<ProductDTOResponse> getAvailable()
+    {
+        return productRepository.findByStockGreaterThan(0)
+                .stream()
+                .map(productMapper::toResponse)
+                .toList();
+    }
+
+    //ACTUALIZAR SOLO PRECIO
+    @Override
+    @Transactional
+    public ProductDTOResponse updatePrice (Long id, BigDecimal price)
+    {
+        ProductEntity entity = productRepository.findById(id)
+                .orElseThrow(()-> new RuntimeException("Product not found with id: " + id));
+
+        entity.setPrice(price);
+
+        return productMapper.toResponse(productRepository.save(entity));
     }
 }
 

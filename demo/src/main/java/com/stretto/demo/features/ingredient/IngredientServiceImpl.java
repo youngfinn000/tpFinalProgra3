@@ -1,5 +1,6 @@
 package com.stretto.demo.features.ingredient;
 
+import com.stretto.demo.common.exception.NotFoundException;
 import com.stretto.demo.features.ingredient.domain.IngredientEntity;
 import com.stretto.demo.features.ingredient.domain.dto.IngredientDTORequest;
 import com.stretto.demo.features.ingredient.domain.dto.IngredientDTOResponse;
@@ -24,10 +25,10 @@ public class IngredientServiceImpl implements IngredientService {
     @Override
     public IngredientDTOResponse create(IngredientDTORequest request) {
         StockEntity stockId = stockRepository.findById(request.getStockId())
-                .orElseThrow(() -> new RuntimeException("Stock Not Found"));
+                .orElseThrow(() -> new NotFoundException("Stock Not Found"));
 
         RecipeEntity recipeId = recipeRepository.findById(request.getRecipeId())
-                .orElseThrow(() -> new RuntimeException("Recipe Not Found"));
+                .orElseThrow(() -> new NotFoundException("Recipe Not Found"));
 
         IngredientEntity entity = IngredientMapper.toEntity(request, stockId, recipeId);
         IngredientEntity saved = repository.save(entity);
@@ -46,14 +47,14 @@ public class IngredientServiceImpl implements IngredientService {
     @Override
     public IngredientDTOResponse findById(Long id) {
         IngredientEntity entity = repository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Ingredient Not Found"));
+                .orElseThrow(() -> new NotFoundException("Ingredient Not Found"));
     return IngredientMapper.toResponse(entity);
     }
 
     @Override
     public IngredientDTOResponse update(IngredientDTORequest request, Long id) {
         IngredientEntity entity = repository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Ingredient Not Found"));
+                .orElseThrow(() -> new NotFoundException("Ingredient Not Found"));
 
         entity.setRequiredAmount(request.getRequiredAmount());
         entity.setUnit(request.getUnit());
@@ -61,4 +62,13 @@ public class IngredientServiceImpl implements IngredientService {
         IngredientEntity saved = repository.save(entity);
         return IngredientMapper.toResponse(saved);
     }
+
+    @Override
+    public Double calculateTotalAmount(Long id, Double kg) {
+        IngredientEntity entity = repository.findById(id)
+                .orElseThrow(() -> new NotFoundException("Ingredient Not Found"));
+
+        return (kg / entity.getRecipe().getBaseQuantity()) * entity.getRequiredAmount();
+    }
+
 }

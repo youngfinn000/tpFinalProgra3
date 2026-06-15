@@ -1,5 +1,7 @@
 package com.stretto.demo.features.stock;
 
+import com.stretto.demo.common.exception.InsufficientStockException;
+import com.stretto.demo.common.exception.NotFoundException;
 import com.stretto.demo.features.stock.domain.StockEntity;
 import com.stretto.demo.features.stock.domain.dto.StockDTORequest;
 import com.stretto.demo.features.stock.domain.dto.StockDTOResponse;
@@ -34,7 +36,7 @@ public class StockServiceImpl implements StockService {
     @Override
     public StockDTOResponse findById(Long id) {
         StockEntity entity = repository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Stock Not Found"));
+                .orElseThrow(() -> new NotFoundException("Stock Not Found"));
 
         return StockMapper.toResponse(entity);
     }
@@ -42,7 +44,7 @@ public class StockServiceImpl implements StockService {
     @Override
     public StockDTOResponse update(StockDTORequest request, Long id) {
         StockEntity entity = repository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Stock Not Found"));
+                .orElseThrow(() -> new NotFoundException("Stock Not Found"));
 
         entity.setName(request.getName());
         entity.setCurrentStock(request.getCurrentStock());
@@ -53,4 +55,43 @@ public class StockServiceImpl implements StockService {
         StockEntity saved = repository.save(entity);
         return StockMapper.toResponse(saved);
     }
+
+
+
+    @Override
+    public StockDTOResponse ToDiscount(Long id, Double qty) {
+
+        StockEntity entity = repository.findById(id)
+                .orElseThrow(() -> new NotFoundException("Stock Not Found"));
+
+        if(entity.getCurrentStock() < qty){
+            throw new InsufficientStockException("The quantity to be deducted is greater than the stock");
+        }
+
+        entity.setCurrentStock(entity.getCurrentStock() - qty);
+        StockEntity saved = repository.save(entity);
+
+        return StockMapper.toResponse(saved);
+    }
+
+    @Override
+    public Boolean isLow(Long id) {
+
+        StockEntity entity = repository.findById(id)
+                .orElseThrow(() -> new NotFoundException("Stock Not Found"));
+
+        return entity.getCurrentStock() <= entity.getMinimumStock();
+    }
+
+    @Override
+    public List<StockDTOResponse> findAllLow() {
+        List<StockEntity> entities = repository.findAllLowStock();
+        return entities.stream()
+                .map(StockMapper::toResponse)
+                .toList();
+    }
+
+
+
+
 }

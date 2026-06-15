@@ -43,4 +43,25 @@ public class StockController {
         StockDTOResponse response = stockService.update(request, id);
         return ResponseEntity.ok(response);
     }
+
+    @PatchMapping("/{id}/ToDiscount")
+    public ResponseEntity<StockDTOResponse> ToDiscount(@PathVariable Long id, @RequestParam Double qty)
+    {
+        StockDTOResponse response = stockService.ToDiscount(id, qty);
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/{id}/is-low")
+    public ResponseEntity<Boolean> isLow(@PathVariable Long id){
+        Boolean response = stockService.isLow(id);
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/low")
+    public ResponseEntity<List<StockDTOResponse>> findAllLow()
+    {
+        List<StockDTOResponse> responses = stockService.findAllLow();
+        return ResponseEntity.ok(responses);
+    }
+
 }

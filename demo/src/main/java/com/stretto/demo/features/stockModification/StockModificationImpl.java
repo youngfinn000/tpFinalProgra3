@@ -51,6 +51,7 @@ public class StockModificationImpl implements StockModificationService{
         return StockModificationMapper.toResponse(entity);
     }
 
+
     @Override
     public StockModificationDTOResponse update(Long id, StockModificationDTORequest request) {
         StockModificationEntity entity = repository.findById(id)

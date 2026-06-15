@@ -43,4 +43,7 @@ public class StockController {
         StockDTOResponse response = stockService.update(request, id);
         return ResponseEntity.ok(response);
     }
+
+
+
 }

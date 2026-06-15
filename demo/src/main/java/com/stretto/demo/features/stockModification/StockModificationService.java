@@ -1,5 +1,9 @@
 package com.stretto.demo.features.stockModification;
 
+import com.stretto.demo.features.productionLot.domain.dto.ProductionLotDTORequest;
+import com.stretto.demo.features.productionLot.domain.dto.ProductionLotDTOResponse;
+import com.stretto.demo.features.stock.domain.dto.StockDTORequest;
+import com.stretto.demo.features.stock.domain.dto.StockDTOResponse;
 import com.stretto.demo.features.stockModification.domain.dto.StockModificationDTORequest;
 import com.stretto.demo.features.stockModification.domain.dto.StockModificationDTOResponse;
 
@@ -17,4 +21,5 @@ public interface StockModificationService {
     StockModificationDTOResponse update(Long id, StockModificationDTORequest request);
 
     List<StockModificationDTOResponse> findByDate(LocalDate date);
+
 }

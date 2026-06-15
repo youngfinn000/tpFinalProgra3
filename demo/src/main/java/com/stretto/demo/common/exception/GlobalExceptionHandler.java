@@ -70,6 +70,48 @@ public class GlobalExceptionHandler {
                 .body(errorDetails);
     }
 
+    @ExceptionHandler(BadCredentialsException.class)
+    public ResponseEntity<ErrorDetails> badCredentialsException(BadCredentialsException ex, WebRequest request){
+        ErrorDetails errorDetails = new ErrorDetails(LocalDateTime.now(), ex.getMessage(), request.getDescription(false));
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(errorDetails);
+    }
+
+    @ExceptionHandler(DisabledException.class)
+    public ResponseEntity<ErrorDetails> disabledException(DisabledException ex, WebRequest request){
+        ErrorDetails errorDetails = new ErrorDetails(LocalDateTime.now(), ex.getMessage(), request.getDescription(false));
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorDetails);
+    }
+
+    @ExceptionHandler(LockedException.class)
+    public ResponseEntity<ErrorDetails> lockedException(LockedException ex, WebRequest request){
+        ErrorDetails errorDetails = new ErrorDetails(LocalDateTime.now(), ex.getMessage(), request.getDescription(false));
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(errorDetails);
+    }
+
+    @ExceptionHandler(AccountExpiredException.class)
+    public ResponseEntity<ErrorDetails> accountExpiredException(AccountExpiredException ex, WebRequest request){
+        ErrorDetails errorDetails = new ErrorDetails(LocalDateTime.now(), ex.getMessage(), request.getDescription(false));
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(errorDetails);
+    }
+
+    @ExceptionHandler(CredentialsExpiredException.class)
+    public ResponseEntity<ErrorDetails> credentialsExpiredException(CredentialsExpiredException ex, WebRequest request){
+        ErrorDetails errorDetails = new ErrorDetails(LocalDateTime.now(), ex.getMessage(), request.getDescription(false));
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(errorDetails);
+    }
+
+    @ExceptionHandler(InsufficientAuthenticationException.class)
+    public ResponseEntity<ErrorDetails> insufficientAuthenticationException(InsufficientAuthenticationException ex, WebRequest request){
+        ErrorDetails errorDetails = new ErrorDetails(LocalDateTime.now(), ex.getMessage(), request.getDescription(false));
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(errorDetails);
+    }
+
+    @ExceptionHandler(AuthenticationServiceException.class)
+    public ResponseEntity<ErrorDetails> authenticationServiceException(AuthenticationServiceException ex, WebRequest request){
+        ErrorDetails errorDetails = new ErrorDetails(LocalDateTime.now(), ex.getMessage(), request.getDescription(false));
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(errorDetails);
+    }
+
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorDetails> exception(Exception ex, WebRequest request){
         ErrorDetails errorDetails = new ErrorDetails(LocalDateTime.now(), ex.getMessage(), request.getDescription(false));

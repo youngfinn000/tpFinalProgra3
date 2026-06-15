@@ -1,4 +1,4 @@
- /## 🌿 Estructura de ramas
+che /## 🌿 Estructura de ramas
 
 * `main` → versión estable del proyecto (NO trabajar directamente)
 * `develop` → integración de funcionalidades

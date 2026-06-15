@@ -18,4 +18,6 @@ public interface StockService {
     StockDTOResponse ToDiscount(Long id, Double qty);
 
     Boolean isLow(Long id);
+
+    List<StockDTOResponse> findAllLow();
 }

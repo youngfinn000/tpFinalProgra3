@@ -51,4 +51,22 @@ public class StockModificationController {
         List<StockModificationDTOResponse> responses = stockModificationService.findByDate(date);
         return ResponseEntity.ok(responses);
     }
+
+    @PostMapping("/register")
+    public ResponseEntity<StockModificationDTOResponse> register(@RequestBody StockModificationDTORequest request)
+    {
+        StockModificationDTOResponse response = stockModificationService.register(request);
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
+    }
+
+
+    @GetMapping("/validate")
+    public ResponseEntity<Boolean> validate(
+            @RequestParam Long stockId,
+            @RequestParam Double qty
+    ){
+
+        Boolean response = stockModificationService.validateStock(stockId, qty);
+        return ResponseEntity.ok(response);
+    }
 }

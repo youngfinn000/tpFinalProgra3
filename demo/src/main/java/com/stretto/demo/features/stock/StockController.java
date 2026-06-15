@@ -57,5 +57,11 @@ public class StockController {
         return ResponseEntity.ok(response);
     }
 
+    @GetMapping("/low")
+    public ResponseEntity<List<StockDTOResponse>> findAllLow()
+    {
+        List<StockDTOResponse> responses = stockService.findAllLow();
+        return ResponseEntity.ok(responses);
+    }
 
 }

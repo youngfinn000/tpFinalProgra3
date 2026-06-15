@@ -82,4 +82,16 @@ public class StockServiceImpl implements StockService {
 
         return entity.getCurrentStock() <= entity.getMinimumStock();
     }
+
+    @Override
+    public List<StockDTOResponse> findAllLow() {
+        List<StockEntity> entities = repository.findAllLowStock();
+        return entities.stream()
+                .map(StockMapper::toResponse)
+                .toList();
+    }
+
+
+
+
 }

@@ -6,6 +6,7 @@ import jakarta.validation.constraints.*;
 import lombok.*;
 
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -34,5 +35,9 @@ public class RequestBudgetDtoRequest {
 
     @NotEmpty (message = "Minimum one flavor per request")
     private List<Long> flavorsId;
+
+    @NotNull(message = "Date is required")
+    @Future(message = "Date must be in the future")
+    private LocalDate eventDate;
 
 }

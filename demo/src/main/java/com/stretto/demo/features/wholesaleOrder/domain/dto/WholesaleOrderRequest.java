@@ -1,6 +1,7 @@
 package com.stretto.demo.features.wholesaleOrder.domain.dto;
 
 
+import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.FutureOrPresent;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
@@ -17,6 +18,9 @@ public class WholesaleOrderRequest {
 
     @NotNull(message = "Advance payment status ir required")
     private Boolean advancePaymentStatus;
+
+    @DecimalMin(value = "0.01",message = "Advance payment amount must be greater than 0")
+    private BigDecimal advancePaymentAmount;
 
     @FutureOrPresent(message = "Delivery date cannot be in the past")
     private LocalDate deliveryDate;

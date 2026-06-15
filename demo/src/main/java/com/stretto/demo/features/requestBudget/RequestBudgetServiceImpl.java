@@ -1,6 +1,5 @@
 package com.stretto.demo.features.requestBudget;
 
-import com.stretto.demo.common.exception.WholeSaleCustomerNotFoundException;
 import com.stretto.demo.features.flavors.FlavorsRepository;
 import com.stretto.demo.features.flavors.domain.FlavorsEntity;
 import com.stretto.demo.features.requestBudget.domain.RequestBudgetEntity;

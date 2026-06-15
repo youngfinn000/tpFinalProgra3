@@ -6,6 +6,7 @@ import jakarta.validation.constraints.*;
 import lombok.*;
 
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -30,9 +31,13 @@ public class RequestBudgetDtoRequest {
 
     @NotNull(message = "Client is obligatory")
     @Positive(message = "ID must be valid")
-    private WholesaleCustomerEntity customer;
+    private Long customerId;
 
     @NotEmpty (message = "Minimum one flavor per request")
-    private List<FlavorsEntity>  flavors;
+    private List<Long> flavorsId;
+
+    @NotNull(message = "Date is required")
+    @Future(message = "Date must be in the future")
+    private LocalDate eventDate;
 
 }

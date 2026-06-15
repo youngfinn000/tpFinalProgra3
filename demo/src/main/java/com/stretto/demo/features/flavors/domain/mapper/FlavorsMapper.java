@@ -3,11 +3,13 @@ package com.stretto.demo.features.flavors.domain.mapper;
 import com.stretto.demo.features.flavors.domain.FlavorsEntity;
 import com.stretto.demo.features.flavors.domain.dto.FlavorsDTORequest;
 import com.stretto.demo.features.flavors.domain.dto.FlavorsDTOResponse;
+import org.springframework.stereotype.Component;
 
+@Component
 public class FlavorsMapper {
 
     //Entity -> DTO //devuelve
-    public static FlavorsDTOResponse toResponse (FlavorsEntity entity)
+    public FlavorsDTOResponse toResponse (FlavorsEntity entity)
     {
         return FlavorsDTOResponse.builder()
                 .id(entity.getId())
@@ -17,7 +19,7 @@ public class FlavorsMapper {
     }
 
     //DTO -> Entity // guarda
-    public static FlavorsEntity toEntity (FlavorsDTORequest request)
+    public FlavorsEntity toEntity (FlavorsDTORequest request)
     {
         return FlavorsEntity.builder()
                 .name(request.getName())

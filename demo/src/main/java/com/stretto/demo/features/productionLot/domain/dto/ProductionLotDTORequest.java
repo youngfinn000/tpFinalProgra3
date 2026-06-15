@@ -4,6 +4,8 @@ import com.stretto.demo.features.productionLot.domain.enums.StatusLotEnum;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
+import java.time.LocalDate;
+
 @Getter
 @Setter
 @AllArgsConstructor
@@ -24,4 +26,7 @@ public class ProductionLotDTORequest {
 
     @NotNull(message = "Performance PCT is required")
     private Double performancePCT;
+
+    @NotNull(message = "Production date is required")
+    private LocalDate productionDate;
 }

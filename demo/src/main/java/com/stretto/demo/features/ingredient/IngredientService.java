@@ -14,4 +14,6 @@ public interface IngredientService {
     IngredientDTOResponse findById(Long id);
 
     IngredientDTOResponse update(IngredientDTORequest request, Long id);
+
+    Double calculateTotalAmount(Long id, Double kg);
 }

@@ -1,8 +1,10 @@
 package com.stretto.demo.features.product;
 
+import com.stretto.demo.features.product.domain.ProductEntity;
 import com.stretto.demo.features.product.domain.dto.ProductDTORequest;
 import com.stretto.demo.features.product.domain.dto.ProductDTOResponse;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 public interface ProductService {
@@ -19,5 +21,13 @@ public interface ProductService {
 
     ProductDTOResponse activate(Long id);
 
-    List<ProductDTOResponse> findByFlavor(Long flavorId);
+    List<ProductDTOResponse> searchByName(String name);
+
+    List<ProductDTOResponse> getLowStock (Integer limit);
+
+    List<ProductDTOResponse> getAvailable();
+
+    ProductDTOResponse updatePrice (Long id, BigDecimal price);
+
+
 }

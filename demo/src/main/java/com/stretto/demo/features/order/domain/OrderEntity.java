@@ -4,6 +4,7 @@ import com.stretto.demo.features.internalUser.domain.InternalUserEntity;
 import com.stretto.demo.features.order.domain.enums.PaymentMethodEnum;
 import com.stretto.demo.features.order.domain.enums.SaleChannelEnum;
 import com.stretto.demo.features.order.domain.enums.StateOrderEnum;
+import com.stretto.demo.features.orderDetail.domain.OrderDetailEntity;
 import com.stretto.demo.features.product.domain.ProductEntity;
 import jakarta.persistence.*;
 import lombok.*;
@@ -43,21 +44,14 @@ public class OrderEntity {
 
     private LocalDateTime date;
 
-    //pedidos - productos
-    @ManyToMany
-    @JoinTable (name = "order_product" ,
-            joinColumns = @JoinColumn(name = "order_id") ,
-            inverseJoinColumns = @JoinColumn (name = "product_id"))
-    private List<ProductEntity> listProduct;
-
+    //pedidos - detallepedido
+    @OneToMany (mappedBy = "order", cascade = CascadeType.ALL)
+    private List<OrderDetailEntity> orderDetails;
 
     //pedidos - usuario
     @ManyToOne
     @JoinColumn(name = "user_id")
     private InternalUserEntity internalUser;
-
-    //pedidos - pedidos mayoristas (OnetoOne) UNIDIRECCIONAL
-
 
 
 }

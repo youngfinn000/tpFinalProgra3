@@ -9,9 +9,7 @@ import java.util.List;
 
 public interface WholesaleCustomerService {
 
-    WholesaleCusDtoResponse createWholesaleCustomer(
-            WholesaleCusDtoRequest request
-    );
+    WholesaleCusDtoResponse createWholesaleCustomer(WholesaleCusDtoRequest request);
 
     List<WholesaleCusDtoResponse> getAllWholesaleCustomer();
 

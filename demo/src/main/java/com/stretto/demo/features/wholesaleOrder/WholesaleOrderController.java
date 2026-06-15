@@ -10,6 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @RestController
@@ -18,12 +19,10 @@ import java.util.List;
 public class WholesaleOrderController {
 
     private final WholesaleOrderService wholesaleOrderService;
-    private final WholesaleOrderRepository wholesaleOrderRepository;
 
-    @PostMapping
-    public ResponseEntity<WholesaleOrderResponse> createWholesaleOrder(@Valid@RequestBody WholesaleOrderRequest request){
-        WholesaleOrderResponse response = wholesaleOrderService.createWholesaleOrder(request);
-        return ResponseEntity.status(HttpStatus.CREATED).body(response);
+    @PostMapping("/request-budget/{requestbudgetId}")
+    public ResponseEntity<WholesaleOrderResponse> createWholesaleOrder(@PathVariable Long requestId){
+        return ResponseEntity.status(HttpStatus.CREATED).body(wholesaleOrderService.createFromRequestBudget(requestId));
     }
 
     @GetMapping
@@ -36,11 +35,26 @@ public class WholesaleOrderController {
         return ResponseEntity.ok(wholesaleOrderService.getWholesaleOrderById(id));
     }
 
-    @DeleteMapping("/{id}")
-    public void deleteWholesaleOrder(Long id){
-        WholesaleOrderEntity entity = wholesaleOrderRepository.findById(id).orElseThrow(()->new RuntimeException("Wholesale order not found"));
-        entity.setActive(false);
-        wholesaleOrderRepository.save(entity);
+    @PatchMapping("/{id}")
+    public ResponseEntity<WholesaleOrderResponse> updateWholesaleOrder(@PathVariable Long id, @Valid @RequestBody WholesaleOrderRequest request){
+        return ResponseEntity.ok(wholesaleOrderService.updateWholesaleOrder(id, request));
     }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteWholesaleOrder(@PathVariable Long id){
+        wholesaleOrderService.deleteWholesaleOrder(id);
+        return ResponseEntity.noContent().build();
+    }
+
+    @PatchMapping("/{orderId}/advance-payment")
+    public ResponseEntity<WholesaleOrderResponse> registerAdvancePayment(@PathVariable Long orderId, @Valid@RequestParam Long customerId, @Valid@RequestParam BigDecimal amount){
+        return ResponseEntity.ok(wholesaleOrderService.registerAdvancePayment(orderId, customerId, amount));
+    }
+
+    @GetMapping("/customer/{customerId}")
+    public ResponseEntity<List<WholesaleOrderResponse>> getOrdersByCustomerId(@PathVariable Long customerId){
+        return ResponseEntity.ok(wholesaleOrderService.getWholesaleOrdersByCustomerId(customerId));
+    }
+
 
 }

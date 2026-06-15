@@ -3,6 +3,8 @@ package com.stretto.demo.features.productionLot.domain.dto;
 import com.stretto.demo.features.productionLot.domain.enums.StatusLotEnum;
 import lombok.*;
 
+import java.time.LocalDate;
+
 @Getter
 @Setter
 @AllArgsConstructor
@@ -15,6 +17,7 @@ public class ProductionLotDTOResponse {
     private Double amountProduced;
     private StatusLotEnum status;
     private Double performancePCT;
+    private LocalDate productionDate;
 
     @Getter
     @Builder

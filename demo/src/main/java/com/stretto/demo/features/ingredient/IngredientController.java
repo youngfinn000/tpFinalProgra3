@@ -44,4 +44,11 @@ public class IngredientController {
         IngredientDTOResponse response = ingredientService.update(request, id);
         return ResponseEntity.ok(response);
     }
+
+    @GetMapping("/{id}/calculate-total")
+    public ResponseEntity<Double> calculate(@PathVariable Long id, @RequestParam Double kg)
+    {
+        Double response = ingredientService.calculateTotalAmount(id, kg);
+        return ResponseEntity.ok(response);
+    }
 }

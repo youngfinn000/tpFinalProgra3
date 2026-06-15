@@ -27,7 +27,10 @@ public class RequestBudgetEntity {
     private int  quantityKg;
 
     @Column (nullable = false)
-    private LocalDateTime requestDateTime;
+    private LocalDateTime requestDateTime; //fecha que se hace la solicitud
+
+    @Column(nullable = false)
+    private LocalDate eventDate;//fecha en la que se pide entregar
 
     @Column (nullable = false)
     private double budget;

@@ -15,12 +15,11 @@ public class WholesaleOrderResponse {
 
     private Long id;
     private boolean advancePayment;
+    private BigDecimal advancePaymentAmount;
     private LocalDate deliveryDate;
     private BigDecimal discount;
-    private Long orderId;
     private Long requestBudgetId;
     private Long wholesaleCustomerId;
     private String wholesaleCustomerName;
-
 
 }

@@ -7,6 +7,8 @@ import com.stretto.demo.features.order.domain.dto.OrderDTORequest;
 import com.stretto.demo.features.order.domain.dto.OrderDTOResponse;
 import com.stretto.demo.features.order.domain.enums.SaleChannelEnum;
 import com.stretto.demo.features.order.domain.enums.StateOrderEnum;
+import com.stretto.demo.features.product.ProductService;
+import com.stretto.demo.features.product.domain.dto.ProductDTOResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -23,6 +25,7 @@ import java.util.List;
 public class OrderController {
 
     private final OrderService orderService;
+    private final ProductService productService;
 
     //CREAR PEDIDO
     @PostMapping

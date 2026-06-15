@@ -2,6 +2,10 @@ package com.stretto.demo.features.internalUser;
 
 import com.stretto.demo.features.internalUser.domain.dto.InternalUserDTORequest;
 import com.stretto.demo.features.internalUser.domain.dto.InternalUserDTOResponse;
+import com.stretto.demo.features.order.domain.dto.OrderDTORequest;
+import com.stretto.demo.features.order.domain.dto.OrderDTOResponse;
+import com.stretto.demo.features.productionLot.domain.dto.ProductionLotDTORequest;
+import com.stretto.demo.features.productionLot.domain.dto.ProductionLotDTOResponse;
 
 
 import java.util.List;
@@ -19,4 +23,8 @@ public interface InternalUserService {
     void delete(Long id);
 
     InternalUserDTOResponse activate(Long id);
+
+    OrderDTOResponse createOrder(Long userId, OrderDTORequest request);
+
+    ProductionLotDTOResponse registerLot(Long userId, ProductionLotDTORequest request);
 }

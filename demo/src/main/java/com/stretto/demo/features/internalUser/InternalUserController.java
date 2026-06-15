@@ -2,6 +2,10 @@ package com.stretto.demo.features.internalUser;
 
 import com.stretto.demo.features.internalUser.domain.dto.InternalUserDTORequest;
 import com.stretto.demo.features.internalUser.domain.dto.InternalUserDTOResponse;
+import com.stretto.demo.features.order.domain.dto.OrderDTORequest;
+import com.stretto.demo.features.order.domain.dto.OrderDTOResponse;
+import com.stretto.demo.features.productionLot.domain.dto.ProductionLotDTORequest;
+import com.stretto.demo.features.productionLot.domain.dto.ProductionLotDTOResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -56,5 +60,17 @@ public class InternalUserController {
     {
         InternalUserDTOResponse response = internalUserService.activate(id);
         return ResponseEntity.ok(response);
+    }
+
+    @PostMapping("/{userId}/order")
+    public ResponseEntity<OrderDTOResponse> createOrder(@PathVariable Long userId, @RequestBody OrderDTORequest request){
+        OrderDTOResponse response = internalUserService.createOrder(userId, request);
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
+    }
+
+    @PostMapping("/{userId}/lot")
+    public ResponseEntity<ProductionLotDTOResponse> createLote(@PathVariable Long userId, @RequestBody ProductionLotDTORequest request){
+        ProductionLotDTOResponse response = internalUserService.registerLot(userId, request);
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 }

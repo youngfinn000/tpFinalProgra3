@@ -20,6 +20,7 @@ public class RequestBudgetMapper {
                 .id(entity.getId())
                 .quantity(entity.getQuantityKg())
                 .requestDateTime(entity.getRequestDateTime())
+                .eventDate(entity.getEventDate())
                 .budget(entity.getBudget())
                 .advancePayment(entity.isAdvancePayment())
                 .stateRequestEnum(entity.getStateRequestEnum())
@@ -30,11 +31,12 @@ public class RequestBudgetMapper {
                 ;
     }
 
-    public static RequestBudgetEntity toEntity(RequestBudgetDtoRequest request, WholesaleCustomerEntity customer, List<FlavorsEntity> flavors){
+    public static RequestBudgetEntity toEntity(RequestBudgetDtoRequest request,WholesaleCustomerEntity customer, List<FlavorsEntity> flavors){
 
         return RequestBudgetEntity.builder()
                 .quantityKg(request.getQuantity())
                 .requestDateTime(request.getRequestDatetime())
+                .eventDate(request.getEventDate())
                 .advancePayment(request.isAdvancePayment())
                 .customer(customer)
                 .listflavors(flavors)

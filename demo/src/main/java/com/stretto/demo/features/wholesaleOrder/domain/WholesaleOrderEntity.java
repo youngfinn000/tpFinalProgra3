@@ -24,6 +24,9 @@ public class WholesaleOrderEntity {
     @Column (nullable = false)
     private boolean advancePayment;
 
+    @Column(nullable = true)
+    private BigDecimal advancePaymentAmount;
+
     private LocalDate deliveryDate;
 
     private BigDecimal discount;

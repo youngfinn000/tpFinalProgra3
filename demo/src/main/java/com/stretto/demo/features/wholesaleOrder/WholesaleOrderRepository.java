@@ -11,9 +11,7 @@ import java.util.Optional;
 @Repository
 public interface WholesaleOrderRepository extends JpaRepository<WholesaleOrderEntity , Long>{
 
-    List<WholesaleOrderEntity> findByWholesaleCustomerIdAndActiveTrue(Long customerId);
+    Optional<WholesaleOrderEntity> findByRequestBudgetId(Long rbId);
     List<WholesaleOrderEntity> findByActiveTrue();
-    Optional<WholesaleOrderEntity> findByRequestBudgetId(Long requestBudgetId);
-
-
+    List<WholesaleOrderEntity> findByWholesaleCustomerIdAndActiveTrue(Long id);
 }

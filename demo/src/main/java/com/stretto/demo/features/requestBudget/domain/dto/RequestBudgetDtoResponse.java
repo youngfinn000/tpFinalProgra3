@@ -19,6 +19,7 @@ public class RequestBudgetDtoResponse {
     private Long id;
     private int quantity;
     private LocalDateTime requestDateTime;
+    private LocalDate eventDate;
     private double budget;
     private boolean advancePayment;
     private StateRequestEnum stateRequestEnum;

@@ -36,8 +36,8 @@ public class WholesaleCustomerServiceImpl implements WholesaleCustomerService {
 
     @Override
     public WholesaleCusDtoResponse updateWholesaleCustomer(Long id, WholesaleCusDtoRequest request) {
-        WholesaleCustomerEntity customer= findActiveOrThrow(id);
-        if(wholesaleCustomerRepository.existsByEmailAndIdNot(request.getCuit(), id)){
+        WholesaleCustomerEntity customer = findActiveOrThrow(id);
+        if(wholesaleCustomerRepository.existsByEmailAndIdNot(request.getEmail(), id)){
             throw new AlreadyExistsException("There is already a customer with an email: " + request.getEmail());
         }
         if(request.getCuit() != null && wholesaleCustomerRepository.existsByCuitAndIdNot(request.getCuit(), id)){
@@ -82,7 +82,7 @@ public class WholesaleCustomerServiceImpl implements WholesaleCustomerService {
 
     private WholesaleCustomerEntity findActiveOrThrow(Long id) {
         WholesaleCustomerEntity customer= wholesaleCustomerRepository.findById(id).orElseThrow(()->new NotFoundException("WholesaleCustomer not found with id: "+id));
-        if(customer.isActive()){
+        if(!customer.isActive()){
             throw new InvalidStateException("Wholesale Customer with id "+id+ " its inactive. " );
         }
         return customer;

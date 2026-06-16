@@ -82,8 +82,8 @@ public class RequestBudgetServiceImpl implements RequestBudgetService {
     public RequestBudgetDtoResponse updateRequestBudget(Long id, RequestBudgetStateDto statedto){
         RequestBudgetEntity entity = requestBudgetRepository.findById(id).orElseThrow(()-> new NotFoundException("RequestBudgetEntity not found")) ;
 
-        if(entity.getStateRequestEnum().equals(StateRequestEnum.PENDING)){
-            throw new InvalidStateException("Request budget state is PENDING");
+        if(!entity.getStateRequestEnum().equals(StateRequestEnum.PENDING)){
+            throw new InvalidStateException("Request budget has already been resolved");
         }
 
         StateRequestEnum newState = StateRequestEnum.valueOf(statedto.getState().toUpperCase());

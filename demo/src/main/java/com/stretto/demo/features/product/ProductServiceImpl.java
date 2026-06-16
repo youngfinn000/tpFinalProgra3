@@ -100,7 +100,7 @@ public class ProductServiceImpl implements ProductService {
                 .orElseThrow(() -> new NotFoundException("Product not found with id: " + id));
 
         if(entity.isActive()){
-            throw new InvalidStateException("You can reactivate a deactivated product");
+            throw new InvalidStateException("Product is already active");
         }
 
         entity.setActive(true);
@@ -114,7 +114,7 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public List<ProductDTOResponse> searchByName (String name)
     {
-        return  productRepository.findByNameContainingIgnoreCase(name)
+        return  productRepository.findByNameContainingIgnoreCaseAndActiveTrue(name)
                 .stream()
                 .map(productMapper::toResponse)
                 .toList();

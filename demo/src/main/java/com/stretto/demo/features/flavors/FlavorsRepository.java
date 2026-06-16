@@ -18,5 +18,5 @@ public interface FlavorsRepository extends JpaRepository<FlavorsEntity, Long> {
 
     List<FlavorsEntity> findByActiveInactiveFalse();
 
-    List<FlavorsEntity> findByNameContainingIgnoreCase(String name);
+    List<FlavorsEntity> findByNameContainingIgnoreCaseAndActiveInactiveTrue(String name);
 }

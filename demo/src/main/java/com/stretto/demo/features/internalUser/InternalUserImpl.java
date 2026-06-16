@@ -2,6 +2,7 @@ package com.stretto.demo.features.internalUser;
 
 
 import com.stretto.demo.common.exception.InvalidRoleException;
+import com.stretto.demo.common.exception.InvalidStateException;
 import com.stretto.demo.common.exception.NotFoundException;
 import com.stretto.demo.features.internalUser.domain.InternalUserEntity;
 import com.stretto.demo.features.internalUser.domain.dto.InternalUserDTORequest;
@@ -77,6 +78,11 @@ public class InternalUserImpl implements InternalUserService {
     public InternalUserDTOResponse activate(Long id){
         InternalUserEntity entity = repository.findById(id)
                 .orElseThrow(() -> new NotFoundException("User not found"));
+
+        if(entity.isActive()){
+            throw new InvalidStateException("User is already active");
+        }
+
         entity.setActive(true);
         InternalUserEntity updated = repository.save(entity);
         return InternalUserMapper.toResponse(updated);

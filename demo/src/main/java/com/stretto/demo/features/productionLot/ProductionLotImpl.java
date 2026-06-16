@@ -106,7 +106,12 @@ public class ProductionLotImpl implements ProductionLotService {
         ProductionLotEntity entity = repository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Production lot not found"));
 
-        entity.setPerformancePct((entity.getAmountProduced() / entity.getRecipe().getBaseQuantity()) * 100);
+        Double baseQuantity = entity.getRecipe().getBaseQuantity();
+        if(baseQuantity == null || baseQuantity <= 0){
+            throw new InvalidStateException("Recipe base quantity must be greater than zero to calculate performance");
+        }
+
+        entity.setPerformancePct((entity.getAmountProduced() / baseQuantity) * 100);
         ProductionLotEntity saved = repository.save(entity);
         return ProductionLotMapper.toResponse(saved);
     }

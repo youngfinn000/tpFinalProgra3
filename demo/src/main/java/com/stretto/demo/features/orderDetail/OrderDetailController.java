@@ -28,10 +28,10 @@ public class OrderDetailController {
     //BUSCAR DETALLE POR ID DEL PEDIDO
     @GetMapping("/order/{orderId}")
     public ResponseEntity<List<OrderDetailDTOResponse>> getByOrder(
-            @PathVariable Long id
+            @PathVariable Long orderId
     )
     {
-        return ResponseEntity.ok(orderDetailService.getByOrder(id));
+        return ResponseEntity.ok(orderDetailService.getByOrder(orderId));
     }
 
     //ELIMINAR DETALLE POR ID DEL PEDIDO

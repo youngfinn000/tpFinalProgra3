@@ -129,7 +129,7 @@ public class FlavorsServiceImpl implements FlavorsService{
     @Override
     public List<FlavorsDTOResponse> searchByName(String text)
     {
-        return flavorsRepository.findByNameContainingIgnoreCase(text)
+        return flavorsRepository.findByNameContainingIgnoreCaseAndActiveInactiveTrue(text)
                 .stream()
                 .map(flavorsMapper :: toResponse)
                 .toList();

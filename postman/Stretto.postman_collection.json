@@ -2,7 +2,7 @@
   "info": {
     "_postman_id": "aa64ae27-1eac-4ce3-a5eb-332a1bfe4274",
     "name": "Stretto API",
-    "description": "Coleccion completa de endpoints de la API Stretto (heladeria). Generada a partir de los controllers del proyecto.",
+    "description": "Coleccion completa de endpoints de la API Stretto (heladeria).",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
   "auth": {

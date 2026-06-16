@@ -276,23 +276,11 @@ public class OrderServiceImpl implements OrderService {
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
 
 
-        Map<SaleChannelEnum, BigDecimal> revenueByChannel = orders.stream()
-                .filter(o -> o.getStateOrderEnum() != StateOrderEnum.CANCELLED)
-                .collect(Collectors.groupingBy(
-                        OrderEntity::getSaleChannelEnum,
-                        Collectors.reducing(
-                                BigDecimal.ZERO,
-                                OrderEntity::getTotal,
-                                BigDecimal::add
-                        )
-                ));
-
             return DailyReportDTO.builder()
                     .date(today)
                     .totalOrders(totalOrders)
                     .cancellOrders(cancellOrders)
                     .totalRevenue(totalRevenue)
-                    .revenueByChannel(revenueByChannel)
                     .build();
     }
 
@@ -321,24 +309,12 @@ public class OrderServiceImpl implements OrderService {
                 .map(OrderEntity :: getTotal)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
 
-        Map<SaleChannelEnum, BigDecimal> revenueByChannel = orders.stream()
-                .filter(o -> o.getStateOrderEnum() != StateOrderEnum.CANCELLED)
-                .collect(Collectors.groupingBy(
-                        OrderEntity::getSaleChannelEnum,
-                        Collectors.reducing(
-                                BigDecimal.ZERO,
-                                OrderEntity::getTotal,
-                                BigDecimal::add
-                        )
-                ));
-
         return MonthlyReportDTO.builder()
                 .year(year)
                 .month(month)
                 .totalOrders(totalOrders)
                 .cancelleOrders(cancellOrders)
                 .totalRevenue(totalRevenue)
-                .revenueByChannel(revenueByChannel)
                 .build();
     }
 

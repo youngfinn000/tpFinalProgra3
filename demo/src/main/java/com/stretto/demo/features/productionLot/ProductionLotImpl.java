@@ -106,28 +106,21 @@ public class ProductionLotImpl implements ProductionLotService {
         ProductionLotEntity entity = repository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Production lot not found"));
 
-        entity.setPerformancePct((entity.getAmountProduced() / entity.getRecipe().getBaseQuantity()) * 100);
+        Double baseQuantity = entity.getRecipe().getBaseQuantity();
+        if(baseQuantity == null || baseQuantity <= 0){
+            throw new InvalidStateException("Recipe base quantity must be greater than zero to calculate performance");
+        }
+
+        entity.setPerformancePct((entity.getAmountProduced() / baseQuantity) * 100);
         ProductionLotEntity saved = repository.save(entity);
         return ProductionLotMapper.toResponse(saved);
     }
 
     @Override
-    public List<ProductionLotActivityDTOResponse> getProductionHistory(LocalDate date, Long flavorId) {
-
-        if(date != null && flavorId != null){
-            return repository.findByProductionDateAndFlavorId(date, flavorId).stream()
-                    .map(ProductionLotMapper::toActivityResponse)
-                    .toList();
-        }
+    public List<ProductionLotActivityDTOResponse> getProductionHistory(LocalDate date) {
 
         if(date != null){
             return repository.findByProductionDate(date).stream()
-                    .map(ProductionLotMapper::toActivityResponse)
-                    .toList();
-        }
-
-        if(flavorId != null){
-            return repository.findByFlavorId(flavorId).stream()
                     .map(ProductionLotMapper::toActivityResponse)
                     .toList();
         }

@@ -14,7 +14,7 @@ public class FlavorsMapper {
         return FlavorsDTOResponse.builder()
                 .id(entity.getId())
                 .name(entity.getName())
-                .active_inactive(entity.isActive_inactive())
+                .activeInactive(entity.isActiveInactive())
                 .build();
     }
 
@@ -23,7 +23,7 @@ public class FlavorsMapper {
     {
         return FlavorsEntity.builder()
                 .name(request.getName())
-                .active_inactive(true)
+                .activeInactive(true)
                 .build();
     }
 }

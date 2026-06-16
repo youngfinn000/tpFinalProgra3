@@ -1,6 +1,7 @@
 package com.stretto.demo.features.product;
 
 import com.stretto.demo.common.exception.AlreadyExistsException;
+import com.stretto.demo.common.exception.InvalidStateException;
 import com.stretto.demo.common.exception.NotFoundException;
 import com.stretto.demo.features.product.domain.ProductEntity;
 import com.stretto.demo.features.product.domain.dto.ProductDTORequest;
@@ -98,6 +99,10 @@ public class ProductServiceImpl implements ProductService {
         ProductEntity entity = productRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Product not found with id: " + id));
 
+        if(entity.isActive()){
+            throw new InvalidStateException("Product is already active");
+        }
+
         entity.setActive(true);
 
         ProductEntity updated = productRepository.save(entity);
@@ -109,7 +114,7 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public List<ProductDTOResponse> searchByName (String name)
     {
-        return  productRepository.findByNameContainingIgnoreCase(name)
+        return  productRepository.findByNameContainingIgnoreCaseAndActiveTrue(name)
                 .stream()
                 .map(productMapper::toResponse)
                 .toList();

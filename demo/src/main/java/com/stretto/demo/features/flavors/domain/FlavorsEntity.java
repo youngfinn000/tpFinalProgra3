@@ -21,6 +21,6 @@ public class FlavorsEntity {
     private String name;
 
     @Column(nullable = false)
-    private boolean active_inactive;
+    private boolean activeInactive;
 
 }

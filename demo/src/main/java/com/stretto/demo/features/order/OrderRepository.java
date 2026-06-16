@@ -18,7 +18,7 @@ public interface OrderRepository extends JpaRepository<OrderEntity , Long> {
 
     List<OrderEntity> findByStateOrderEnum(StateOrderEnum state);
 
-    List<OrderEntity> findBySaleChannel(SaleChannelEnum saleChannel);
+    List<OrderEntity> findBySaleChannelEnum(SaleChannelEnum saleChannel);
 
     List<OrderEntity> findByDateBetween(LocalDateTime startDate,
                                         LocalDateTime endDate);

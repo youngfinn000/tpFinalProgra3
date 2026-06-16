@@ -26,7 +26,6 @@ public class RecipeDTORequest {
     @NotNull(message = "Product Id is required")
     private Long productId;
 
-    @NotNull(message = "Production Lot Id is required")
     private Long productionLotId;
 
     @NotNull(message = "Ingredients are required")

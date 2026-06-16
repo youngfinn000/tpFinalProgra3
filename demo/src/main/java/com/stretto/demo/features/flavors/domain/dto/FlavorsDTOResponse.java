@@ -11,5 +11,5 @@ public class FlavorsDTOResponse {
 
     private Long id;
     private String name;
-    private boolean active_inactive;
+    private boolean activeInactive;
 }

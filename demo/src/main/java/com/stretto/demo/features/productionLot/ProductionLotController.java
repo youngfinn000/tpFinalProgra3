@@ -70,10 +70,9 @@ public class ProductionLotController {
 
     @GetMapping("/history")
     public ResponseEntity<List<ProductionLotActivityDTOResponse>> getProductionHistory(
-            @RequestParam(required = false) LocalDate date,
-            @RequestParam(required = false) Long flavorId
+            @RequestParam(required = false) LocalDate date
     ) {
-        List<ProductionLotActivityDTOResponse> response = productionLotService.getProductionHistory(date, flavorId);
+        List<ProductionLotActivityDTOResponse> response = productionLotService.getProductionHistory(date);
         return ResponseEntity.ok(response);
     }
 }

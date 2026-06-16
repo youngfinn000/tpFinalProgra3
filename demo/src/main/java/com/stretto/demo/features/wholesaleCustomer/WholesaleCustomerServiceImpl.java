@@ -13,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.rmi.AlreadyBoundException;
 import java.util.List;
+import java.util.Objects;
 
 @Service
 @Transactional
@@ -24,8 +25,12 @@ public class WholesaleCustomerServiceImpl implements WholesaleCustomerService {
 
     @Override
     public WholesaleCusDtoResponse createWholesaleCustomer(WholesaleCusDtoRequest request) {
-        wholesaleCustomerRepository.findByEmail(request.getEmail()).orElseThrow(()-> new AlreadyExistsException("There is already a customer with an email: " + request.getEmail()));
         WholesaleCustomerEntity entity = WholesaleCusMapper.toEntity(request);
+
+        if (wholesaleCustomerRepository.findByEmail(request.getEmail()).isPresent()) {
+            throw new AlreadyExistsException("Already exists Whole Sale Customer with this email");
+        }
+
         return WholesaleCusMapper.toResponse(wholesaleCustomerRepository.save(entity));
     }
 

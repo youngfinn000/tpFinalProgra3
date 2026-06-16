@@ -10,13 +10,13 @@ import java.util.Optional;
 @Repository
 public interface FlavorsRepository extends JpaRepository<FlavorsEntity, Long> {
 
-    List<FlavorsEntity> findByActive_inactiveTrue();
+    List<FlavorsEntity> findByActiveInactiveTrue();
 
     boolean existsByNameIgnoreCase (String name);
 
     Optional<FlavorsEntity> findByNameIgnoreCase(String name) ;
 
-    List<FlavorsEntity> findByActive_InactiveFalse();
+    List<FlavorsEntity> findByActiveInactiveFalse();
 
     List<FlavorsEntity> findByNameContainingIgnoreCase(String name);
 }

@@ -112,22 +112,10 @@ public class ProductionLotImpl implements ProductionLotService {
     }
 
     @Override
-    public List<ProductionLotActivityDTOResponse> getProductionHistory(LocalDate date, Long flavorId) {
-
-        if(date != null && flavorId != null){
-            return repository.findByProductionDateAndFlavorId(date, flavorId).stream()
-                    .map(ProductionLotMapper::toActivityResponse)
-                    .toList();
-        }
+    public List<ProductionLotActivityDTOResponse> getProductionHistory(LocalDate date) {
 
         if(date != null){
             return repository.findByProductionDate(date).stream()
-                    .map(ProductionLotMapper::toActivityResponse)
-                    .toList();
-        }
-
-        if(flavorId != null){
-            return repository.findByFlavorId(flavorId).stream()
                     .map(ProductionLotMapper::toActivityResponse)
                     .toList();
         }

@@ -3,6 +3,7 @@ package com.stretto.demo.features.internalUser.domain.dto;
 import com.stretto.demo.features.internalUser.domain.enums.RolEnum;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.*;
 
@@ -25,6 +26,6 @@ public class InternalUserDTORequest {
     @NotBlank(message = "Password is required")
     private String passwordHash;
 
-    @NotBlank(message = "rol is required")
+    @NotNull(message = "rol is required")
     private RolEnum rol;
 }

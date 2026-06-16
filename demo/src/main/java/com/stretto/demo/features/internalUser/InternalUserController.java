@@ -43,7 +43,7 @@ public class InternalUserController {
 
     @PutMapping("/{id}")
     public ResponseEntity<InternalUserDTOResponse> update(@PathVariable Long id,
-                                                           @RequestBody InternalUserDTORequest request){
+                                                           @Valid @RequestBody InternalUserDTORequest request){
         InternalUserDTOResponse response = internalUserService.update(id, request);
         return ResponseEntity.ok(response);
     }

@@ -44,6 +44,9 @@ public class RecipeMapper {
 
     public static RecipeDTOResponse.ProductionLotSummary productionLotSummary(ProductionLotEntity entity)
     {
+        if (entity == null) {
+            return null;
+        }
         return RecipeDTOResponse.ProductionLotSummary.builder()
                 .id(entity.getId())
                 .build();

@@ -1,6 +1,7 @@
 package com.stretto.demo.features.product;
 
 import com.stretto.demo.common.exception.AlreadyExistsException;
+import com.stretto.demo.common.exception.InvalidStateException;
 import com.stretto.demo.common.exception.NotFoundException;
 import com.stretto.demo.features.product.domain.ProductEntity;
 import com.stretto.demo.features.product.domain.dto.ProductDTORequest;
@@ -97,6 +98,10 @@ public class ProductServiceImpl implements ProductService {
     public ProductDTOResponse activate(Long id) {
         ProductEntity entity = productRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Product not found with id: " + id));
+
+        if(entity.isActive()){
+            throw new InvalidStateException("You can reactivate a deactivated product");
+        }
 
         entity.setActive(true);
 

@@ -188,7 +188,7 @@ public class OrderServiceImpl implements OrderService {
     //BUSCAR POR CANAL DE PEDIDO
     @Override
     public List<OrderDTOResponse> findBySaleChannel(SaleChannelEnum saleChannel) {
-        return orderRepository.findBySaleChannel(saleChannel)
+        return orderRepository.findBySaleChannelEnum(saleChannel)
                 .stream()
                 .map(orderMapper::toResponse)
                 .toList();
@@ -211,7 +211,7 @@ public class OrderServiceImpl implements OrderService {
 
 
     //REPORTE DIARIO DE PEDIDOS PROGRAMADO
-    @Scheduled(cron = "0 59 23 * * *")
+    @Scheduled(cron = "0 */5 * * * *")
     public void scheduledDailyReport()
     {
         DailyReportDTO report = generateDailyReport();
@@ -222,6 +222,7 @@ public class OrderServiceImpl implements OrderService {
                 "Total orders: " + report.getTotalOrders() + "\n" +
                 "Canceled orders: " + report.getCancellOrders() + "\n" +
                 "Total Revenue: " + report.getTotalRevenue();
+
 
         sendMail("Daily Report Stretto", body);
     }

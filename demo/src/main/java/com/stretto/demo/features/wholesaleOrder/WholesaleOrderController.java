@@ -21,8 +21,8 @@ public class WholesaleOrderController {
     private final WholesaleOrderService wholesaleOrderService;
 
     @PostMapping("/request-budget/{requestbudgetId}")
-    public ResponseEntity<WholesaleOrderResponse> createWholesaleOrder(@PathVariable Long requestId){
-        return ResponseEntity.status(HttpStatus.CREATED).body(wholesaleOrderService.createFromRequestBudget(requestId));
+    public ResponseEntity<WholesaleOrderResponse> createWholesaleOrder(@PathVariable Long requestbudgetId){
+        return ResponseEntity.status(HttpStatus.CREATED).body(wholesaleOrderService.createFromRequestBudget(requestbudgetId));
     }
 
     @GetMapping

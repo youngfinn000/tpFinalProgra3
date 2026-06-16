@@ -4,6 +4,7 @@ import com.stretto.demo.features.flavors.domain.FlavorsEntity;
 import com.stretto.demo.features.requestBudget.domain.RequestBudgetEntity;
 import com.stretto.demo.features.requestBudget.domain.dto.RequestBudgetDtoRequest;
 import com.stretto.demo.features.requestBudget.domain.dto.RequestBudgetDtoResponse;
+import com.stretto.demo.features.requestBudget.domain.enums.StateRequestEnum;
 import com.stretto.demo.features.wholesaleCustomer.domain.WholesaleCustomerEntity;
 import org.springframework.stereotype.Component;
 
@@ -38,6 +39,7 @@ public class RequestBudgetMapper {
                 .requestDateTime(request.getRequestDatetime())
                 .eventDate(request.getEventDate())
                 .advancePayment(request.isAdvancePayment())
+                .stateRequestEnum(StateRequestEnum.PENDING)
                 .customer(customer)
                 .listflavors(flavors)
                 .build();

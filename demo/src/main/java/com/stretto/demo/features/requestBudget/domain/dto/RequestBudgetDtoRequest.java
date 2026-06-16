@@ -18,13 +18,12 @@ import java.util.List;
 public class RequestBudgetDtoRequest {
 
 
-    @NotBlank(message = "Quantity is required")
     @Positive (message = "Quantity must be valid")
     @DecimalMin("0.5")
     private int quantity;
 
+    @NotNull(message = "Time is required")
     @FutureOrPresent(message = "Date must be in the present or future")
-    @NotBlank(message = "Time is required")
     private LocalDateTime requestDatetime;
 
     private boolean advancePayment;

@@ -30,8 +30,11 @@ public class RecipeImpl implements RecipeService{
         ProductEntity productId = productRepository.findById(request.getProductId())
                 .orElseThrow(() -> new NotFoundException("Product not found"));
 
-        ProductionLotEntity productionLotId = productionLotRepository.findById(request.getProductionLotId())
-                .orElseThrow(() -> new NotFoundException("Production Lot not found"));
+        ProductionLotEntity productionLotId = null;
+        if (request.getProductionLotId() != null) {
+            productionLotId = productionLotRepository.findById(request.getProductionLotId())
+                    .orElseThrow(() -> new NotFoundException("Production Lot not found"));
+        }
 
         List<IngredientEntity> ingredients = ingredientRepository.findAllById(request.getIngredientIds());
 
@@ -66,6 +69,12 @@ public class RecipeImpl implements RecipeService{
         entity.setName(request.getName());
         entity.setBaseQuantity(request.getBaseQuantity());
         entity.setUnitBase(request.getUnitBase());
+
+        if (request.getProductionLotId() != null) {
+            ProductionLotEntity productionLot = productionLotRepository.findById(request.getProductionLotId())
+                    .orElseThrow(() -> new NotFoundException("Production Lot not found"));
+            entity.setProductionLot(productionLot);
+        }
 
         RecipeEntity saved = repository.save(entity);
         return RecipeMapper.toResponse(saved);

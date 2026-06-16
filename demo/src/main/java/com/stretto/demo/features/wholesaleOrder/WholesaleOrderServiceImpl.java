@@ -70,7 +70,7 @@ public class WholesaleOrderServiceImpl implements WholesaleOrderService {
 
     @Override
     public WholesaleOrderResponse updateWholesaleOrder(Long id, WholesaleOrderRequest request){
-        WholesaleOrderEntity entity=wholesaleOrderRepository.findById(id).orElseThrow(()->new NotFoundException("Wholesale Order not found with id: "+id));
+        WholesaleOrderEntity entity = wholesaleOrderRepository.findById(id).orElseThrow(()->new NotFoundException("Wholesale Order not found with id: "+id));
         if(!entity.isActive()){
             throw new InvalidStateException("Wholesale Order is inactive.");
         }

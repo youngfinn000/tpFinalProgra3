@@ -22,5 +22,5 @@ public interface ProductionLotService {
 
     ProductionLotDTOResponse calculatePerformance(Long id);
 
-    List<ProductionLotActivityDTOResponse> getProductionHistory(LocalDate date, Long flavorId);
+    List<ProductionLotActivityDTOResponse> getProductionHistory(LocalDate date);
 }

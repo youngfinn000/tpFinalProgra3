@@ -13,3 +13,5 @@ demo/target/
 
 # Claude
 .claude/
+
+docker-compose.yml

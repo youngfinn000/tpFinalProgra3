@@ -3,6 +3,8 @@ package com.stretto.demo.auth.credentials;
 import com.stretto.demo.common.exception.NotFoundException;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Service;
 
 @Service

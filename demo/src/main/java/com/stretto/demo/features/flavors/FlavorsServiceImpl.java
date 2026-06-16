@@ -1,6 +1,7 @@
 package com.stretto.demo.features.flavors;
 
 import com.stretto.demo.common.exception.AlreadyExistsException;
+import com.stretto.demo.common.exception.InvalidStateException;
 import com.stretto.demo.common.exception.NotFoundException;
 import com.stretto.demo.features.flavors.domain.FlavorsEntity;
 import com.stretto.demo.features.flavors.domain.dto.FlavorsDTORequest;
@@ -38,7 +39,7 @@ public class FlavorsServiceImpl implements FlavorsService{
     @Override
     public List<FlavorsDTOResponse> findAll()
     {
-        return flavorsRepository.findByActive_inactiveTrue()
+        return flavorsRepository.findByActiveInactiveTrue()
                 .stream()
                 .map(flavorsMapper :: toResponse)
                 .toList();
@@ -81,7 +82,7 @@ public class FlavorsServiceImpl implements FlavorsService{
         FlavorsEntity entity = flavorsRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Flavor not found with id: " + id));
 
-        entity.setActive_inactive(false);
+        entity.setActiveInactive(false);
 
         flavorsRepository.save(entity);
     }
@@ -93,7 +94,11 @@ public class FlavorsServiceImpl implements FlavorsService{
         FlavorsEntity entity = flavorsRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Flavor not found with id: " + id));
 
-        entity.setActive_inactive(true);
+        if(entity.isActiveInactive()){
+            throw new InvalidStateException("You can only re-enable a disabled flavor");
+        }
+
+        entity.setActiveInactive(true);
 
         FlavorsEntity updated = flavorsRepository.save(entity);
         return flavorsMapper.toResponse(updated);
@@ -114,7 +119,7 @@ public class FlavorsServiceImpl implements FlavorsService{
     @Override
     public List<FlavorsDTOResponse> findInactive()
     {
-        return flavorsRepository.findByActive_InactiveFalse()
+        return flavorsRepository.findByActiveInactiveFalse()
                 .stream()
                 .map(flavorsMapper :: toResponse)
                 .toList();
@@ -124,7 +129,7 @@ public class FlavorsServiceImpl implements FlavorsService{
     @Override
     public List<FlavorsDTOResponse> searchByName(String text)
     {
-        return flavorsRepository.findByNameContainingIgnoreCase(text)
+        return flavorsRepository.findByNameContainingIgnoreCaseAndActiveInactiveTrue(text)
                 .stream()
                 .map(flavorsMapper :: toResponse)
                 .toList();

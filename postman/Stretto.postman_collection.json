@@ -1,32 +1,12 @@
 {
   "info": {
-    "_postman_id": "aa64ae27-1eac-4ce3-a5eb-332a1bfe4274",
+    "_postman_id": "0aa4b10b-87c7-471d-b4c3-e94028aa3279",
     "name": "Stretto API",
     "description": "Coleccion completa de endpoints de la API Stretto (heladeria).",
-    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "49593379",
+    "_collection_link": "https://go.postman.co/collection/49593379-0aa4b10b-87c7-471d-b4c3-e94028aa3279?source=collection_link"
   },
-  "auth": {
-    "type": "bearer",
-    "bearer": [
-      {
-        "key": "token",
-        "value": "{{token}}",
-        "type": "string"
-      }
-    ]
-  },
-  "variable": [
-    {
-      "key": "baseUrl",
-      "value": "http://localhost:8080",
-      "type": "string"
-    },
-    {
-      "key": "token",
-      "value": "",
-      "type": "string"
-    }
-  ],
   "item": [
     {
       "name": "Auth",
@@ -34,6 +14,9 @@
         {
           "name": "Login",
           "request": {
+            "auth": {
+              "type": "noauth"
+            },
             "method": "POST",
             "header": [
               {
@@ -41,6 +24,15 @@
                 "value": "application/json"
               }
             ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"username\": \"admin\",\n    \"password\": \"password123\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
             "url": {
               "raw": "{{baseUrl}}/api/v1/auth/login",
               "host": [
@@ -53,25 +45,16 @@
                 "login"
               ]
             },
-            "description": "Devuelve un JWT. Copialo y pegalo en la variable de coleccion 'token' (o en Tests de esta request se puede automatizar).",
-            "body": {
-              "mode": "raw",
-              "raw": "{\n    \"username\": \"admin\",\n    \"password\": \"password123\"\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
-            },
-            "auth": {
-              "type": "noauth"
-            }
+            "description": "Devuelve un JWT. Copialo y pegalo en la variable de coleccion 'token' (o en Tests de esta request se puede automatizar)."
           },
           "response": []
         },
         {
           "name": "Register",
           "request": {
+            "auth": {
+              "type": "noauth"
+            },
             "method": "POST",
             "header": [
               {
@@ -79,6 +62,15 @@
                 "value": "application/json"
               }
             ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"name\": \"Nuevo Empleado\",\n    \"username\": \"nuevo_empleado\",\n    \"password\": \"password123\",\n    \"email\": \"nuevo@stretto.com\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
             "url": {
               "raw": "{{baseUrl}}/api/v1/auth/register",
               "host": [
@@ -90,18 +82,6 @@
                 "auth",
                 "register"
               ]
-            },
-            "body": {
-              "mode": "raw",
-              "raw": "{\n    \"name\": \"Nuevo Empleado\",\n    \"username\": \"nuevo_empleado\",\n    \"password\": \"password123\",\n    \"email\": \"nuevo@stretto.com\"\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
-            },
-            "auth": {
-              "type": "noauth"
             }
           },
           "response": []
@@ -121,6 +101,15 @@
                 "value": "application/json"
               }
             ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"name\": \"Chocolate\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
             "url": {
               "raw": "{{baseUrl}}/api/v1/flavors",
               "host": [
@@ -131,15 +120,6 @@
                 "v1",
                 "flavors"
               ]
-            },
-            "body": {
-              "mode": "raw",
-              "raw": "{\n    \"name\": \"Chocolate\"\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
             }
           },
           "response": []
@@ -193,6 +173,15 @@
                 "value": "application/json"
               }
             ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"name\": \"Chocolate Amargo\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
             "url": {
               "raw": "{{baseUrl}}/api/v1/flavors/1",
               "host": [
@@ -204,15 +193,6 @@
                 "flavors",
                 "1"
               ]
-            },
-            "body": {
-              "mode": "raw",
-              "raw": "{\n    \"name\": \"Chocolate Amargo\"\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
             }
           },
           "response": []
@@ -340,6 +320,15 @@
                 "value": "application/json"
               }
             ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"requiredAmount\": 200.0,\n    \"unit\": \"GRAM\",\n    \"recipeId\": 1,\n    \"stockId\": 1\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
             "url": {
               "raw": "{{baseUrl}}/api/v1/ingredient",
               "host": [
@@ -350,15 +339,6 @@
                 "v1",
                 "ingredient"
               ]
-            },
-            "body": {
-              "mode": "raw",
-              "raw": "{\n    \"requiredAmount\": 200.0,\n    \"unit\": \"GRAM\",\n    \"recipeId\": 1,\n    \"stockId\": 1\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
             }
           },
           "response": []
@@ -412,6 +392,15 @@
                 "value": "application/json"
               }
             ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"requiredAmount\": 250.0,\n    \"unit\": \"GRAM\",\n    \"recipeId\": 1,\n    \"stockId\": 1\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
             "url": {
               "raw": "{{baseUrl}}/api/v1/ingredient/1",
               "host": [
@@ -423,15 +412,6 @@
                 "ingredient",
                 "1"
               ]
-            },
-            "body": {
-              "mode": "raw",
-              "raw": "{\n    \"requiredAmount\": 250.0,\n    \"unit\": \"GRAM\",\n    \"recipeId\": 1,\n    \"stockId\": 1\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
             }
           },
           "response": []
@@ -478,6 +458,15 @@
                 "value": "application/json"
               }
             ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"name\": \"Juan Perez\",\n    \"email\": \"juan@stretto.com\",\n    \"passwordHash\": \"password123\",\n    \"rol\": \"EMPLOYEE\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
             "url": {
               "raw": "{{baseUrl}}/api/v1/internalUser",
               "host": [
@@ -488,15 +477,6 @@
                 "v1",
                 "internalUser"
               ]
-            },
-            "body": {
-              "mode": "raw",
-              "raw": "{\n    \"name\": \"Juan Perez\",\n    \"email\": \"juan@stretto.com\",\n    \"passwordHash\": \"password123\",\n    \"rol\": \"EMPLOYEE\"\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
             }
           },
           "response": []
@@ -550,6 +530,15 @@
                 "value": "application/json"
               }
             ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"name\": \"Juan Perez\",\n    \"email\": \"juan@stretto.com\",\n    \"passwordHash\": \"password123\",\n    \"rol\": \"EMPLOYEE\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
             "url": {
               "raw": "{{baseUrl}}/api/v1/internalUser/1",
               "host": [
@@ -561,15 +550,6 @@
                 "internalUser",
                 "1"
               ]
-            },
-            "body": {
-              "mode": "raw",
-              "raw": "{\n    \"name\": \"Juan Perez\",\n    \"email\": \"juan@stretto.com\",\n    \"passwordHash\": \"password123\",\n    \"rol\": \"EMPLOYEE\"\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
             }
           },
           "response": []
@@ -625,6 +605,15 @@
                 "value": "application/json"
               }
             ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"saleChannelEnum\": \"LOCAL\",\n    \"paymentMethodEnum\": \"CASH\",\n    \"userID\": 1,\n    \"details\": [\n        {\n            \"productId\": 1,\n            \"flavorsId\": [\n                1,\n                2\n            ],\n            \"quantity\": 2\n        }\n    ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
             "url": {
               "raw": "{{baseUrl}}/api/v1/internalUser/1/order",
               "host": [
@@ -637,15 +626,6 @@
                 "1",
                 "order"
               ]
-            },
-            "body": {
-              "mode": "raw",
-              "raw": "{\n    \"saleChannelEnum\": \"LOCAL\",\n    \"paymentMethodEnum\": \"CASH\",\n    \"userID\": 1,\n    \"details\": [\n        {\n            \"productId\": 1,\n            \"flavorsId\": [\n                1,\n                2\n            ],\n            \"quantity\": 2\n        }\n    ]\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
             }
           },
           "response": []
@@ -660,6 +640,15 @@
                 "value": "application/json"
               }
             ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"recipeId\": 1,\n    \"userId\": 1,\n    \"amountProduced\": 10.0,\n    \"status\": \"PLANNED\",\n    \"performancePCT\": 0.0,\n    \"productionDate\": \"2026-06-15\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
             "url": {
               "raw": "{{baseUrl}}/api/v1/internalUser/1/lot",
               "host": [
@@ -672,15 +661,6 @@
                 "1",
                 "lot"
               ]
-            },
-            "body": {
-              "mode": "raw",
-              "raw": "{\n    \"recipeId\": 1,\n    \"userId\": 1,\n    \"amountProduced\": 10.0,\n    \"status\": \"PLANNED\",\n    \"performancePCT\": 0.0,\n    \"productionDate\": \"2026-06-15\"\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
             }
           },
           "response": []
@@ -700,6 +680,15 @@
                 "value": "application/json"
               }
             ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"productId\": 1,\n    \"flavorsId\": [\n        1,\n        2\n    ],\n    \"quantity\": 2\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
             "url": {
               "raw": "{{baseUrl}}/api/v1/order-details/1",
               "host": [
@@ -711,15 +700,6 @@
                 "order-details",
                 "1"
               ]
-            },
-            "body": {
-              "mode": "raw",
-              "raw": "{\n    \"productId\": 1,\n    \"flavorsId\": [\n        1,\n        2\n    ],\n    \"quantity\": 2\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
             }
           },
           "response": []
@@ -780,6 +760,15 @@
                 "value": "application/json"
               }
             ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"saleChannelEnum\": \"LOCAL\",\n    \"paymentMethodEnum\": \"CASH\",\n    \"userID\": 1,\n    \"details\": [\n        {\n            \"productId\": 1,\n            \"flavorsId\": [\n                1,\n                2\n            ],\n            \"quantity\": 2\n        }\n    ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
             "url": {
               "raw": "{{baseUrl}}/api/v1/orders",
               "host": [
@@ -790,15 +779,6 @@
                 "v1",
                 "orders"
               ]
-            },
-            "body": {
-              "mode": "raw",
-              "raw": "{\n    \"saleChannelEnum\": \"LOCAL\",\n    \"paymentMethodEnum\": \"CASH\",\n    \"userID\": 1,\n    \"details\": [\n        {\n            \"productId\": 1,\n            \"flavorsId\": [\n                1,\n                2\n            ],\n            \"quantity\": 2\n        }\n    ]\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
             }
           },
           "response": []
@@ -1050,6 +1030,15 @@
                 "value": "application/json"
               }
             ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"recipeId\": 1,\n    \"userId\": 1,\n    \"amountProduced\": 10.0,\n    \"status\": \"PLANNED\",\n    \"performancePCT\": 0.0,\n    \"productionDate\": \"2026-06-15\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
             "url": {
               "raw": "{{baseUrl}}/api/v1/productionLot",
               "host": [
@@ -1060,15 +1049,6 @@
                 "v1",
                 "productionLot"
               ]
-            },
-            "body": {
-              "mode": "raw",
-              "raw": "{\n    \"recipeId\": 1,\n    \"userId\": 1,\n    \"amountProduced\": 10.0,\n    \"status\": \"PLANNED\",\n    \"performancePCT\": 0.0,\n    \"productionDate\": \"2026-06-15\"\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
             }
           },
           "response": []
@@ -1122,6 +1102,15 @@
                 "value": "application/json"
               }
             ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"recipeId\": 1,\n    \"userId\": 1,\n    \"amountProduced\": 12.0,\n    \"status\": \"IN_PROGRESS\",\n    \"performancePCT\": 0.0,\n    \"productionDate\": \"2026-06-15\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
             "url": {
               "raw": "{{baseUrl}}/api/v1/productionLot/1",
               "host": [
@@ -1133,15 +1122,6 @@
                 "productionLot",
                 "1"
               ]
-            },
-            "body": {
-              "mode": "raw",
-              "raw": "{\n    \"recipeId\": 1,\n    \"userId\": 1,\n    \"amountProduced\": 12.0,\n    \"status\": \"IN_PROGRESS\",\n    \"performancePCT\": 0.0,\n    \"productionDate\": \"2026-06-15\"\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
             }
           },
           "response": []
@@ -1250,6 +1230,15 @@
                 "value": "application/json"
               }
             ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"name\": \"Cucurucho 2 bolas\",\n    \"price\": 1500.0,\n    \"maxFlavors\": 2,\n    \"stock\": 50\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
             "url": {
               "raw": "{{baseUrl}}/api/v1/products",
               "host": [
@@ -1260,15 +1249,6 @@
                 "v1",
                 "products"
               ]
-            },
-            "body": {
-              "mode": "raw",
-              "raw": "{\n    \"name\": \"Cucurucho 2 bolas\",\n    \"price\": 1500.0,\n    \"maxFlavors\": 2,\n    \"stock\": 50\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
             }
           },
           "response": []
@@ -1322,6 +1302,15 @@
                 "value": "application/json"
               }
             ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"name\": \"Cucurucho 2 bolas\",\n    \"price\": 1600.0,\n    \"maxFlavors\": 2,\n    \"stock\": 50\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
             "url": {
               "raw": "{{baseUrl}}/api/v1/products/1",
               "host": [
@@ -1333,15 +1322,6 @@
                 "products",
                 "1"
               ]
-            },
-            "body": {
-              "mode": "raw",
-              "raw": "{\n    \"name\": \"Cucurucho 2 bolas\",\n    \"price\": 1600.0,\n    \"maxFlavors\": 2,\n    \"stock\": 50\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
             }
           },
           "response": []
@@ -1465,7 +1445,7 @@
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "{{baseUrl}}/api/v1/products/1/price?price=1700.0",
+              "raw": "{{baseUrl}}/api/v1/products/1/price?price=40000.0",
               "host": [
                 "{{baseUrl}}"
               ],
@@ -1479,7 +1459,7 @@
               "query": [
                 {
                   "key": "price",
-                  "value": "1700.0"
+                  "value": "40000.0"
                 }
               ]
             }
@@ -1501,6 +1481,15 @@
                 "value": "application/json"
               }
             ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"name\": \"Base crema\",\n    \"baseQuantity\": 5.0,\n    \"unitBase\": \"KG\",\n    \"productId\": 1,\n    \"ingredientIds\": [\n        1,\n        2\n    ],\n    \"subRecipeIds\": []\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
             "url": {
               "raw": "{{baseUrl}}/api/v1/recipe",
               "host": [
@@ -1511,15 +1500,6 @@
                 "v1",
                 "recipe"
               ]
-            },
-            "body": {
-              "mode": "raw",
-              "raw": "{\n    \"name\": \"Base crema\",\n    \"baseQuantity\": 5.0,\n    \"unitBase\": \"KG\",\n    \"productId\": 1,\n    \"productionLotId\": 1,\n    \"ingredientIds\": [\n        1,\n        2\n    ],\n    \"subRecipeIds\": []\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
             }
           },
           "response": []
@@ -1573,6 +1553,15 @@
                 "value": "application/json"
               }
             ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"name\": \"Base crema\",\n    \"baseQuantity\": 6.0,\n    \"unitBase\": \"KG\",\n    \"productId\": 1,\n    \"productionLotId\": 1,\n    \"ingredientIds\": [\n        1,\n        2\n    ],\n    \"subRecipeIds\": []\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
             "url": {
               "raw": "{{baseUrl}}/api/v1/recipe/1",
               "host": [
@@ -1584,15 +1573,6 @@
                 "recipe",
                 "1"
               ]
-            },
-            "body": {
-              "mode": "raw",
-              "raw": "{\n    \"name\": \"Base crema\",\n    \"baseQuantity\": 6.0,\n    \"unitBase\": \"KG\",\n    \"productId\": 1,\n    \"productionLotId\": 1,\n    \"ingredientIds\": [\n        1,\n        2\n    ],\n    \"subRecipeIds\": []\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
             }
           },
           "response": []
@@ -1639,6 +1619,15 @@
                 "value": "application/json"
               }
             ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"quantity\": 10,\n    \"requestDatetime\": \"2026-07-01T10:00:00\",\n    \"advancePayment\": false,\n    \"customerId\": 1,\n    \"flavorsId\": [\n        1,\n        2\n    ],\n    \"eventDate\": \"2026-07-15\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
             "url": {
               "raw": "{{baseUrl}}/api/request_budget",
               "host": [
@@ -1648,15 +1637,6 @@
                 "api",
                 "request_budget"
               ]
-            },
-            "body": {
-              "mode": "raw",
-              "raw": "{\n    \"quantity\": 10,\n    \"requestDatetime\": \"2026-07-01T10:00:00\",\n    \"advancePayment\": false,\n    \"customerId\": 1,\n    \"flavorsId\": [\n        1,\n        2\n    ],\n    \"eventDate\": \"2026-07-15\"\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
             }
           },
           "response": []
@@ -1715,6 +1695,15 @@
                 "value": "application/json"
               }
             ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"state\": \"CONFIRMED\",\n    \"budget\": 50000.0\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
             "url": {
               "raw": "{{baseUrl}}/api/request_budget/1/state",
               "host": [
@@ -1726,15 +1715,6 @@
                 "1",
                 "state"
               ]
-            },
-            "body": {
-              "mode": "raw",
-              "raw": "{\n    \"state\": \"CONFIRMED\",\n    \"budget\": 50000.0\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
             }
           },
           "response": []
@@ -1754,6 +1734,15 @@
                 "value": "application/json"
               }
             ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"adjustmentType\": \"ADD\",\n    \"amount\": 10.0,\n    \"motive\": \"Reposicion de mercaderia\",\n    \"stockId\": 1,\n    \"userId\": 1\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
             "url": {
               "raw": "{{baseUrl}}/api/v1/stockModification",
               "host": [
@@ -1764,15 +1753,6 @@
                 "v1",
                 "stockModification"
               ]
-            },
-            "body": {
-              "mode": "raw",
-              "raw": "{\n    \"adjustmentType\": \"ADD\",\n    \"amount\": 10.0,\n    \"motive\": \"Reposicion de mercaderia\",\n    \"stockId\": 1,\n    \"userId\": 1\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
             }
           },
           "response": []
@@ -1826,6 +1806,15 @@
                 "value": "application/json"
               }
             ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"adjustmentType\": \"REMOVE\",\n    \"amount\": 5.0,\n    \"motive\": \"Merma\",\n    \"stockId\": 1,\n    \"userId\": 1\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
             "url": {
               "raw": "{{baseUrl}}/api/v1/stockModification/1",
               "host": [
@@ -1837,15 +1826,6 @@
                 "stockModification",
                 "1"
               ]
-            },
-            "body": {
-              "mode": "raw",
-              "raw": "{\n    \"adjustmentType\": \"REMOVE\",\n    \"amount\": 5.0,\n    \"motive\": \"Merma\",\n    \"stockId\": 1,\n    \"userId\": 1\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
             }
           },
           "response": []
@@ -1881,6 +1861,15 @@
                 "value": "application/json"
               }
             ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"adjustmentType\": \"ADD\",\n    \"amount\": 10.0,\n    \"motive\": \"Reposicion\",\n    \"stockId\": 1,\n    \"userId\": 1\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
             "url": {
               "raw": "{{baseUrl}}/api/v1/stockModification/register",
               "host": [
@@ -1892,15 +1881,6 @@
                 "stockModification",
                 "register"
               ]
-            },
-            "body": {
-              "mode": "raw",
-              "raw": "{\n    \"adjustmentType\": \"ADD\",\n    \"amount\": 10.0,\n    \"motive\": \"Reposicion\",\n    \"stockId\": 1,\n    \"userId\": 1\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
             }
           },
           "response": []
@@ -1950,6 +1930,15 @@
                 "value": "application/json"
               }
             ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"name\": \"Leche entera\",\n    \"currentStock\": 100.0,\n    \"minimumStock\": 20.0,\n    \"unitMeasurement\": \"LITER\",\n    \"status\": \"ACTIVE\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
             "url": {
               "raw": "{{baseUrl}}/api/v1/stock",
               "host": [
@@ -1960,15 +1949,6 @@
                 "v1",
                 "stock"
               ]
-            },
-            "body": {
-              "mode": "raw",
-              "raw": "{\n    \"name\": \"Leche entera\",\n    \"currentStock\": 100.0,\n    \"minimumStock\": 20.0,\n    \"unitMeasurement\": \"LITER\",\n    \"status\": \"ACTIVE\"\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
             }
           },
           "response": []
@@ -2022,6 +2002,15 @@
                 "value": "application/json"
               }
             ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"name\": \"Leche entera\",\n    \"currentStock\": 90.0,\n    \"minimumStock\": 20.0,\n    \"unitMeasurement\": \"LITER\",\n    \"status\": \"ACTIVE\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
             "url": {
               "raw": "{{baseUrl}}/api/v1/stock/1",
               "host": [
@@ -2033,15 +2022,6 @@
                 "stock",
                 "1"
               ]
-            },
-            "body": {
-              "mode": "raw",
-              "raw": "{\n    \"name\": \"Leche entera\",\n    \"currentStock\": 90.0,\n    \"minimumStock\": 20.0,\n    \"unitMeasurement\": \"LITER\",\n    \"status\": \"ACTIVE\"\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
             }
           },
           "response": []
@@ -2129,6 +2109,15 @@
                 "value": "application/json"
               }
             ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"companyName\": \"Eventos SA\",\n    \"email\": \"contacto@eventossa.com\",\n    \"contactName\": \"Maria Lopez\",\n    \"cuit\": \"30-12345678-9\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
             "url": {
               "raw": "{{baseUrl}}/api/wholesale_customers",
               "host": [
@@ -2138,15 +2127,6 @@
                 "api",
                 "wholesale_customers"
               ]
-            },
-            "body": {
-              "mode": "raw",
-              "raw": "{\n    \"companyName\": \"Eventos SA\",\n    \"email\": \"contacto@eventossa.com\",\n    \"contactName\": \"Maria Lopez\",\n    \"cuit\": \"30-12345678-9\"\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
             }
           },
           "response": []
@@ -2198,6 +2178,15 @@
                 "value": "application/json"
               }
             ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"companyName\": \"Eventos SA\",\n    \"email\": \"contacto@eventossa.com\",\n    \"contactName\": \"Maria Lopez\",\n    \"cuit\": \"30-12345678-9\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
             "url": {
               "raw": "{{baseUrl}}/api/wholesale_customers/1",
               "host": [
@@ -2208,15 +2197,6 @@
                 "wholesale_customers",
                 "1"
               ]
-            },
-            "body": {
-              "mode": "raw",
-              "raw": "{\n    \"companyName\": \"Eventos SA\",\n    \"email\": \"contacto@eventossa.com\",\n    \"contactName\": \"Maria Lopez\",\n    \"cuit\": \"30-12345678-9\"\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
             }
           },
           "response": []
@@ -2363,6 +2343,15 @@
                 "value": "application/json"
               }
             ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"advancePaymentStatus\": true,\n    \"advancePaymentAmount\": 5000.0,\n    \"deliveryDate\": \"2026-07-15\",\n    \"discount\": 0.0,\n    \"orderId\": 1,\n    \"requestBudgetId\": 1,\n    \"customerId\": 1\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
             "url": {
               "raw": "{{baseUrl}}/api/wholesale-orders/1",
               "host": [
@@ -2373,15 +2362,6 @@
                 "wholesale-orders",
                 "1"
               ]
-            },
-            "body": {
-              "mode": "raw",
-              "raw": "{\n    \"advancePaymentStatus\": true,\n    \"advancePaymentAmount\": 5000.0,\n    \"deliveryDate\": \"2026-07-15\",\n    \"discount\": 0.0,\n    \"orderId\": 1,\n    \"requestBudgetId\": 1,\n    \"customerId\": 1\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
             }
           },
           "response": []
@@ -2456,6 +2436,50 @@
           "response": []
         }
       ]
+    }
+  ],
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{token}}",
+        "type": "string"
+      }
+    ]
+  },
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "packages": {},
+        "requests": {},
+        "exec": [
+          ""
+        ]
+      }
+    },
+    {
+      "listen": "test",
+      "script": {
+        "type": "text/javascript",
+        "packages": {},
+        "requests": {},
+        "exec": [
+          ""
+        ]
+      }
+    }
+  ],
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:8080"
+    },
+    {
+      "key": "token",
+      "value": ""
     }
   ]
 }

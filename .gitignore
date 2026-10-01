@@ -15,3 +15,20 @@ demo/target/
 .claude/
 
 docker-compose.yml
+
+# IntelliJ
+.idea/
+*.iml
+
+# Maven
+**/target/
+
+# Angular
+**/node_modules/
+**/.angular/
+
+# VS Code
+.vscode/
+
+# Environment variables
+.env

@@ -2,6 +2,7 @@ package com.stretto.demo.auth.config;
 
 import com.stretto.demo.auth.filters.JwtAuthenticationFilter;
 import com.stretto.demo.auth.filters.RestAuthenticationEntryPoint;
+import org.springframework.http.HttpMethod;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -49,6 +50,7 @@ public class SecurityConfig {
                                 "/swagger-ui.html",
                                 "/v3/api-docs/**"
                         ).permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/wholesale_customers").permitAll()
                         .anyRequest().authenticated())
                 .cors(Customizer.withDefaults())
                 .csrf(AbstractHttpConfigurer::disable)

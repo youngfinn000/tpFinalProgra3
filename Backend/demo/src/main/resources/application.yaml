@@ -1,11 +1,14 @@
 spring:
   config:
-    import: optional:file:.env[.properties]
+    import:
+      - optional:file:.env[.properties]
+      - optional:file:../.env[.properties]
+      - optional:file:Backend/demo/.env[.properties]
 
   datasource:
-    url: jdbc:mysql://localhost:3306/strettogelato
-    username: ${db_usuario}
-    password: ${db_password}
+    url: jdbc:mysql://localhost:3306/stretto_db?createDatabaseIfNotExist=true
+    username: ${db_usuario:root}
+    password: ${db_password:}
     driver-class-name: com.mysql.cj.jdbc.Driver
 
   jpa:
@@ -20,8 +23,8 @@ spring:
   mail:
     host: smtp.gmail.com
     port: 587
-    username: ${mail_usuario}
-    password: ${mail_password}
+    username: ${mail_usuario:}
+    password: ${mail_password:}
     properties:
       mail:
         smtp:
@@ -30,6 +33,7 @@ spring:
             enable: true
 
 jwt:
-  secret: ${jwt_secret}
+  secret: ${JWT_SECRET:strettoSecretKeyForJwtTokenSigning12345678901234567890}
   expiration: 86400000
 
+jwt_secret: ${JWT_SECRET:strettoSecretKeyForJwtTokenSigning12345678901234567890}

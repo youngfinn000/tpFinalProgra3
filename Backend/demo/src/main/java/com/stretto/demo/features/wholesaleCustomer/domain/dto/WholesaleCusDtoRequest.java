@@ -25,4 +25,7 @@ public class WholesaleCusDtoRequest {
 
     @Size (max = 20, message = "CUIT cannot exceed 20 charecters")
     private String cuit;
+
+    @Size(min = 6, message = "Password must have at least 6 characters")
+    private String password;
 }

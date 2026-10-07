@@ -1,5 +1,10 @@
 package com.stretto.demo.features.wholesaleCustomer;
 
+import com.stretto.demo.auth.credentials.CredentialsEntity;
+import com.stretto.demo.auth.credentials.CredentialsRepository;
+import com.stretto.demo.auth.permissions.RoleEntity;
+import com.stretto.demo.auth.permissions.RoleRepository;
+import com.stretto.demo.auth.permissions.Roles;
 import com.stretto.demo.common.exception.AlreadyExistsException;
 import com.stretto.demo.common.exception.InvalidStateException;
 import com.stretto.demo.common.exception.NotFoundException;
@@ -8,12 +13,14 @@ import com.stretto.demo.features.wholesaleCustomer.domain.dto.WholesaleCusDtoReq
 import com.stretto.demo.features.wholesaleCustomer.domain.dto.WholesaleCusDtoResponse;
 import com.stretto.demo.features.wholesaleCustomer.domain.mapper.WholesaleCusMapper;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.rmi.AlreadyBoundException;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 
 @Service
 @Transactional
@@ -21,17 +28,38 @@ import java.util.Objects;
 public class WholesaleCustomerServiceImpl implements WholesaleCustomerService {
 
     private final WholesaleCustomerRepository wholesaleCustomerRepository;
+    private final CredentialsRepository credentialsRepository;
+    private final RoleRepository roleRepository;
+    private final PasswordEncoder passwordEncoder;
 
 
     @Override
     public WholesaleCusDtoResponse createWholesaleCustomer(WholesaleCusDtoRequest request) {
-        WholesaleCustomerEntity entity = WholesaleCusMapper.toEntity(request);
-
-        if (wholesaleCustomerRepository.findByEmail(request.getEmail()).isPresent()) {
+        if (wholesaleCustomerRepository.findByEmail(request.getEmail()).isPresent()
+                || credentialsRepository.findByUsername(request.getEmail()).isPresent()) {
             throw new AlreadyExistsException("Already exists Whole Sale Customer with this email");
         }
 
-        return WholesaleCusMapper.toResponse(wholesaleCustomerRepository.save(entity));
+        if (request.getPassword() == null || request.getPassword().isBlank()) {
+            throw new InvalidStateException("Password is required for wholesale customer registration");
+        }
+
+        WholesaleCustomerEntity entity = WholesaleCusMapper.toEntity(request);
+        WholesaleCustomerEntity savedCustomer = wholesaleCustomerRepository.save(entity);
+
+        RoleEntity roleWholesale = roleRepository.findByRole(Roles.ROLE_WHOLESALE)
+                .orElseGet(() -> roleRepository.save(new RoleEntity(Roles.ROLE_WHOLESALE)));
+
+        CredentialsEntity credentials = CredentialsEntity.builder()
+                .username(request.getEmail())
+                .password(passwordEncoder.encode(request.getPassword()))
+                .enabled(true)
+                .wholesaleCustomer(savedCustomer)
+                .roles(new HashSet<>(Set.of(roleWholesale)))
+                .build();
+        credentialsRepository.save(credentials);
+
+        return WholesaleCusMapper.toResponse(savedCustomer);
     }
 
     @Override
@@ -43,11 +71,24 @@ public class WholesaleCustomerServiceImpl implements WholesaleCustomerService {
         if(request.getCuit() != null && wholesaleCustomerRepository.existsByCuitAndIdNot(request.getCuit(), id)){
             throw new AlreadyExistsException("There cuit is already registered for another client: "+request.getCuit());
         }
+        String oldEmail = customer.getEmail();
         customer.setCompanyName(request.getCompanyName());
         customer.setEmail(request.getEmail());
         customer.setContactName(request.getContactName());
         customer.setCuit(request.getCuit());
-        return WholesaleCusMapper.toResponse(wholesaleCustomerRepository.save(customer));
+        WholesaleCustomerEntity updatedCustomer = wholesaleCustomerRepository.save(customer);
+
+        credentialsRepository.findByUsername(oldEmail).ifPresent(creds -> {
+            if (!oldEmail.equals(request.getEmail())) {
+                creds.setUsername(request.getEmail());
+            }
+            if (request.getPassword() != null && !request.getPassword().isBlank()) {
+                creds.setPassword(passwordEncoder.encode(request.getPassword()));
+            }
+            credentialsRepository.save(creds);
+        });
+
+        return WholesaleCusMapper.toResponse(updatedCustomer);
     }
 
     @Override
@@ -55,6 +96,12 @@ public class WholesaleCustomerServiceImpl implements WholesaleCustomerService {
         WholesaleCustomerEntity customer = findActiveOrThrow(id);
         customer.setActive(false);
         wholesaleCustomerRepository.save(customer);
+
+        credentialsRepository.findByUsername(customer.getEmail())
+                .ifPresent(creds -> {
+                    creds.setEnabled(false);
+                    credentialsRepository.save(creds);
+                });
     }
 
     @Override

@@ -41,6 +41,10 @@ public class DatabaseInitializerConfig {
             roleAdmin.getPermits().add(eliminarUsuario);
             roleRepository.save(roleAdmin);
 
+            RoleEntity roleWholesale = new RoleEntity(Roles.ROLE_WHOLESALE);
+            roleWholesale.getPermits().add(actualizarCuenta);
+            roleRepository.save(roleWholesale);
+
             String passwordEncriptada = passwordEncoder.encode("password123");
 
             InternalUserEntity adminUser = new InternalUserEntity();

@@ -2,6 +2,7 @@ package com.stretto.demo.auth.credentials;
 
 import com.stretto.demo.auth.permissions.RoleEntity;
 import com.stretto.demo.features.internalUser.domain.InternalUserEntity;
+import com.stretto.demo.features.wholesaleCustomer.domain.WholesaleCustomerEntity;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
@@ -34,8 +35,12 @@ public class CredentialsEntity implements UserDetails {
     private Boolean enabled;
 
     @OneToOne
-    @JoinColumn(name = "usuario_id", referencedColumnName = "id", unique = true)
+    @JoinColumn(name = "usuario_id", referencedColumnName = "id", unique = true, nullable = true)
     private InternalUserEntity usuario;
+
+    @OneToOne
+    @JoinColumn(name = "wholesale_customer_id", referencedColumnName = "id", unique = true, nullable = true)
+    private WholesaleCustomerEntity wholesaleCustomer;
 
     @ManyToMany(cascade = CascadeType.MERGE,fetch = FetchType.EAGER)
     @JoinTable(

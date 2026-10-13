@@ -1,6 +1,24 @@
 .footer {
-  padding: 0.75rem 1rem;
-  text-align: center;
-  background: #f3f4f6;
-  color: #6b7280;
+  padding: 1.1rem 1.75rem;
+  background-color: #ffffff;
+  border-top: 1px solid var(--border-color);
+  color: var(--text-secondary);
+  font-size: 0.82rem;
+}
+
+.footer-content {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  flex-wrap: wrap;
+}
+
+.footer-divider {
+  color: var(--border-color);
+}
+
+.footer-version {
+  color: var(--text-primary);
+  font-family: monospace;
 }

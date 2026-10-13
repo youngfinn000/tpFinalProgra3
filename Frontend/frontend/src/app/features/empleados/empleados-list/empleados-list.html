@@ -1,1 +1,401 @@
-<p>empleados-list works!</p>
+<div class="empleados-container">
+  <!-- Encabezado de página -->
+  <div class="page-header">
+    <div>
+      <h1 class="page-title">Gestión de Empleados</h1>
+      <p class="page-subtitle">Administrá los usuarios internos y sus roles en STRETTO</p>
+    </div>
+    <button type="button" class="btn btn-primary" (click)="abrirModalCrear()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="btn-icon">
+        <line x1="12" y1="5" x2="12" y2="19"></line>
+        <line x1="5" y1="12" x2="19" y2="12"></line>
+      </svg>
+      Nuevo Empleado
+    </button>
+  </div>
+
+  <!-- Alertas de estado -->
+  @if (mensajeExito()) {
+    <div class="alert alert-success">
+      <svg class="alert-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+        <polyline points="22 4 12 14.01 9 11.01"></polyline>
+      </svg>
+      <span class="alert-text">{{ mensajeExito() }}</span>
+      <button type="button" class="alert-close" (click)="cerrarAlertaExito()">✕</button>
+    </div>
+  }
+
+  @if (mensajeError()) {
+    <div class="alert alert-danger">
+      <svg class="alert-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <circle cx="12" cy="12" r="10"></circle>
+        <line x1="15" y1="9" x2="9" y2="15"></line>
+        <line x1="9" y1="9" x2="15" y2="15"></line>
+      </svg>
+      <span class="alert-text">{{ mensajeError() }}</span>
+      <button type="button" class="alert-close" (click)="cerrarAlertaError()">✕</button>
+    </div>
+  }
+
+  <!-- Tarjetas de estadísticas -->
+  <div class="stats-grid">
+    <div class="stat-card">
+      <div class="stat-info">
+        <span class="stat-label">Total Empleados</span>
+        <span class="stat-value">{{ totalEmpleados() }}</span>
+      </div>
+      <div class="stat-icon icon-blue">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+          <circle cx="9" cy="7" r="4"></circle>
+          <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+          <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+        </svg>
+      </div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-info">
+        <span class="stat-label">Activos</span>
+        <span class="stat-value text-success">{{ totalActivos() }}</span>
+      </div>
+      <div class="stat-icon icon-green">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="10"></circle>
+          <polyline points="12 6 12 12 14 14"></polyline>
+        </svg>
+      </div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-info">
+        <span class="stat-label">Inactivos</span>
+        <span class="stat-value text-muted">{{ totalInactivos() }}</span>
+      </div>
+      <div class="stat-icon icon-gray">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="10"></circle>
+          <line x1="4.93" y1="4.93" x2="19.07" y2="19.07"></line>
+        </svg>
+      </div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-info">
+        <span class="stat-label">Administradores</span>
+        <span class="stat-value text-amber">{{ totalAdmins() }}</span>
+      </div>
+      <div class="stat-icon icon-amber">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"></path>
+        </svg>
+      </div>
+    </div>
+  </div>
+
+  <!-- Barra de búsqueda y filtros -->
+  <div class="filter-bar">
+    <div class="search-input-wrapper">
+      <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <circle cx="11" cy="11" r="8"></circle>
+        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+      </svg>
+      <input
+        type="text"
+        class="form-control search-input"
+        placeholder="Buscar por nombre, email, rol o ID..."
+        [ngModel]="filtroTexto()"
+        (ngModelChange)="filtroTexto.set($event)"
+      />
+    </div>
+
+    <div class="filter-controls">
+      <select
+        class="form-control select-estado"
+        [ngModel]="filtroEstado()"
+        (ngModelChange)="filtroEstado.set($event)"
+      >
+        <option value="todos">Todos los estados</option>
+        <option value="activos">Solo activos</option>
+        <option value="inactivos">Solo inactivos</option>
+      </select>
+
+      <button type="button" class="btn btn-secondary btn-icon-only" (click)="cargarEmpleados()" title="Recargar lista">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="btn-icon">
+          <polyline points="23 4 23 10 17 10"></polyline>
+          <polyline points="1 20 1 14 7 14"></polyline>
+          <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path>
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- Contenedor de la tabla -->
+  <div class="card table-card">
+    @if (cargando()) {
+      <div class="table-loading">
+        <span class="spinner-large"></span>
+        <p>Cargando empleados...</p>
+      </div>
+    } @else {
+      @if (empleadosFiltrados().length === 0) {
+        <div class="table-empty">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="empty-icon">
+            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+            <circle cx="9" cy="7" r="4"></circle>
+            <line x1="18" y1="8" x2="23" y2="13"></line>
+            <line x1="23" y1="8" x2="18" y2="13"></line>
+          </svg>
+          <h3>No se encontraron empleados</h3>
+          <p>
+            @if (filtroTexto() || filtroEstado() !== 'todos') {
+              No hay empleados que coincidan con los filtros aplicados.
+            } @else {
+              Aún no hay empleados registrados en el sistema.
+            }
+          </p>
+        </div>
+      } @else {
+        <div class="table-responsive">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Nombre</th>
+                <th>Email</th>
+                <th>Rol</th>
+                <th>Estado</th>
+                <th class="text-right">Acciones</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (emp of empleadosFiltrados(); track emp.id) {
+                <tr [class.row-inactive]="!emp.active">
+                  <td class="font-mono text-muted">#{{ emp.id }}</td>
+                  <td>
+                    <div class="user-cell">
+                      <div class="user-avatar" [class.avatar-admin]="emp.rol === 'ADMIN'">
+                        {{ emp.name.charAt(0).toUpperCase() }}
+                      </div>
+                      <span class="user-name">{{ emp.name }}</span>
+                    </div>
+                  </td>
+                  <td class="text-secondary">{{ emp.email }}</td>
+                  <td>
+                    @if (emp.rol === 'ADMIN') {
+                      <span class="badge badge-admin">ADMINISTRADOR</span>
+                    } @else {
+                      <span class="badge badge-employee">EMPLEADO</span>
+                    }
+                  </td>
+                  <td>
+                    @if (emp.active) {
+                      <span class="badge badge-active">Activo</span>
+                    } @else {
+                      <span class="badge badge-inactive">Inactivo</span>
+                    }
+                  </td>
+                  <td class="text-right">
+                    <div class="action-buttons">
+                      <button
+                        type="button"
+                        class="btn-action btn-action-edit"
+                        (click)="abrirModalEditar(emp)"
+                        title="Modificar datos del empleado"
+                      >
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                          <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                          <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                        </svg>
+                        <span>Editar</span>
+                      </button>
+
+                      @if (emp.active) {
+                        <button
+                          type="button"
+                          class="btn-action btn-action-danger"
+                          (click)="abrirConfirmacionEstado(emp, 'desactivar')"
+                          title="Desactivar empleado"
+                        >
+                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="3 6 5 6 21 6"></polyline>
+                            <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                          </svg>
+                          <span>Desactivar</span>
+                        </button>
+                      } @else {
+                        <button
+                          type="button"
+                          class="btn-action btn-action-success"
+                          (click)="abrirConfirmacionEstado(emp, 'activar')"
+                          title="Reactivar empleado"
+                        >
+                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                            <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                          </svg>
+                          <span>Reactivar</span>
+                        </button>
+                      }
+                    </div>
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      }
+    }
+  </div>
+</div>
+
+<!-- Modal Formulario Alta / Modificación -->
+@if (modalFormularioAbierto()) {
+  <div class="modal-backdrop" (click)="cerrarModalFormulario()">
+    <div class="modal-card" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h2 class="modal-title">
+          {{ modoFormulario() === 'crear' ? 'Registrar Nuevo Empleado' : 'Modificar Empleado #' + empleadoSeleccionadoId }}
+        </h2>
+        <button type="button" class="modal-close" (click)="cerrarModalFormulario()">✕</button>
+      </div>
+
+      <form [formGroup]="empleadoForm" (ngSubmit)="guardarEmpleado()" class="modal-body">
+        <div class="form-group">
+          <label for="name" class="form-label">Nombre Completo *</label>
+          <input
+            id="name"
+            type="text"
+            formControlName="name"
+            class="form-control"
+            placeholder="Ej: Juan Pérez"
+            [class.is-invalid]="empleadoForm.get('name')?.touched && empleadoForm.get('name')?.invalid"
+          />
+          @if (empleadoForm.get('name')?.touched && empleadoForm.get('name')?.errors?.['required']) {
+            <span class="field-error">El nombre es obligatorio.</span>
+          }
+          @if (empleadoForm.get('name')?.touched && empleadoForm.get('name')?.errors?.['maxlength']) {
+            <span class="field-error">El nombre no puede exceder 50 caracteres.</span>
+          }
+        </div>
+
+        <div class="form-group">
+          <label for="email" class="form-label">Correo Electrónico *</label>
+          <input
+            id="email"
+            type="email"
+            formControlName="email"
+            class="form-control"
+            placeholder="ejemplo@stretto.com"
+            [class.is-invalid]="empleadoForm.get('email')?.touched && empleadoForm.get('email')?.invalid"
+          />
+          @if (empleadoForm.get('email')?.touched && empleadoForm.get('email')?.errors?.['required']) {
+            <span class="field-error">El correo electrónico es obligatorio.</span>
+          }
+          @if (empleadoForm.get('email')?.touched && empleadoForm.get('email')?.errors?.['email']) {
+            <span class="field-error">El correo electrónico ingresado no es válido.</span>
+          }
+        </div>
+
+        @if (modoFormulario() === 'crear') {
+          <div class="form-group">
+            <label for="password" class="form-label">Contraseña Inicial *</label>
+            <input
+              id="password"
+              type="password"
+              formControlName="password"
+              class="form-control"
+              placeholder="Mínimo 4 caracteres"
+              [class.is-invalid]="empleadoForm.get('password')?.touched && empleadoForm.get('password')?.invalid"
+            />
+            @if (empleadoForm.get('password')?.touched && empleadoForm.get('password')?.errors?.['required']) {
+              <span class="field-error">La contraseña es obligatoria para el alta.</span>
+            }
+            @if (empleadoForm.get('password')?.touched && empleadoForm.get('password')?.errors?.['minlength']) {
+              <span class="field-error">La contraseña debe tener al menos 4 caracteres.</span>
+            }
+          </div>
+        }
+
+        <div class="form-group">
+          <label for="rol" class="form-label">Rol en el Sistema *</label>
+          <select id="rol" formControlName="rol" class="form-control">
+            <option value="EMPLOYEE">Empleado Operativo (EMPLOYEE)</option>
+            <option value="ADMIN">Administrador (ADMIN)</option>
+          </select>
+          <small class="form-hint">
+            Los Administradores tienen acceso total a la gestión de empleados y configuraciones.
+          </small>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" (click)="cerrarModalFormulario()" [disabled]="guardando()">
+            Cancelar
+          </button>
+          <button type="submit" class="btn btn-primary" [disabled]="guardando()">
+            @if (guardando()) {
+              <span class="spinner"></span>
+              <span>Guardando...</span>
+            } @else {
+              <span>{{ modoFormulario() === 'crear' ? 'Crear Empleado' : 'Guardar Cambios' }}</span>
+            }
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+}
+
+<!-- Modal de Confirmación para Desactivar/Reactivar -->
+@if (modalConfirmacionAbierto()) {
+  <div class="modal-backdrop" (click)="cerrarModalConfirmacion()">
+    <div class="modal-card modal-confirm" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h2 class="modal-title">
+          {{ accionConfirmacion() === 'desactivar' ? '¿Desactivar Empleado?' : '¿Reactivar Empleado?' }}
+        </h2>
+        <button type="button" class="modal-close" (click)="cerrarModalConfirmacion()">✕</button>
+      </div>
+
+      <div class="modal-body">
+        @if (accionConfirmacion() === 'desactivar') {
+          <p>
+            ¿Estás seguro de que deseás desactivar al empleado
+            <strong>"{{ empleadoAfectado()?.name }}"</strong>?
+          </p>
+          <p class="text-muted text-sm">
+            El empleado no podrá operar en el sistema hasta que sea reactivado nuevamente.
+          </p>
+        } @else {
+          <p>
+            ¿Estás seguro de que deseás reactivar al empleado
+            <strong>"{{ empleadoAfectado()?.name }}"</strong>?
+          </p>
+          <p class="text-muted text-sm">
+            El empleado recuperará el acceso a sus funcionalidades correspondientes.
+          </p>
+        }
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" (click)="cerrarModalConfirmacion()" [disabled]="guardando()">
+          Cancelar
+        </button>
+        <button
+          type="button"
+          [class]="accionConfirmacion() === 'desactivar' ? 'btn btn-danger' : 'btn btn-success'"
+          (click)="confirmarCambioEstado()"
+          [disabled]="guardando()"
+        >
+          @if (guardando()) {
+            <span class="spinner"></span>
+            <span>Procesando...</span>
+          } @else {
+            <span>{{ accionConfirmacion() === 'desactivar' ? 'Sí, Desactivar' : 'Sí, Reactivar' }}</span>
+          }
+        </button>
+      </div>
+    </div>
+  </div>
+}

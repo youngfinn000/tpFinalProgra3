@@ -1,0 +1,10 @@
+<header class="header">
+  <h1 class="logo">STRETTO</h1>
+
+  @if (usuario(); as u) {
+    <div class="user">
+      <span>{{ u.username }} ({{ u.rol }})</span>
+      <button type="button" (click)="cerrarSesion()">Cerrar sesión</button>
+    </div>
+  }
+</header>

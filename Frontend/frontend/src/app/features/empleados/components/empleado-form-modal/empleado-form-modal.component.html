@@ -1,0 +1,106 @@
+<app-modal
+  [abierto]="abierto()"
+  [titulo]="modo() === 'crear' ? 'Nuevo Empleado' : 'Editar Empleado'"
+  [anchoMaximo]="'520px'"
+  (cerrar)="onCerrar()"
+>
+  @if (error()) {
+    <div class="alert alert-danger">
+      <svg class="alert-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <circle cx="12" cy="12" r="10"></circle>
+        <line x1="15" y1="9" x2="9" y2="15"></line>
+        <line x1="9" y1="9" x2="15" y2="15"></line>
+      </svg>
+      <span>{{ error() }}</span>
+    </div>
+  }
+
+  <form [formGroup]="empleadoForm" (ngSubmit)="onSubmit()" class="empleado-form" novalidate>
+    <div class="form-group">
+      <label for="emp-name" class="form-label">Nombre completo *</label>
+      <input
+        id="emp-name"
+        type="text"
+        class="form-control"
+        formControlName="name"
+        placeholder="Ej: Juan Pérez"
+        [class.is-invalid]="empleadoForm.get('name')?.touched && empleadoForm.get('name')?.invalid"
+      />
+      @if (empleadoForm.get('name')?.touched && empleadoForm.get('name')?.errors?.['required']) {
+        <span class="field-error">El nombre es obligatorio.</span>
+      }
+      @if (empleadoForm.get('name')?.touched && empleadoForm.get('name')?.errors?.['maxlength']) {
+        <span class="field-error">Máximo 50 caracteres.</span>
+      }
+    </div>
+
+    <div class="form-group">
+      <label for="emp-email" class="form-label">Correo electrónico *</label>
+      <input
+        id="emp-email"
+        type="email"
+        class="form-control"
+        formControlName="email"
+        placeholder="ejemplo@stretto.com"
+        [class.is-invalid]="empleadoForm.get('email')?.touched && empleadoForm.get('email')?.invalid"
+      />
+      @if (empleadoForm.get('email')?.touched && empleadoForm.get('email')?.errors?.['required']) {
+        <span class="field-error">El email es obligatorio.</span>
+      }
+      @if (empleadoForm.get('email')?.touched && empleadoForm.get('email')?.errors?.['email']) {
+        <span class="field-error">Formato de email inválido.</span>
+      }
+    </div>
+
+    <div class="form-group">
+      <label for="emp-password" class="form-label">
+        Contraseña {{ modo() === 'crear' ? '*' : '(Opcional)' }}
+      </label>
+      <input
+        id="emp-password"
+        type="password"
+        class="form-control"
+        formControlName="password"
+        placeholder="{{ modo() === 'crear' ? 'Mínimo 4 caracteres' : 'Dejá en blanco para no modificar' }}"
+        [class.is-invalid]="empleadoForm.get('password')?.touched && empleadoForm.get('password')?.invalid"
+      />
+      @if (empleadoForm.get('password')?.touched && empleadoForm.get('password')?.errors?.['required']) {
+        <span class="field-error">La contraseña es obligatoria.</span>
+      }
+      @if (empleadoForm.get('password')?.touched && empleadoForm.get('password')?.errors?.['minlength']) {
+        <span class="field-error">Mínimo 4 caracteres.</span>
+      }
+    </div>
+
+    <div class="form-group">
+      <label for="emp-rol" class="form-label">Rol en el sistema *</label>
+      <select id="emp-rol" class="form-control" formControlName="rol">
+        <option value="EMPLOYEE">Empleado (Operativo / Ventas)</option>
+        <option value="ADMIN">Administrador (Acceso total)</option>
+      </select>
+    </div>
+
+    <div class="modal-actions">
+      <button
+        type="button"
+        class="btn btn-secondary"
+        (click)="onCerrar()"
+        [disabled]="guardando()"
+      >
+        Cancelar
+      </button>
+
+      <button
+        type="submit"
+        class="btn btn-primary"
+        [disabled]="guardando()"
+      >
+        @if (guardando()) {
+          <span class="spinner-small"></span>
+        }
+        {{ modo() === 'crear' ? 'Crear Empleado' : 'Guardar Cambios' }}
+      </button>
+    </div>
+  </form>
+</app-modal>
+

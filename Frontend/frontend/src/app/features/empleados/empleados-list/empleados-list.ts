@@ -1,17 +1,18 @@
 import { Component, OnInit, computed, inject, signal } from '@angular/core';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators, FormsModule } from '@angular/forms';
-import { Empleado, EmpleadoRequest, RolEmpleado } from '../models/empleado.model';
+import { FormsModule } from '@angular/forms';
+import { Empleado, EmpleadoRequest } from '../models/empleado.model';
 import { EmpleadoService } from '../services/empleado.service';
+import { EmpleadoFormModalComponent } from '../components/empleado-form-modal/empleado-form-modal.component';
+import { ConfirmDialogComponent } from '../../../shared/components/confirm-dialog/confirm-dialog.component';
 
 @Component({
   selector: 'app-empleados-list',
-  imports: [ReactiveFormsModule, FormsModule],
+  imports: [FormsModule, EmpleadoFormModalComponent, ConfirmDialogComponent],
   templateUrl: './empleados-list.html',
   styleUrl: './empleados-list.css',
 })
 export class EmpleadosList implements OnInit {
   private empleadoService = inject(EmpleadoService);
-  private fb = inject(FormBuilder);
 
   empleados = signal<Empleado[]>([]);
   cargando = signal<boolean>(false);
@@ -22,22 +23,16 @@ export class EmpleadosList implements OnInit {
 
   mensajeExito = signal<string>('');
   mensajeError = signal<string>('');
+  mensajeErrorModal = signal<string>('');
 
-  // Modales
+  // Modales desacoplados
   modalFormularioAbierto = signal<boolean>(false);
   modoFormulario = signal<'crear' | 'editar'>('crear');
-  empleadoSeleccionadoId: number | null = null;
+  empleadoSeleccionado = signal<Empleado | null>(null);
 
   modalConfirmacionAbierto = signal<boolean>(false);
   empleadoAfectado = signal<Empleado | null>(null);
   accionConfirmacion = signal<'desactivar' | 'activar'>('desactivar');
-
-  empleadoForm: FormGroup = this.fb.group({
-    name: ['', [Validators.required, Validators.maxLength(50)]],
-    email: ['', [Validators.required, Validators.email]],
-    password: ['', [Validators.required, Validators.minLength(4)]],
-    rol: ['EMPLOYEE' as RolEmpleado, [Validators.required]],
-  });
 
   // Lista filtrada computada
   empleadosFiltrados = computed(() => {
@@ -61,11 +56,18 @@ export class EmpleadosList implements OnInit {
     });
   });
 
-  // Estadísticas computadas
-  totalEmpleados = computed(() => this.empleados().length);
-  totalActivos = computed(() => this.empleados().filter((e) => e.active).length);
-  totalInactivos = computed(() => this.empleados().filter((e) => !e.active).length);
-  totalAdmins = computed(() => this.empleados().filter((e) => e.rol === 'ADMIN').length);
+
+
+  tituloConfirmacion = computed(() =>
+    this.accionConfirmacion() === 'desactivar' ? '¿Desactivar Empleado?' : '¿Reactivar Empleado?'
+  );
+
+  mensajeConfirmacion = computed(() => {
+    const nombre = this.empleadoAfectado()?.name ?? '';
+    return this.accionConfirmacion() === 'desactivar'
+      ? `¿Estás seguro de que deseás desactivar al empleado "${nombre}"? No podrá operar en el sistema hasta que sea reactivado.`
+      : `¿Estás seguro de que deseás reactivar al empleado "${nombre}"? El empleado recuperará el acceso a sus funcionalidades correspondientes.`;
+  });
 
   ngOnInit(): void {
     this.cargarEmpleados();
@@ -94,55 +96,26 @@ export class EmpleadosList implements OnInit {
 
   abrirModalCrear(): void {
     this.modoFormulario.set('crear');
-    this.empleadoSeleccionadoId = null;
-    this.empleadoForm.reset({
-      name: '',
-      email: '',
-      password: '',
-      rol: 'EMPLOYEE',
-    });
-    this.empleadoForm.get('password')?.setValidators([Validators.required, Validators.minLength(4)]);
-    this.empleadoForm.get('password')?.updateValueAndValidity();
+    this.empleadoSeleccionado.set(null);
+    this.mensajeErrorModal.set('');
     this.modalFormularioAbierto.set(true);
-    this.mensajeError.set('');
   }
 
   abrirModalEditar(emp: Empleado): void {
     this.modoFormulario.set('editar');
-    this.empleadoSeleccionadoId = emp.id;
-    this.empleadoForm.reset({
-      name: emp.name,
-      email: emp.email,
-      password: 'dummyPassword123', // El backend requiere el campo @NotBlank para pasar @Valid en update
-      rol: emp.rol,
-    });
-    // En edición, no exigimos contraseña al usuario
-    this.empleadoForm.get('password')?.clearValidators();
-    this.empleadoForm.get('password')?.updateValueAndValidity();
+    this.empleadoSeleccionado.set(emp);
+    this.mensajeErrorModal.set('');
     this.modalFormularioAbierto.set(true);
-    this.mensajeError.set('');
   }
 
   cerrarModalFormulario(): void {
     this.modalFormularioAbierto.set(false);
+    this.empleadoSeleccionado.set(null);
   }
 
-  guardarEmpleado(): void {
-    if (this.empleadoForm.invalid) {
-      this.empleadoForm.markAllAsTouched();
-      return;
-    }
-
+  guardarEmpleado(request: EmpleadoRequest): void {
     this.guardando.set(true);
-    this.mensajeError.set('');
-
-    const formValue = this.empleadoForm.value;
-    const request: EmpleadoRequest = {
-      name: formValue.name.trim(),
-      email: formValue.email.trim(),
-      passwordHash: formValue.password || 'password123',
-      rol: formValue.rol,
-    };
+    this.mensajeErrorModal.set('');
 
     if (this.modoFormulario() === 'crear') {
       this.empleadoService.crear(request).subscribe({
@@ -155,14 +128,15 @@ export class EmpleadosList implements OnInit {
         error: (err) => {
           this.guardando.set(false);
           console.error('Error al crear empleado:', err);
-          this.mensajeError.set(
+          this.mensajeErrorModal.set(
             err.error?.message || 'Error al crear el empleado. Verificá los datos ingresados.'
           );
         },
       });
     } else {
-      if (!this.empleadoSeleccionadoId) return;
-      this.empleadoService.actualizar(this.empleadoSeleccionadoId, request).subscribe({
+      const emp = this.empleadoSeleccionado();
+      if (!emp) return;
+      this.empleadoService.actualizar(emp.id, request).subscribe({
         next: (actualizado) => {
           this.guardando.set(false);
           this.modalFormularioAbierto.set(false);
@@ -172,7 +146,7 @@ export class EmpleadosList implements OnInit {
         error: (err) => {
           this.guardando.set(false);
           console.error('Error al actualizar empleado:', err);
-          this.mensajeError.set(
+          this.mensajeErrorModal.set(
             err.error?.message || 'Error al actualizar el empleado.'
           );
         },

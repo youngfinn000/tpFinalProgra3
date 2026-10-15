@@ -13,8 +13,7 @@ export class Header {
 
   usuario = this.auth.usuario;
 
-  cerrarSesion() {
+  cerrarSesion(): void {
     this.auth.logout();
-    this.router.navigate(['/login']);
   }
 }

@@ -13,7 +13,7 @@ export class SaborDetalle {
   private svc = inject(SaborService);
   private route = inject(ActivatedRoute);
 
-  esAdmin = signal(true); // TEMPORAL: reemplazar por el rol real
+  esAdmin = signal(true); 
 
   sabor = signal<Sabor | null>(null);
   error = signal('');

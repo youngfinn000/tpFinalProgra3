@@ -68,6 +68,20 @@ export const routes: Routes = [
         loadComponent: () =>
           import('./features/insumos/insumo-form/insumo-form').then((m) => m.InsumoForm),
       },
+      {
+        path: 'productos',
+        canActivate: [authGuard],
+        loadComponent: () =>
+          import('./features/productos/producto-list/producto-list').then((m) => m.ProductoList),
+      },
+      {
+        path: 'productos/:id',
+        canActivate: [authGuard],
+        loadComponent: () =>
+          import('./features/productos/producto-detalle/producto-detalle').then(
+            (m) => m.ProductoDetalle,
+          ),
+      },
     ],
   },
   { path: '**', redirectTo: '' },

@@ -50,6 +50,18 @@ export const routes: Routes = [
         loadComponent: () =>
           import('./features/sabores/sabor-detalle/sabor-detalle').then((m) => m.SaborDetalle),
       },
+      {
+        path: 'productos',
+        canActivate: [authGuard],
+        loadComponent: () =>
+          import('./features/productos/producto-list/producto-list').then((m) => m.ProductoList),
+      },
+      {
+        path: 'productos/:id',
+        canActivate: [authGuard],
+        loadComponent: () =>
+          import('./features/productos/producto-detalle/producto-detalle').then((m) => m.ProductoDetalle),
+      },
     ],
   },
   { path: '**', redirectTo: '' },

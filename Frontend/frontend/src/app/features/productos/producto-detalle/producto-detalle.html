@@ -1,0 +1,158 @@
+<section class="detalle-page">
+  <!-- Navegación superior / Breadcrumb -->
+  <div class="breadcrumb-bar">
+    <a routerLink="/productos" class="back-link">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="back-icon">
+        <line x1="19" y1="12" x2="5" y2="12"></line>
+        <polyline points="12 19 5 12 12 5"></polyline>
+      </svg>
+      <span>Volver al Catálogo</span>
+    </a>
+  </div>
+
+  @if (cargando()) {
+    <div class="loading-container">
+      <span class="spinner-large"></span>
+      <p>Cargando detalle del producto...</p>
+    </div>
+  } @else if (error()) {
+    <div class="alert alert-danger">
+      <svg class="alert-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <circle cx="12" cy="12" r="10"></circle>
+        <line x1="15" y1="9" x2="9" y2="15"></line>
+        <line x1="9" y1="9" x2="15" y2="15"></line>
+      </svg>
+      <span class="alert-text">{{ error() }}</span>
+    </div>
+    <div class="mt-3">
+      <a routerLink="/productos" class="btn btn-secondary">Volver al listado</a>
+    </div>
+  } @else if (producto(); as prod) {
+    <!-- Encabezado de Detalle -->
+    <header class="detail-page-header">
+      <div class="header-main">
+        <div class="product-badge-category">
+          {{ prod.categoriaLabel }}
+        </div>
+        <h1 class="product-title">{{ prod.nombre }}</h1>
+        <p class="product-subtitle">
+          Ficha técnica y estado del producto en el catálogo de STRETTO
+        </p>
+      </div>
+
+      <div class="header-status">
+        @if (prod.activo) {
+          <span class="badge badge-active">Activo para la venta</span>
+        } @else {
+          <span class="badge badge-inactive">Inactivo</span>
+        }
+      </div>
+    </header>
+
+    <!-- Contenido Principal: Grid de tarjetas independientes -->
+    <div class="detail-grid">
+      <!-- Columna Principal -->
+      <div class="main-column">
+        <!-- Tarjeta de Presentación y Precios -->
+        <div class="card detail-card">
+          <div class="card-hero">
+            <div class="hero-icon-container">
+              @if (prod.categoria === 'GELATO') {
+                <lucide-icon name="ice-cream-cone" [size]="28" class="hero-icon-svg"></lucide-icon>
+              } @else if (prod.categoria === 'POSTRES_HELADOS') {
+                <lucide-icon name="cake-slice" [size]="28" class="hero-icon-svg"></lucide-icon>
+              } @else if (prod.categoria === 'BATIDOS') {
+                <lucide-icon name="cup-soda" [size]="28" class="hero-icon-svg"></lucide-icon>
+              } @else {
+                <lucide-icon name="flame" [size]="28" class="hero-icon-svg"></lucide-icon>
+              }
+            </div>
+            <div class="hero-info">
+              <span class="hero-tag">Precio Oficial</span>
+              <!-- TASK: Mostrar precio del producto -->
+              <span class="hero-price">{{ formatoPrecio(prod.precio) }}</span>
+              <span class="hero-subtext">Precio final al consumidor en salón y retiro</span>
+            </div>
+          </div>
+
+          <div class="card-divider"></div>
+
+          <!-- Descripción -->
+          <div class="section-block">
+            <h3 class="section-title">Descripción del Producto</h3>
+            <p class="section-description">
+              {{ prod.descripcion || 'Producto elaborado artesanalmente en STRETTO con ingredientes de primera calidad.' }}
+            </p>
+          </div>
+        </div>
+
+        <!-- Tarjeta de Especificaciones de Producción -->
+        <div class="card specs-card">
+          <h3 class="section-title">Especificaciones de Venta</h3>
+          <dl class="specs-list">
+            <div class="spec-row">
+              <dt>Categoría</dt>
+              <dd>
+                <span class="category-pill-sm">{{ prod.categoriaLabel }}</span>
+              </dd>
+            </div>
+            <div class="spec-row">
+              <dt>Cantidad de Sabores</dt>
+              <dd>
+                @if (prod.maxSabores && prod.maxSabores > 0) {
+                  <strong>Hasta {{ prod.maxSabores }} {{ prod.maxSabores === 1 ? 'sabor' : 'sabores' }}</strong>
+                } @else {
+                  <span>Porción cerrada / Sin selección de sabores</span>
+                }
+              </dd>
+            </div>
+            <div class="spec-row">
+              <dt>Código de Producto</dt>
+              <dd class="font-mono">#{{ prod.id }}</dd>
+            </div>
+          </dl>
+        </div>
+      </div>
+
+      <!-- Columna Lateral -->
+      <div class="side-column">
+        <!-- Tarjeta de Stock -->
+        <!-- TASK: Mostrar stock del producto -->
+        <div class="card stock-card">
+          <h3 class="section-title">Estado de Inventario</h3>
+          
+          <div class="stock-status-block">
+            <span class="stock-pill" [ngClass]="obtenerClaseStock(prod.stock)">
+              <span class="stock-dot"></span>
+              {{ obtenerTextoStock(prod.stock) }}
+            </span>
+            <p class="stock-hint">
+              @if (prod.stock > 10) {
+                Stock en niveles óptimos para la operación.
+              } @else if (prod.stock > 0) {
+                Stock bajo. Se sugiere planificar reposición o producción.
+              } @else {
+                Sin existencias disponibles en el mostrador.
+              }
+            </p>
+          </div>
+
+          <div class="stock-meter">
+            <div class="stock-meter-bar" [style.width.%]="prod.stock > 40 ? 100 : (prod.stock * 2.5)"></div>
+          </div>
+        </div>
+
+        <!-- Acciones Rápidas -->
+        <div class="card actions-card">
+          <h3 class="section-title">Acciones</h3>
+          <div class="actions-stack">
+            <a routerLink="/productos" class="btn btn-secondary full-width">
+              ← Volver al Catálogo
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  }
+</section>
+

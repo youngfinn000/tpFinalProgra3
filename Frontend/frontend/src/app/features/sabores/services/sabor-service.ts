@@ -4,7 +4,6 @@ import { Observable, catchError, forkJoin, map, of, throwError } from 'rxjs';
 import { environment } from '../../../../environments/environment';
 import { Sabor, SaborForm } from '../models/sabor.model';
 
-// Ajustá estos nombres a tu FlavorsDTOResponse
 interface FlavorDTO {
   id: number;
   name: string;
@@ -18,7 +17,6 @@ const toSabor = (d: FlavorDTO): Sabor => ({
   activo: d.activeInactive ?? d.activeInactive ?? false,
 });
 
-// Ajustá estos nombres a tu FlavorsDTORequest
 const toRequest = (r: SaborForm) => ({
   name: r.nombre,
 });

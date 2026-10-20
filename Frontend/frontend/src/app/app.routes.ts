@@ -51,6 +51,24 @@ export const routes: Routes = [
           import('./features/sabores/sabor-detalle/sabor-detalle').then((m) => m.SaborDetalle),
       },
       {
+        path: 'insumos',
+        canActivate: [adminGuard],
+        loadComponent: () =>
+          import('./features/insumos/insumos-list/insumo-list').then((m) => m.InsumoLista),
+      },
+      {
+        path: 'insumos/nuevo',
+        canActivate: [adminGuard],
+        loadComponent: () =>
+          import('./features/insumos/insumo-form/insumo-form').then((m) => m.InsumoForm),
+      },
+      {
+        path: 'insumos/:id/editar',
+        canActivate: [adminGuard],
+        loadComponent: () =>
+          import('./features/insumos/insumo-form/insumo-form').then((m) => m.InsumoForm),
+      },
+      {
         path: 'productos',
         canActivate: [authGuard],
         loadComponent: () =>
@@ -60,7 +78,9 @@ export const routes: Routes = [
         path: 'productos/:id',
         canActivate: [authGuard],
         loadComponent: () =>
-          import('./features/productos/producto-detalle/producto-detalle').then((m) => m.ProductoDetalle),
+          import('./features/productos/producto-detalle/producto-detalle').then(
+            (m) => m.ProductoDetalle,
+          ),
       },
     ],
   },

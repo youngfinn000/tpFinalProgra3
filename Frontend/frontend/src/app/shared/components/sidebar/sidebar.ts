@@ -7,7 +7,7 @@ interface MenuItem {
   label: string;
   ruta: string;
   roles: Rol[];
-  icono: 'empleados' | 'clientes' | 'sabores' | 'productos';
+  icono: 'empleados' | 'clientes' | 'sabores' | 'productos' | 'insumos';
 }
 
 @Component({
@@ -20,13 +20,39 @@ export class Sidebar {
   private auth = inject(AuthService);
 
   private items: MenuItem[] = [
-    { label: 'Productos', ruta: '/productos', roles: ['ROLE_ADMIN', 'ROLE_USER'], icono: 'productos' },
-    { label: 'Sabores', ruta: '/sabores', roles: ['ROLE_ADMIN', 'ROLE_USER'], icono: 'sabores' },
-    { label: 'Empleados', ruta: '/empleados', roles: ['ROLE_ADMIN'], icono: 'empleados' },
-    { label: 'Clientes mayoristas', ruta: '/clientes-mayoristas', roles: ['ROLE_ADMIN', 'ROLE_USER', 'ROLE_WHOLESALE'], icono: 'clientes' },
+    {
+      label: 'Productos',
+      ruta: '/productos',
+      roles: ['ROLE_ADMIN', 'ROLE_USER'],
+      icono: 'productos',
+    },
+    {
+      label: 'Sabores',
+      ruta: '/sabores',
+      roles: ['ROLE_ADMIN', 'ROLE_USER'],
+      icono: 'sabores',
+    },
+    {
+      label: 'Insumos',
+      ruta: '/insumos',
+      roles: ['ROLE_ADMIN'],
+      icono: 'insumos',
+    },
+    {
+      label: 'Empleados',
+      ruta: '/empleados',
+      roles: ['ROLE_ADMIN'],
+      icono: 'empleados',
+    },
+    {
+      label: 'Clientes mayoristas',
+      ruta: '/clientes-mayoristas',
+      roles: ['ROLE_ADMIN', 'ROLE_USER', 'ROLE_WHOLESALE'],
+      icono: 'clientes',
+    },
   ];
-  
-  menu = computed(() => this.items.filter((i) => this.auth.tieneRol(...i.roles)));
 
-  
+  menu = computed(() =>
+    this.items.filter((item) => this.auth.tieneRol(...item.roles)),
+  );
 }

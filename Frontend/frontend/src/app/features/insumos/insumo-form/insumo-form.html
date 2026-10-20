@@ -1,0 +1,101 @@
+<section class="page">
+  <header class="page-header">
+    <div>
+      <h1 class="page-title">
+        {{ esEdicion() ? 'Editar insumo' : 'Nuevo insumo' }}
+      </h1>
+      <p class="page-subtitle">
+        {{
+          esEdicion() ? 'Modificá los datos del insumo.' : 'Registrá un nuevo insumo para STRETTO.'
+        }}
+      </p>
+    </div>
+  </header>
+
+  @if (error()) {
+    <div class="alert alert-danger">
+      <span>{{ error() }}</span>
+      <button type="button" class="alert-close" (click)="error.set('')">✕</button>
+    </div>
+  }
+
+  <div class="form-card">
+    <form [formGroup]="form" (ngSubmit)="guardar()">
+      <div class="form-grid">
+        <div class="form-group">
+          <label for="nombre">Nombre del insumo *</label>
+          <input id="nombre" type="text" formControlName="nombre" placeholder="Ej.: Leche" />
+
+          @if (form.controls.nombre.touched && form.controls.nombre.hasError('required')) {
+            <small class="field-error">El nombre es obligatorio.</small>
+          }
+
+          @if (form.controls.nombre.touched && form.controls.nombre.hasError('maxlength')) {
+            <small class="field-error"> El nombre no puede superar los 100 caracteres. </small>
+          }
+        </div>
+
+        <div class="form-group">
+          <label for="unidad">Unidad de medida *</label>
+          <select id="unidad" formControlName="unidad">
+            @for (unidad of unidades; track unidad.valor) {
+              <option [value]="unidad.valor">
+                {{ unidad.etiqueta }}
+              </option>
+            }
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="stockActual">Stock actual *</label>
+          <input id="stockActual" type="number" min="0" step="any" formControlName="stockActual" />
+
+          @if (form.controls.stockActual.touched && form.controls.stockActual.invalid) {
+            <small class="field-error"> El stock debe ser igual o mayor a cero. </small>
+          }
+        </div>
+
+        <div class="form-group">
+          <label for="puntoReposicion">Punto de reposición *</label>
+          <input
+            id="puntoReposicion"
+            type="number"
+            min="0"
+            step="any"
+            formControlName="puntoReposicion"
+          />
+
+          @if (form.controls.puntoReposicion.touched && form.controls.puntoReposicion.invalid) {
+            <small class="field-error">
+              El punto de reposición debe ser igual o mayor a cero.
+            </small>
+          }
+        </div>
+
+        <div class="form-group">
+          <label for="estado">Estado *</label>
+          <select id="estado" formControlName="estado">
+            <option value="ACTIVE">Activo</option>
+            <option value="INACTIVE">Inactivo</option>
+            <option value="OUT_OF_STOCK">Sin stock</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-actions">
+        <button
+          type="button"
+          class="btn btn-secondary"
+          (click)="cancelar()"
+          [disabled]="guardando()"
+        >
+          Cancelar
+        </button>
+
+        <button type="submit" class="btn btn-primary" [disabled]="guardando()">
+          {{ guardando() ? 'Guardando...' : esEdicion() ? 'Guardar cambios' : 'Crear insumo' }}
+        </button>
+      </div>
+    </form>
+  </div>
+</section>

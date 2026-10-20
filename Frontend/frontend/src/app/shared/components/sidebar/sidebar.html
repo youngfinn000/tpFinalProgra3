@@ -1,10 +1,15 @@
 <aside class="sidebar">
   <div class="sidebar-section-title">NAVEGACIÓN</div>
+
   <nav class="sidebar-nav">
     <ul class="sidebar-menu">
       @for (item of menu(); track item.ruta) {
         <li>
-          <a [routerLink]="item.ruta" routerLinkActive="active" class="sidebar-link">
+          <a
+            [routerLink]="item.ruta"
+            routerLinkActive="active"
+            class="sidebar-link"
+          >
             @if (item.icono === 'empleados') {
               <svg
                 viewBox="0 0 24 24"
@@ -32,6 +37,23 @@
                 <path d="M17 7A5 5 0 0 0 7 7"></path>
                 <path d="M17 7a2 2 0 0 1 0 4H7a2 2 0 0 1 0-4"></path>
               </svg>
+            } @else if (item.icono === 'insumos') {
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.75"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                class="link-icon"
+              >
+                <circle cx="12" cy="19" r="2"></circle>
+                <circle cx="12" cy="5" r="2"></circle>
+                <circle cx="16" cy="12" r="2"></circle>
+                <circle cx="20" cy="19" r="2"></circle>
+                <circle cx="4" cy="19" r="2"></circle>
+                <circle cx="8" cy="12" r="2"></circle>
+              </svg>
             } @else {
               <svg
                 viewBox="0 0 24 24"
@@ -44,6 +66,7 @@
                 <circle cx="12" cy="7" r="4"></circle>
               </svg>
             }
+
             <span class="link-text">{{ item.label }}</span>
           </a>
         </li>

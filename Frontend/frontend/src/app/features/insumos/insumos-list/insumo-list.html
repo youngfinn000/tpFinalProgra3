@@ -1,0 +1,109 @@
+<section class="page">
+  <header class="page-header">
+    <div>
+      <h1 class="page-title">Gestión de Insumos</h1>
+      <p class="page-subtitle">
+        Administrá los insumos y su stock en STRETTO
+      </p>
+    </div>
+
+    <a routerLink="/insumos/nuevo" class="btn btn-primary">
+      + Nuevo Insumo
+    </a>
+  </header>
+
+  @if (error()) {
+    <div class="alert alert-danger">
+      <span class="alert-text">{{ error() }}</span>
+
+      <button
+        type="button"
+        class="alert-close"
+        (click)="error.set('')"
+      >
+        ✕
+      </button>
+    </div>
+  }
+
+  <div class="table-card">
+    <div class="table-scroll">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Nombre</th>
+            <th>Unidad de medida</th>
+            <th>Stock actual</th>
+            <th>Estado</th>
+            <th class="col-actions">Acciones</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          @for (i of insumos(); track i.id) {
+            <tr>
+              <td class="cell-id">#{{ i.id }}</td>
+
+              <td class="cell-name">{{ i.nombre }}</td>
+
+              <td>
+                <span class="chip">
+                  {{ etiquetaUnidad(i.unidad) }}
+                </span>
+              </td>
+
+              <td class="cell-stock">
+                {{ i.stockActual }}
+              </td>
+
+              <td>
+                <span
+                  class="badge"
+                  [class.badge-success]="i.estado === 'ACTIVE'"
+                  [class.badge-muted]="i.estado === 'INACTIVE'"
+                  [class.badge-danger]="i.estado === 'OUT_OF_STOCK'"
+                >
+                  {{
+                    i.estado === 'ACTIVE'
+                      ? 'Activo'
+                      : i.estado === 'INACTIVE'
+                        ? 'Inactivo'
+                        : i.estado === 'OUT_OF_STOCK'
+                          ? 'Sin stock'
+                          : i.estado
+                  }}
+                </span>
+              </td>
+
+              <td class="col-actions">
+                <div class="actions">
+                  <a
+                    class="action-btn"
+                    [routerLink]="['/insumos', i.id, 'editar']"
+                  >
+                    Editar
+                  </a>
+
+                  <button
+                    type="button"
+                    class="action-btn action-danger"
+                    (click)="eliminar(i)"
+                  >
+                    Eliminar
+                  </button>
+                </div>
+              </td>
+            </tr>
+          } @empty {
+            <tr>
+              <td colspan="6" class="empty-state">
+                No hay insumos cargados
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>

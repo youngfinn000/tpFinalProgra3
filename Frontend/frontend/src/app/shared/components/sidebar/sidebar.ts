@@ -7,7 +7,7 @@ interface MenuItem {
   label: string;
   ruta: string;
   roles: Rol[];
-  icono: 'empleados' | 'clientes' | 'sabores';
+  icono: 'empleados' | 'clientes' | 'sabores' | 'insumos';
 }
 
 @Component({
@@ -23,6 +23,7 @@ export class Sidebar {
     { label: 'Empleados', ruta: '/empleados', roles: ['ROLE_ADMIN'], icono: 'empleados' },
     { label: 'Clientes mayoristas', ruta: '/clientes-mayoristas', roles: ['ROLE_ADMIN', 'ROLE_USER', 'ROLE_WHOLESALE'], icono: 'clientes' },
     { label: 'Sabores', ruta: '/sabores', roles: ['ROLE_ADMIN', 'ROLE_USER'] , icono: 'sabores' },
+    { label: 'Insumos', ruta: '/insumos', roles: ['ROLE_ADMIN'] , icono: 'insumos' },
   ];
   
   menu = computed(() => this.items.filter((i) => this.auth.tieneRol(...i.roles)));

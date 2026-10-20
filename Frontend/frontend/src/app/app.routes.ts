@@ -28,6 +28,28 @@ export const routes: Routes = [
             (m) => m.ClientesList,
           ),
       },
+      {
+        path: 'sabores',
+        loadComponent: () =>
+          import('./features/sabores/sabor-list/sabor-list').then((m) => m.SaborList),
+      },
+      {
+        path: 'sabores/nuevo',
+        canActivate: [adminGuard],
+        loadComponent: () =>
+          import('./features/sabores/sabor-form/sabor-form').then((m) => m.SaborForm),
+      },
+      {
+        path: 'sabores/:id/editar',
+        canActivate: [adminGuard],
+        loadComponent: () =>
+          import('./features/sabores/sabor-form/sabor-form').then((m) => m.SaborForm),
+      },
+      {
+        path: 'sabores/:id',
+        loadComponent: () =>
+          import('./features/sabores/sabor-detalle/sabor-detalle').then((m) => m.SaborDetalle),
+      },
     ],
   },
   { path: '**', redirectTo: '' },

@@ -21,9 +21,11 @@ public class StockServiceImpl implements StockService {
 
     @Override
     public StockDTOResponse create(StockDTORequest request) {
-        StockEntity response = StockMapper.toEntity(request);
-        StockEntity saved = repository.save(response);
+        StockEntity entity = StockMapper.toEntity(request);
 
+        entity.setStatus(calcularEstado(entity.getCurrentStock()));
+
+        StockEntity saved = repository.save(entity);
         return StockMapper.toResponse(saved);
     }
 
@@ -52,7 +54,8 @@ public class StockServiceImpl implements StockService {
         entity.setCurrentStock(request.getCurrentStock());
         entity.setMinimumStock(request.getMinimumStock());
         entity.setUnit(request.getUnitMeasurement());
-        entity.setStatus(request.getStatus());
+
+        entity.setStatus(calcularEstado(entity.getCurrentStock()));
 
         StockEntity saved = repository.save(entity);
         return StockMapper.toResponse(saved);
@@ -60,17 +63,18 @@ public class StockServiceImpl implements StockService {
 
     @Override
     public StockDTOResponse ToDiscount(Long id, Double qty) {
-
         StockEntity entity = repository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Stock Not Found"));
 
         if (entity.getCurrentStock() < qty) {
-            throw new InsufficientStockException("The quantity to be deducted is greater than the stock");
+            throw new InsufficientStockException(
+                    "The quantity to be deducted is greater than the stock");
         }
 
         entity.setCurrentStock(entity.getCurrentStock() - qty);
-        StockEntity saved = repository.save(entity);
+        entity.setStatus(calcularEstado(entity.getCurrentStock()));
 
+        StockEntity saved = repository.save(entity);
         return StockMapper.toResponse(saved);
     }
 
@@ -99,6 +103,14 @@ public class StockServiceImpl implements StockService {
 
         entity.setStatus(StatusEnum.INACTIVE);
         repository.save(entity);
+    }
+
+    private StatusEnum calcularEstado(Double stockActual) {
+        if (stockActual <= 0) {
+            return StatusEnum.OUT_OF_STOCK;
+        }
+
+        return StatusEnum.ACTIVE;
     }
 
 }

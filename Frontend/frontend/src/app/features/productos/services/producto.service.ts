@@ -284,6 +284,46 @@ export class ProductoService {
     );
   }
 
+  
+  createProducto(datos: any): Observable<Producto> {
+    // Armamos el DTO que espera la API
+    const body: ProductoDTORequest = {
+      name: datos.nombre,
+      price: Number(datos.precio),
+      stock: Number(datos.stock),
+      maxFlavors: datos.saboresMax ? Number(datos.saboresMax) : undefined,
+      active: datos.activo ?? true
+    };
+
+    return this.http.post<ProductoDTOResponse>(this.url, body).pipe(
+      map((dto) => {
+        const nuevoProd = mapDtoToProducto(dto);
+        this.mockProductos.unshift(nuevoProd);
+        return nuevoProd;
+      }),
+      catchError((err) => {
+        console.warn('Backend /products no disponible para crear. Guardando localmente:', err.message);
+
+        const cat = inferirCategoria(datos.nombre);
+        const nuevoProdLocal: Producto = {
+          id: this.mockProductos.length + 1,
+          nombre: datos.nombre,
+          precio: Number(datos.precio) || 0,
+          activo: datos.activo ?? true,
+          stock: Number(datos.stock) || 0,
+          maxSabores: datos.saboresMax ? Number(datos.saboresMax) : 0,
+          categoria: cat.categoria,
+          categoriaLabel: cat.label,
+          categoriaIcono: cat.icono,
+          descripcion: datos.descripcion || `Producto artesanal STRETTO: ${datos.nombre}.`
+        };
+
+        this.mockProductos.unshift(nuevoProdLocal);
+        return of(nuevoProdLocal);
+      })
+    );
+  }
+
   private actualizarEstadoLocal(id: number, activo: boolean): void {
     const idx = this.mockProductos.findIndex((p) => p.id === id);
     if (idx !== -1) {

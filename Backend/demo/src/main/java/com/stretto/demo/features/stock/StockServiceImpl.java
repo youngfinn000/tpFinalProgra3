@@ -5,9 +5,11 @@ import com.stretto.demo.common.exception.NotFoundException;
 import com.stretto.demo.features.stock.domain.StockEntity;
 import com.stretto.demo.features.stock.domain.dto.StockDTORequest;
 import com.stretto.demo.features.stock.domain.dto.StockDTOResponse;
+import com.stretto.demo.features.stock.domain.enums.StatusEnum;
 import com.stretto.demo.features.stock.domain.mapper.StockMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -56,15 +58,13 @@ public class StockServiceImpl implements StockService {
         return StockMapper.toResponse(saved);
     }
 
-
-
     @Override
     public StockDTOResponse ToDiscount(Long id, Double qty) {
 
         StockEntity entity = repository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Stock Not Found"));
 
-        if(entity.getCurrentStock() < qty){
+        if (entity.getCurrentStock() < qty) {
             throw new InsufficientStockException("The quantity to be deducted is greater than the stock");
         }
 
@@ -91,7 +91,14 @@ public class StockServiceImpl implements StockService {
                 .toList();
     }
 
+    @Override
+    @Transactional
+    public void delete(Long id) {
+        StockEntity entity = repository.findById(id)
+                .orElseThrow(() -> new NotFoundException("Stock Not Found with id: " + id));
 
-
+        entity.setStatus(StatusEnum.INACTIVE);
+        repository.save(entity);
+    }
 
 }

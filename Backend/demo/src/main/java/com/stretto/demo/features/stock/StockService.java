@@ -20,4 +20,6 @@ public interface StockService {
     Boolean isLow(Long id);
 
     List<StockDTOResponse> findAllLow();
+
+    void delete(Long id);
 }

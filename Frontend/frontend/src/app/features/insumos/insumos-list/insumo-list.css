@@ -189,3 +189,48 @@ a.btn {
   background-color: #F8E8E8;
   border-color: #A63D40;
 }
+
+.stock-summary {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1rem;
+}
+
+.stock-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding: 1.25rem;
+  border: 1px solid var(--border-color, #e5e7eb);
+  border-radius: 12px;
+  background: var(--surface, #ffffff);
+}
+
+.stock-label {
+  color: var(--text-secondary, #6b7280);
+  font-size: 0.9rem;
+}
+
+.stock-number {
+  color: var(--text-primary, #263238);
+  font-size: 1.8rem;
+}
+
+.stock-card-warning {
+  border-left: 4px solid #d97706;
+}
+
+.stock-card-danger {
+  border-left: 4px solid #dc2626;
+}
+
+.badge-warning {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+@media (max-width: 700px) {
+  .stock-summary {
+    grid-template-columns: 1fr;
+  }
+}

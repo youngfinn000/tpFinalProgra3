@@ -68,7 +68,6 @@ export class InsumoForm {
           unidad: insumo.unidad,
           stockActual: insumo.stockActual,
           puntoReposicion: insumo.puntoReposicion,
-          estado: insumo.estado,
         });
       },
       error: () => {

@@ -1,8 +1,9 @@
+
 import { HttpClient } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { map } from 'rxjs';
 import { environment } from '../../../../environments/environment';
-import { Insumo , InsumoRequest, ESTADO_ACTIVO} from '../models/insumo';
+import { Insumo, InsumoRequest } from '../models/insumo';
 
 interface StockDTO {
   id: number;
@@ -27,7 +28,7 @@ const toRequest = (r: InsumoRequest) => ({
   currentStock: r.stockActual,
   minimumStock: r.puntoReposicion,
   unitMeasurement: r.unidad,
-  status: r.estado ?? ESTADO_ACTIVO,
+  status: r.stockActual <= 0 ? 'INACTIVE' : 'ACTIVE',
 });
 
 @Injectable({

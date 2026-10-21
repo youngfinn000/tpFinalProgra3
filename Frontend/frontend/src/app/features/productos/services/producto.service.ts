@@ -324,6 +324,77 @@ export class ProductoService {
     );
   }
 
+  /**
+   * Actualiza un producto existente
+   */
+  actualizarProducto(id: number, datos: any): Observable<Producto> {
+    const body: ProductoDTORequest = {
+      name: datos.nombre,
+      price: Number(datos.precio),
+      stock: Number(datos.stock),
+      maxFlavors: datos.saboresMax ? Number(datos.saboresMax) : undefined,
+      active: datos.activo ?? true
+    };
+
+    return this.http.put<ProductoDTOResponse>(`${this.url}/${id}`, body).pipe(
+      map((dto) => {
+        const actualizado = mapDtoToProducto(dto);
+        this.actualizarLocal(id, actualizado);
+        return actualizado;
+      }),
+      catchError((err) => {
+        console.warn('Backend no disponible para actualizar. Modificando localmente:', err.message);
+        const cat = inferirCategoria(datos.nombre);
+        const prodActualizado: Producto = {
+          id,
+          nombre: datos.nombre,
+          precio: Number(datos.precio),
+          activo: datos.activo ?? true,
+          stock: Number(datos.stock) || 0,
+          maxSabores: datos.saboresMax ? Number(datos.saboresMax) : 0,
+          categoria: cat.categoria,
+          categoriaLabel: cat.label,
+          categoriaIcono: cat.icono,
+          descripcion: datos.descripcion || ''
+        };
+        this.actualizarLocal(id, prodActualizado);
+        return of(prodActualizado);
+      })
+    );
+  }
+
+  /**
+   * Actualización rápida de solo el precio
+   */
+  actualizarPrecio(id: number, nuevoPrecio: number): Observable<Producto> {
+    return this.http.patch<ProductoDTOResponse>(`${this.url}/${id}/precio`, { price: nuevoPrecio }).pipe(
+      map((dto) => {
+        const actualizado = mapDtoToProducto(dto);
+        this.actualizarPrecioLocal(id, nuevoPrecio);
+        return actualizado;
+      }),
+      catchError(() => {
+        this.actualizarPrecioLocal(id, nuevoPrecio);
+        const prod = this.mockProductos.find((p) => p.id === id);
+        return of(prod!);
+      })
+    );
+  }
+
+  private actualizarLocal(id: number, prod: Producto): void {
+    const idx = this.mockProductos.findIndex((p) => p.id === id);
+    if (idx !== -1) {
+      this.mockProductos[idx] = prod;
+    }
+  }
+
+  private actualizarPrecioLocal(id: number, precio: number): void {
+    const idx = this.mockProductos.findIndex((p) => p.id === id);
+    if (idx !== -1) {
+      this.mockProductos[idx] = { ...this.mockProductos[idx], precio };
+    }
+  }
+
   private actualizarEstadoLocal(id: number, activo: boolean): void {
     const idx = this.mockProductos.findIndex((p) => p.id === id);
     if (idx !== -1) {

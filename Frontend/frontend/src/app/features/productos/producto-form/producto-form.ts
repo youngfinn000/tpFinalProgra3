@@ -17,10 +17,10 @@ export class ProductoForm implements OnInit {
   private router = inject(Router);
   private route = inject(ActivatedRoute);
 
-  // Signals para estado
   esEdicion = signal<boolean>(false);
   guardando = signal<boolean>(false);
   error = signal<string>('');
+  mensajeExito = signal<string>('');
   productoId: number | null = null;
 
   form: FormGroup = this.fb.group({
@@ -69,17 +69,26 @@ export class ProductoForm implements OnInit {
 
     this.guardando.set(true);
     this.error.set('');
+    this.mensajeExito.set('');
 
     const datos = this.form.value;
+    const peticion$ = this.esEdicion() && this.productoId
+      ? this.productoService.actualizarProducto(this.productoId, datos)
+      : this.productoService.createProducto(datos);
 
-    this.productoService.createProducto(datos).subscribe({
+    peticion$.subscribe({
       next: () => {
         this.guardando.set(false);
-        this.router.navigate(['/productos']);
+        this.mensajeExito.set(
+          this.esEdicion()
+            ? '¡Producto actualizado correctamente!'
+            : '¡Producto creado con éxito!'
+        );
+        setTimeout(() => this.router.navigate(['/productos']), 1200);
       },
       error: (err) => {
         this.guardando.set(false);
-        this.error.set('Error al guardar el producto. Intente nuevamente.');
+        this.error.set('Error al guardar el producto. Verifique los datos e intente nuevamente.');
         console.error(err);
       }
     });

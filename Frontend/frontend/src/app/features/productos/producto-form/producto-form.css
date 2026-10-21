@@ -215,3 +215,9 @@
     width: 100%;
   }
 }
+
+.alert-success {
+  color: #15803d;
+  background-color: #f0fdf4;
+  border: 1px solid #bbf7d0;
+}

@@ -159,6 +159,51 @@ export class ProductoList implements OnInit {
     }).format(precio);
   }
 
+
+  // Modal de precio rápido
+  modalPrecioAbierto = signal<boolean>(false);
+  productoPrecioSel = signal<Producto | null>(null);
+  nuevoPrecioInput = signal<number>(0);
+  guardandoPrecio = signal<boolean>(false);
+
+  abrirModalPrecio(prod: Producto, event?: Event): void {
+    if (event) event.stopPropagation();
+    this.productoPrecioSel.set(prod);
+    this.nuevoPrecioInput.set(prod.precio);
+    this.modalPrecioAbierto.set(true);
+  }
+
+  cerrarModalPrecio(): void {
+    this.modalPrecioAbierto.set(false);
+    this.productoPrecioSel.set(null);
+  }
+
+  aplicarPorcentaje(porcentaje: number): void {
+    const prod = this.productoPrecioSel();
+    if (prod) {
+      const calculado = Math.round(prod.precio * (1 + porcentaje / 100));
+      this.nuevoPrecioInput.set(calculado);
+    }
+  }
+
+  guardarNuevoPrecio(): void {
+    const prod = this.productoPrecioSel();
+    const precio = this.nuevoPrecioInput();
+
+    if (!prod || precio <= 0) return;
+
+    this.guardandoPrecio.set(true);
+    this.productoService.actualizarPrecio(prod.id, precio).subscribe({
+      next: () => {
+        this.guardandoPrecio.set(false);
+        this.cerrarModalPrecio();
+        this.cargarProductos(); // Recarga la grilla
+      },
+      error: () => {
+        this.guardandoPrecio.set(false);
+      }
+    });
+  }
   /**
    * Determina la clase del badge según el stock
    * TASK: Mostrar stock del producto

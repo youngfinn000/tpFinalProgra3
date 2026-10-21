@@ -243,6 +243,26 @@
 
                   <td class="col-acciones text-right">
                     <div class="actions-wrapper">
+                      <!-- Cambio rápido de precio -->
+                      <button
+                        type="button"
+                        class="btn-action btn-action-price"
+                        (click)="abrirModalPrecio(prod, $event)"
+                        title="Cambiar precio rápidamente"
+                      >
+                        $ Precio
+                      </button>
+
+                      <!-- Edición completa -->
+                      <a
+                        [routerLink]="['/productos', prod.id, 'editar']"
+                        class="btn-action btn-action-detail"
+                        title="Editar {{ prod.nombre }}"
+                      >
+                        Editar
+                      </a>
+
+                      <!-- Detalle rápido -->
                       <button
                         type="button"
                         class="btn-action btn-action-detail"
@@ -253,6 +273,7 @@
                         <span>Detalle</span>
                       </button>
 
+                      <!-- Página completa de detalle -->
                       <a
                         [routerLink]="['/productos', prod.id]"
                         class="btn-action btn-action-link"
@@ -381,7 +402,7 @@
         </p>
       </div>
 
-      <!-- Acciones -->
+      <!-- Acciones del Modal -->
       <div class="modal-footer-actions">
         <button type="button" class="btn btn-secondary" (click)="cerrarDetalle()">
           Cerrar
@@ -399,6 +420,58 @@
           </svg>
           Ver Página de Detalle
         </a>
+      </div>
+    </div>
+  }
+</app-modal>
+
+<!-- Modal Cambio Rápido de Precio -->
+<app-modal
+  [abierto]="modalPrecioAbierto()"
+  [titulo]="'Actualizar Precio: ' + (productoPrecioSel()?.nombre || '')"
+  [anchoMaximo]="'420px'"
+  (cerrar)="cerrarModalPrecio()"
+>
+  @if (productoPrecioSel(); as prod) {
+    <div style="display: flex; flex-direction: column; gap: 1.25rem; padding: 0.5rem 0;">
+      <div>
+        <label style="font-size: 0.85rem; font-weight: 600; color: var(--text-secondary);">
+          Precio actual: <strong>{{ formatoPrecio(prod.precio) }}</strong>
+        </label>
+      </div>
+
+      <div class="form-group">
+        <label for="nuevoPrecioVal" style="font-size: 0.9rem; font-weight: 700;">Nuevo Precio ($) *</label>
+        <input
+          id="nuevoPrecioVal"
+          type="number"
+          class="form-control"
+          style="padding: 0.75rem; font-size: 1.1rem; font-weight: 700;"
+          [ngModel]="nuevoPrecioInput()"
+          (ngModelChange)="nuevoPrecioInput.set($event)"
+        />
+      </div>
+
+      <!-- Accesos directos % de incremento -->
+      <div>
+        <span style="font-size: 0.8rem; font-weight: 600; color: var(--text-secondary); display: block; margin-bottom: 0.5rem;">
+          Aumento rápido por %:
+        </span>
+        <div style="display: flex; gap: 0.5rem;">
+          <button type="button" class="btn btn-secondary" style="flex: 1; padding: 0.4rem;" (click)="aplicarPorcentaje(5)">+5%</button>
+          <button type="button" class="btn btn-secondary" style="flex: 1; padding: 0.4rem;" (click)="aplicarPorcentaje(10)">+10%</button>
+          <button type="button" class="btn btn-secondary" style="flex: 1; padding: 0.4rem;" (click)="aplicarPorcentaje(15)">+15%</button>
+          <button type="button" class="btn btn-secondary" style="flex: 1; padding: 0.4rem;" (click)="aplicarPorcentaje(20)">+20%</button>
+        </div>
+      </div>
+
+      <div style="display: flex; justify-content: flex-end; gap: 0.75rem; margin-top: 1rem;">
+        <button type="button" class="btn btn-secondary" (click)="cerrarModalPrecio()" [disabled]="guardandoPrecio()">
+          Cancelar
+        </button>
+        <button type="button" class="btn btn-primary" (click)="guardarNuevoPrecio()" [disabled]="guardandoPrecio() || nuevoPrecioInput() <= 0">
+          {{ guardandoPrecio() ? 'Guardando...' : 'Guardar Precio' }}
+        </button>
       </div>
     </div>
   }

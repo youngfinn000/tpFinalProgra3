@@ -6,7 +6,9 @@
       </h1>
       <p class="page-subtitle">
         {{
-          esEdicion() ? 'Modificá los datos del producto.' : 'Registrá un nuevo producto para STRETTO.'
+          esEdicion()
+            ? 'Modificá los datos del producto.'
+            : 'Registrá un nuevo producto para STRETTO.'
         }}
       </p>
     </div>
@@ -25,7 +27,12 @@
         <!-- Nombre -->
         <div class="form-group span-2">
           <label for="nombre">Nombre del producto *</label>
-          <input id="nombre" type="text" formControlName="nombre" placeholder="Ej.: Cucurucho, Kilo, Torta Helada" />
+          <input
+            id="nombre"
+            type="text"
+            formControlName="nombre"
+            placeholder="Ej.: Cucurucho, Kilo, Torta Helada"
+          />
 
           @if (form.controls['nombre'].touched && form.controls['nombre'].hasError('required')) {
             <small class="field-error">El nombre es obligatorio.</small>
@@ -66,7 +73,14 @@
         <!-- Precio -->
         <div class="form-group">
           <label for="precio">Precio ($) *</label>
-          <input id="precio" type="number" min="0" step="any" formControlName="precio" placeholder="0.00" />
+          <input
+            id="precio"
+            type="number"
+            min="0"
+            step="any"
+            formControlName="precio"
+            placeholder="0.00"
+          />
 
           @if (form.controls['precio'].touched && form.controls['precio'].hasError('required')) {
             <small class="field-error">El precio es obligatorio.</small>
@@ -97,6 +111,19 @@
             placeholder="Breve descripción del producto..."
           ></textarea>
         </div>
+
+        @if (mensajeExito()) {
+          <div class="alert alert-success">
+            <span>{{ mensajeExito() }} Redirigiendo...</span>
+          </div>
+        }
+
+        @if (error()) {
+          <div class="alert alert-danger">
+            <span>{{ error() }}</span>
+            <button type="button" class="alert-close" (click)="error.set('')">✕</button>
+          </div>
+        }
 
         <!-- Estado -->
         <div class="form-group">

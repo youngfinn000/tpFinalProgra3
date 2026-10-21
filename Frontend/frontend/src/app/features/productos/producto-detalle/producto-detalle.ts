@@ -4,15 +4,23 @@ import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../../core/services/auth.service';
 import { Producto } from '../models/producto.model';
 import { ProductoService } from '../services/producto.service';
-import { LucideAngularModule } from 'lucide-angular';
+import {
+  LucideIceCreamCone,
+  LucideCakeSlice,
+  LucideCupSoda,
+  LucideFlame,
+} from '@lucide/angular';
 
 @Component({
   selector: 'app-producto-detalle',
   standalone: true,
   imports: [
-    CommonModule,
-    RouterLink,
-    LucideAngularModule,
+  CommonModule,
+  RouterLink,
+  LucideIceCreamCone,
+  LucideCakeSlice,
+  LucideCupSoda,
+  LucideFlame,
   ],
   templateUrl: './producto-detalle.html',
   styleUrl: './producto-detalle.css',

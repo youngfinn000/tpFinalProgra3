@@ -1,3 +1,4 @@
+
 <section class="detalle-page">
   <!-- Navegación superior / Breadcrumb -->
   <div class="breadcrumb-bar">
@@ -49,7 +50,7 @@
       </div>
     </header>
 
-    <!-- Contenido Principal: Grid de tarjetas independientes -->
+    <!-- Contenido Principal -->
     <div class="detail-grid">
       <!-- Columna Principal -->
       <div class="main-column">
@@ -58,18 +59,17 @@
           <div class="card-hero">
             <div class="hero-icon-container">
               @if (prod.categoria === 'GELATO') {
-                <lucide-icon name="ice-cream-cone" [size]="28" class="hero-icon-svg"></lucide-icon>
+                <svg lucideIceCreamCone [size]="28" class="hero-icon-svg"></svg>
               } @else if (prod.categoria === 'POSTRES_HELADOS') {
-                <lucide-icon name="cake-slice" [size]="28" class="hero-icon-svg"></lucide-icon>
+                <svg lucideCakeSlice [size]="28" class="hero-icon-svg"></svg>
               } @else if (prod.categoria === 'BATIDOS') {
-                <lucide-icon name="cup-soda" [size]="28" class="hero-icon-svg"></lucide-icon>
+                <svg lucideCupSoda [size]="28" class="hero-icon-svg"></svg>
               } @else {
-                <lucide-icon name="flame" [size]="28" class="hero-icon-svg"></lucide-icon>
+                <svg lucideFlame [size]="28" class="hero-icon-svg"></svg>
               }
             </div>
             <div class="hero-info">
               <span class="hero-tag">Precio Oficial</span>
-              <!-- TASK: Mostrar precio del producto -->
               <span class="hero-price">{{ formatoPrecio(prod.precio) }}</span>
               <span class="hero-subtext">Precio final al consumidor en salón y retiro</span>
             </div>
@@ -117,10 +117,9 @@
       <!-- Columna Lateral -->
       <div class="side-column">
         <!-- Tarjeta de Stock -->
-        <!-- TASK: Mostrar stock del producto -->
         <div class="card stock-card">
           <h3 class="section-title">Estado de Inventario</h3>
-          
+
           <div class="stock-status-block">
             <span class="stock-pill" [ngClass]="obtenerClaseStock(prod.stock)">
               <span class="stock-dot"></span>
@@ -155,4 +154,3 @@
     </div>
   }
 </section>
-

@@ -6,17 +6,27 @@ import { AuthService } from '../../../core/services/auth.service';
 import { ModalComponent } from '../../../shared/components/modal/modal.component';
 import { CategoriaProducto, Producto } from '../models/producto.model';
 import { ProductoService } from '../services/producto.service';
-import { LucideAngularModule } from 'lucide-angular';
+import {
+  LucideIceCreamCone,
+  LucideCakeSlice,
+  LucideCupSoda,
+  LucideFlame,
+  LucideEye,
+} from '@lucide/angular';
 
 @Component({
   selector: 'app-producto-list',
   standalone: true,
   imports: [
-    CommonModule,
-    FormsModule,
-    RouterLink,
-    ModalComponent,
-    LucideAngularModule,
+  CommonModule,
+  FormsModule,
+  RouterLink,
+  ModalComponent,
+  LucideIceCreamCone,
+  LucideCakeSlice,
+  LucideCupSoda,
+  LucideFlame,
+  LucideEye,
   ],
   templateUrl: './producto-list.html',
   styleUrl: './producto-list.css',

@@ -1,3 +1,4 @@
+
 <div class="productos-container">
   <!-- Encabezado de página -->
   <div class="page-header">
@@ -9,7 +10,6 @@
     </div>
 
     <div class="header-actions">
-      <!-- TASK: Actualiza listado de productos -->
       <button
         type="button"
         class="btn btn-secondary btn-refresh"
@@ -34,7 +34,7 @@
     </div>
   </div>
 
-  <!-- Alertas de Error -->
+  <!-- Alertas de error -->
   @if (error()) {
     <div class="alert alert-danger" role="alert">
       <svg class="alert-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -47,10 +47,9 @@
     </div>
   }
 
-  <!-- Barra de Filtros y Búsqueda -->
+  <!-- Búsqueda y filtros -->
   <div class="filter-card">
     <div class="filter-top-row">
-      <!-- TASK: Crear busqueda por nombre de producto -->
       <div class="search-wrapper">
         <svg
           class="search-icon"
@@ -83,7 +82,6 @@
         }
       </div>
 
-      <!-- TASK: Mostrar productos activos (Filtro de Estado) -->
       <div class="filter-controls">
         <div class="state-select-wrapper">
           <label for="filtroEstado" class="filter-label">Estado:</label>
@@ -101,7 +99,7 @@
       </div>
     </div>
 
-    <!-- Píldoras de Categoría -->
+    <!-- Categorías -->
     <div class="category-pills">
       <span class="pills-title">Categorías:</span>
       <div class="pills-container">
@@ -119,7 +117,7 @@
     </div>
   </div>
 
-  <!-- Tabla Principal de Productos -->
+  <!-- Tabla de productos -->
   <div class="table-card">
     @if (cargando() && productos().length === 0) {
       <div class="table-loading">
@@ -135,6 +133,7 @@
               <line x1="8" y1="12" x2="16" y2="12"></line>
             </svg>
           </div>
+
           <h3>No se encontraron productos</h3>
           <p>
             @if (filtroNombre() || filtroCategoria() !== 'todas' || filtroEstado() !== 'todos') {
@@ -143,6 +142,7 @@
               Aún no hay productos registrados en el sistema.
             }
           </p>
+
           @if (filtroNombre() || filtroCategoria() !== 'todas' || filtroEstado() !== 'activos') {
             <button
               type="button"
@@ -162,33 +162,32 @@
                 <th class="col-nombre">Producto</th>
                 <th class="col-categoria">Categoría</th>
                 <th class="col-sabores">Sabores</th>
-                <!-- TASK: Mostrar precio del producto -->
                 <th class="col-precio text-right">Precio</th>
-                <!-- TASK: Mostrar stock del producto -->
                 <th class="col-stock text-center">Stock</th>
-                <!-- TASK: Mostrar productos activos -->
                 <th class="col-estado text-center">Estado</th>
-                <!-- TASK: Crear vista de detalle de producto -->
                 <th class="col-acciones text-right">Acciones</th>
               </tr>
             </thead>
+
             <tbody>
               @for (prod of productosFiltrados(); track prod.id) {
                 <tr [class.row-inactive]="!prod.activo" class="table-row">
                   <td class="col-id font-mono text-muted">#{{ prod.id }}</td>
+
                   <td class="col-nombre">
                     <div class="product-name-cell" (click)="abrirDetalle(prod)">
                       <div class="product-icon-avatar">
                         @if (prod.categoria === 'GELATO') {
-                          <lucide-icon name="ice-cream-cone" [size]="18" class="product-icon-svg"></lucide-icon>
+                          <svg lucideIceCreamCone [size]="18" class="product-icon-svg"></svg>
                         } @else if (prod.categoria === 'POSTRES_HELADOS') {
-                          <lucide-icon name="cake-slice" [size]="18" class="product-icon-svg"></lucide-icon>
+                          <svg lucideCakeSlice [size]="18" class="product-icon-svg"></svg>
                         } @else if (prod.categoria === 'BATIDOS') {
-                          <lucide-icon name="cup-soda" [size]="18" class="product-icon-svg"></lucide-icon>
+                          <svg lucideCupSoda [size]="18" class="product-icon-svg"></svg>
                         } @else {
-                          <lucide-icon name="flame" [size]="18" class="product-icon-svg"></lucide-icon>
+                          <svg lucideFlame [size]="18" class="product-icon-svg"></svg>
                         }
                       </div>
+
                       <div class="product-info-texts">
                         <span class="product-title">{{ prod.nombre }}</span>
                         @if (prod.descripcion) {
@@ -197,11 +196,13 @@
                       </div>
                     </div>
                   </td>
+
                   <td class="col-categoria">
                     <span class="category-badge">
                       {{ prod.categoriaLabel }}
                     </span>
                   </td>
+
                   <td class="col-sabores">
                     @if (prod.maxSabores && prod.maxSabores > 0) {
                       <span class="flavors-badge" title="Hasta {{ prod.maxSabores }} gustos">
@@ -211,20 +212,20 @@
                       <span class="text-muted text-sm">—</span>
                     }
                   </td>
-                  <!-- TASK: Mostrar precio del producto -->
+
                   <td class="col-precio text-right">
                     <span class="price-tag">
                       {{ formatoPrecio(prod.precio) }}
                     </span>
                   </td>
-                  <!-- TASK: Mostrar stock del producto -->
+
                   <td class="col-stock text-center">
                     <span class="stock-badge" [ngClass]="obtenerClaseStock(prod.stock)">
                       <span class="stock-dot"></span>
                       {{ obtenerTextoStock(prod.stock) }}
                     </span>
                   </td>
-                  <!-- TASK: Mostrar productos activos -->
+
                   <td class="col-estado text-center">
                     @if (prod.activo) {
                       <span class="badge badge-active">Activo</span>
@@ -232,7 +233,7 @@
                       <span class="badge badge-inactive">Inactivo</span>
                     }
                   </td>
-                  <!-- TASK: Crear vista de detalle de producto -->
+
                   <td class="col-acciones text-right">
                     <div class="actions-wrapper">
                       <button
@@ -241,7 +242,7 @@
                         (click)="abrirDetalle(prod)"
                         title="Ver detalle de {{ prod.nombre }}"
                       >
-                        <lucide-icon name="eye" [size]="15" class="action-icon"></lucide-icon>
+                        <svg lucideEye [size]="15" class="action-icon"></svg>
                         <span>Detalle</span>
                       </button>
 
@@ -264,15 +265,24 @@
           </table>
         </div>
 
-        <!-- Footer informativo de la tabla -->
+        <!-- Resumen de la tabla -->
         <div class="table-footer">
           <span class="results-count">
-            Mostrando <strong>{{ productosFiltrados().length }}</strong> de <strong>{{ totalProductos() }}</strong> productos
+            Mostrando <strong>{{ productosFiltrados().length }}</strong> de
+            <strong>{{ totalProductos() }}</strong> productos
           </span>
+
           <div class="footer-legend">
-            <span class="legend-item"><span class="legend-dot dot-active"></span> {{ totalActivos() }} Activos</span>
+            <span class="legend-item">
+              <span class="legend-dot dot-active"></span>
+              {{ totalActivos() }} Activos
+            </span>
+
             @if (totalBajoStock() > 0) {
-              <span class="legend-item"><span class="legend-dot dot-low"></span> {{ totalBajoStock() }} Bajo Stock</span>
+              <span class="legend-item">
+                <span class="legend-dot dot-low"></span>
+                {{ totalBajoStock() }} Bajo Stock
+              </span>
             }
           </div>
         </div>
@@ -281,7 +291,7 @@
   </div>
 </div>
 
-<!-- TASK: Crear vista de detalle de producto (Modal Rápido) -->
+<!-- Modal de detalle rápido -->
 <app-modal
   [abierto]="modalDetalleAbierto()"
   [titulo]="productoSeleccionado() ? productoSeleccionado()!.nombre : 'Detalle del Producto'"
@@ -290,25 +300,23 @@
 >
   @if (productoSeleccionado(); as prod) {
     <div class="detail-modal-body">
-      <!-- Tarjeta superior con precio y categoría -->
       <div class="detail-header-card">
         <div class="detail-main-info">
           <div class="detail-icon-circle">
             @if (prod.categoria === 'GELATO') {
-              <lucide-icon name="ice-cream-cone" [size]="24" class="detail-icon-svg"></lucide-icon>
+              <svg lucideIceCreamCone [size]="24" class="detail-icon-svg"></svg>
             } @else if (prod.categoria === 'POSTRES_HELADOS') {
-              <lucide-icon name="cake-slice" [size]="24" class="detail-icon-svg"></lucide-icon>
+              <svg lucideCakeSlice [size]="24" class="detail-icon-svg"></svg>
             } @else if (prod.categoria === 'BATIDOS') {
-              <lucide-icon name="cup-soda" [size]="24" class="detail-icon-svg"></lucide-icon>
+              <svg lucideCupSoda [size]="24" class="detail-icon-svg"></svg>
             } @else {
-              <lucide-icon name="flame" [size]="24" class="detail-icon-svg"></lucide-icon>
+              <svg lucideFlame [size]="24" class="detail-icon-svg"></svg>
             }
           </div>
+
           <div>
             <h3 class="detail-product-name">{{ prod.nombre }}</h3>
-            <span class="category-badge">
-              {{ prod.categoriaLabel }}
-            </span>
+            <span class="category-badge">{{ prod.categoriaLabel }}</span>
           </div>
         </div>
 
@@ -318,7 +326,7 @@
         </div>
       </div>
 
-      <!-- Cuadrícula de Especificaciones -->
+      <!-- Especificaciones -->
       <div class="specs-grid">
         <div class="spec-card">
           <span class="spec-label">Estado del Producto</span>
@@ -358,7 +366,7 @@
         </div>
       </div>
 
-      <!-- Descripción y notas -->
+      <!-- Descripción -->
       <div class="detail-description-section">
         <h4 class="description-title">Descripción y Preparación</h4>
         <p class="description-text">
@@ -366,7 +374,7 @@
         </p>
       </div>
 
-      <!-- Acciones del Modal -->
+      <!-- Acciones -->
       <div class="modal-footer-actions">
         <button type="button" class="btn btn-secondary" (click)="cerrarDetalle()">
           Cerrar
@@ -388,4 +396,3 @@
     </div>
   }
 </app-modal>
-

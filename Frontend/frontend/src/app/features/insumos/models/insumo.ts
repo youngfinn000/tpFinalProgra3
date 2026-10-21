@@ -12,7 +12,6 @@ export interface InsumoRequest {
   unidad: string;
   stockActual: number;
   puntoReposicion: number;
-  estado?: string;
 }
 
 export const UNIDADES: { valor: string; etiqueta: string }[] = [

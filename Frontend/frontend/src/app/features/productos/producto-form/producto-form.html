@@ -1,0 +1,127 @@
+<section class="page">
+  <header class="page-header">
+    <div>
+      <h1 class="page-title">
+        {{ esEdicion() ? 'Editar producto' : 'Nuevo producto' }}
+      </h1>
+      <p class="page-subtitle">
+        {{
+          esEdicion() ? 'Modificá los datos del producto.' : 'Registrá un nuevo producto para STRETTO.'
+        }}
+      </p>
+    </div>
+  </header>
+
+  @if (error()) {
+    <div class="alert alert-danger">
+      <span>{{ error() }}</span>
+      <button type="button" class="alert-close" (click)="error.set('')">✕</button>
+    </div>
+  }
+
+  <div class="form-card">
+    <form [formGroup]="form" (ngSubmit)="guardar()">
+      <div class="form-grid">
+        <!-- Nombre -->
+        <div class="form-group span-2">
+          <label for="nombre">Nombre del producto *</label>
+          <input id="nombre" type="text" formControlName="nombre" placeholder="Ej.: Cucurucho, Kilo, Torta Helada" />
+
+          @if (form.controls['nombre'].touched && form.controls['nombre'].hasError('required')) {
+            <small class="field-error">El nombre es obligatorio.</small>
+          }
+
+          @if (form.controls['nombre'].touched && form.controls['nombre'].hasError('maxlength')) {
+            <small class="field-error">El nombre no puede superar los 100 caracteres.</small>
+          }
+        </div>
+
+        <!-- Categoría -->
+        <div class="form-group">
+          <label for="categoria">Categoría *</label>
+          <select id="categoria" formControlName="categoria">
+            <option value="GELATO">Gelato</option>
+            <option value="POSTRES_HELADOS">Postres Helados</option>
+            <option value="BATIDOS">Batidos</option>
+            <option value="PROMO">Promociones</option>
+          </select>
+        </div>
+
+        <!-- Cantidad máxima de sabores -->
+        <div class="form-group">
+          <label for="saboresMax">Cant. máx. de sabores</label>
+          <input
+            id="saboresMax"
+            type="number"
+            min="0"
+            formControlName="saboresMax"
+            placeholder="Ej.: 2 (Opcional)"
+          />
+
+          @if (form.controls['saboresMax'].touched && form.controls['saboresMax'].invalid) {
+            <small class="field-error">La cantidad debe ser igual o mayor a cero.</small>
+          }
+        </div>
+
+        <!-- Precio -->
+        <div class="form-group">
+          <label for="precio">Precio ($) *</label>
+          <input id="precio" type="number" min="0" step="any" formControlName="precio" placeholder="0.00" />
+
+          @if (form.controls['precio'].touched && form.controls['precio'].hasError('required')) {
+            <small class="field-error">El precio es obligatorio.</small>
+          }
+
+          @if (form.controls['precio'].touched && form.controls['precio'].hasError('min')) {
+            <small class="field-error">El precio debe ser mayor a cero.</small>
+          }
+        </div>
+
+        <!-- Stock -->
+        <div class="form-group">
+          <label for="stock">Stock inicial *</label>
+          <input id="stock" type="number" min="0" formControlName="stock" placeholder="0" />
+
+          @if (form.controls['stock'].touched && form.controls['stock'].invalid) {
+            <small class="field-error">El stock debe ser igual o mayor a cero.</small>
+          }
+        </div>
+
+        <!-- Descripción -->
+        <div class="form-group span-2">
+          <label for="descripcion">Descripción</label>
+          <textarea
+            id="descripcion"
+            rows="3"
+            formControlName="descripcion"
+            placeholder="Breve descripción del producto..."
+          ></textarea>
+        </div>
+
+        <!-- Estado -->
+        <div class="form-group">
+          <label for="activo">Estado *</label>
+          <select id="activo" formControlName="activo">
+            <option [ngValue]="true">Activo</option>
+            <option [ngValue]="false">Inactivo</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-actions">
+        <button
+          type="button"
+          class="btn btn-secondary"
+          (click)="cancelar()"
+          [disabled]="guardando()"
+        >
+          Cancelar
+        </button>
+
+        <button type="submit" class="btn btn-primary" [disabled]="guardando()">
+          {{ guardando() ? 'Guardando...' : esEdicion() ? 'Guardar cambios' : 'Crear producto' }}
+        </button>
+      </div>
+    </form>
+  </div>
+</section>

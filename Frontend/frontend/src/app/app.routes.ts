@@ -75,6 +75,18 @@ export const routes: Routes = [
           import('./features/productos/producto-list/producto-list').then((m) => m.ProductoList),
       },
       {
+        path: 'productos/nuevo',
+        canActivate: [adminGuard],
+        loadComponent: () =>
+          import('./features/productos/producto-form/producto-form').then((m) => m.ProductoForm),
+      },
+      {
+        path: 'productos/:id/editar',
+        canActivate: [adminGuard],
+        loadComponent: () =>
+          import('./features/productos/producto-form/producto-form').then((m) => m.ProductoForm),
+      },
+      {
         path: 'productos/:id',
         canActivate: [authGuard],
         loadComponent: () =>

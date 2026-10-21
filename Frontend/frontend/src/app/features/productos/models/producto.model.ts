@@ -18,6 +18,7 @@ export interface ProductoDTORequest {
   price: number;
   maxFlavors?: number;
   stock?: number;
+  active?: boolean;
 }
 
 export interface ProductoDTOResponse {

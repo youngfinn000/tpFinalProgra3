@@ -35,15 +35,20 @@ export class Login implements OnInit {
     this.mostrarPassword = !this.mostrarPassword;
   }
 
-  llenarDemo(usuario: 'admin' | 'empleado'): void {
+  llenarDemo(usuario: 'admin' | 'empleado' | 'mayorista'): void {
     if (usuario === 'admin') {
       this.loginForm.setValue({
         username: 'admin',
         password: 'password123',
       });
-    } else {
+    } else if (usuario === 'empleado') {
       this.loginForm.setValue({
         username: 'empleado',
+        password: 'password123',
+      });
+    } else {
+      this.loginForm.setValue({
+        username: 'mayorista@stretto.com',
         password: 'password123',
       });
     }

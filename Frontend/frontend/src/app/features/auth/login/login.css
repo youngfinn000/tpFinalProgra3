@@ -327,3 +327,9 @@
   transform: translateX(4px);
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
 }
+
+.btn-demo-wholesale:hover {
+  background: #f0fdf4;
+  border-color: #bbf7d0;
+  color: #15803d;
+}

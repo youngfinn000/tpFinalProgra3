@@ -1,4 +1,3 @@
-
 import { HttpClient } from '@angular/common/http';
 import { Injectable, computed, inject, signal } from '@angular/core';
 import { Router } from '@angular/router';
@@ -146,9 +145,14 @@ export class AuthService {
   }
 
   rutaInicial(): string {
-    return this.rol() === 'ROLE_ADMIN'
-      ? '/empleados'
-      : '/clientes-mayoristas';
+    const rol = this.rol();
+    if (rol === 'ROLE_ADMIN') {
+      return '/empleados';
+    }
+    if (rol === 'ROLE_WHOLESALE') {
+      return '/solicitar-presupuesto';
+    }
+    return '/clientes-mayoristas';
   }
 
   private guardarSesion(token: string): void {

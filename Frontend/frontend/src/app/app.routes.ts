@@ -29,6 +29,14 @@ export const routes: Routes = [
           ),
       },
       {
+        path: 'solicitar-presupuesto',
+        canActivate: [authGuard],
+        loadComponent: () =>
+          import('./features/presupuestos/solicitar-presupuesto/solicitar-presupuesto').then(
+            (m) => m.SolicitarPresupuesto,
+          ),
+      },
+      {
         path: 'sabores',
         loadComponent: () =>
           import('./features/sabores/sabor-list/sabor-list').then((m) => m.SaborList),

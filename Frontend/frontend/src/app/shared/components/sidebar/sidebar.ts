@@ -7,7 +7,7 @@ interface MenuItem {
   label: string;
   ruta: string;
   roles: Rol[];
-  icono: 'empleados' | 'clientes' | 'sabores' | 'productos' | 'insumos';
+  icono: 'empleados' | 'clientes' | 'sabores' | 'productos' | 'insumos' | 'presupuesto';
 }
 
 @Component({
@@ -29,7 +29,7 @@ export class Sidebar {
     {
       label: 'Sabores',
       ruta: '/sabores',
-      roles: ['ROLE_ADMIN', 'ROLE_USER'],
+      roles: ['ROLE_ADMIN', 'ROLE_USER', 'ROLE_WHOLESALE'],
       icono: 'sabores',
     },
     {
@@ -47,8 +47,14 @@ export class Sidebar {
     {
       label: 'Clientes mayoristas',
       ruta: '/clientes-mayoristas',
-      roles: ['ROLE_ADMIN', 'ROLE_USER', 'ROLE_WHOLESALE'],
+      roles: ['ROLE_ADMIN', 'ROLE_USER'],
       icono: 'clientes',
+    },
+    {
+      label: 'Solicitar Presupuesto',
+      ruta: '/solicitar-presupuesto',
+      roles: ['ROLE_ADMIN', 'ROLE_USER', 'ROLE_WHOLESALE'],
+      icono: 'presupuesto',
     },
   ];
 

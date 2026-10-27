@@ -1,0 +1,284 @@
+<section class="page">
+  <header class="page-header">
+    <div>
+      <h1 class="page-title">Solicitar Presupuesto para Evento</h1>
+      <p class="page-subtitle">
+        {{ esClienteMayorista() ? 'Armá tu pedido para el evento y nuestro equipo te enviará la cotización.' : 'Carga asistida de solicitud de presupuesto para clientes comerciales.' }}
+      </p>
+    </div>
+    <div class="header-actions">
+      @if (!esClienteMayorista()) {
+        <a routerLink="/clientes-mayoristas" class="btn btn-secondary">
+          ← Volver a clientes
+        </a>
+      } @else {
+        <a routerLink="/sabores" class="btn btn-secondary">
+          ← Ver sabores
+        </a>
+      }
+    </div>
+  </header>
+
+  @if (mensajeError()) {
+    <div class="alert alert-danger">
+      <span class="alert-icon">⚠️</span>
+      <span class="alert-text">{{ mensajeError() }}</span>
+      <button type="button" class="alert-close" (click)="mensajeError.set('')">✕</button>
+    </div>
+  }
+
+  <!-- PANTALLA DE CONFIRMACIÓN (KAN-252) -->
+  @if (solicitudExitosa(); as res) {
+    <div class="confirm-card">
+      <div class="confirm-header">
+        <div class="success-badge-icon">✓</div>
+        <h2>¡Solicitud Enviada con Éxito!</h2>
+        <p class="confirm-lead">Tu pedido de presupuesto ha sido recibido por el equipo de STRETTO.</p>
+      </div>
+
+      <div class="confirm-body">
+        <div class="info-grid">
+          <div class="info-item">
+            <span class="info-label">Número de Solicitud</span>
+            <span class="info-value highlight">#{{ res.id }}</span>
+          </div>
+          <div class="info-item">
+            <span class="info-label">Estado</span>
+            <span class="status-badge status-pending">{{ res.stateRequestEnum }}</span>
+          </div>
+          <div class="info-item">
+            <span class="info-label">Cliente Mayorista</span>
+            <span class="info-value">{{ res.customerName }}</span>
+          </div>
+          <div class="info-item">
+            <span class="info-label">Fecha del Evento</span>
+            <span class="info-value">{{ res.eventDate | date:'dd/MM/yyyy' }}</span>
+          </div>
+          <div class="info-item">
+            <span class="info-label">Cantidad solicitada</span>
+            <span class="info-value">{{ res.quantity }} Kg de helado</span>
+          </div>
+          <div class="info-item">
+            <span class="info-label">Anticipo informado</span>
+            <span class="info-value">{{ res.advancePayment ? 'Sí, incluye anticipo' : 'Sin anticipo inicial' }}</span>
+          </div>
+        </div>
+
+        <div class="flavors-summary">
+          <h3>Sabores Seleccionados ({{ res.flavors.length }})</h3>
+          <div class="selected-tags">
+            @for (s of res.flavors; track s.id) {
+              <span class="flavor-chip active">🍦 {{ s.name }}</span>
+            }
+          </div>
+        </div>
+      </div>
+
+      <div class="confirm-footer">
+        <button type="button" class="btn btn-secondary" (click)="nuevaSolicitud()">
+          + Cargar otra solicitud
+        </button>
+        @if (!esClienteMayorista()) {
+          <a routerLink="/clientes-mayoristas" class="btn btn-primary">
+            Ir al listado de clientes
+          </a>
+        } @else {
+          <a routerLink="/sabores" class="btn btn-primary">
+            Ir al catálogo
+          </a>
+        }
+      </div>
+    </div>
+  } @else {
+    <!-- FORMULARIO DE SOLICITUD (KAN-246, KAN-247, KAN-248, KAN-249, KAN-250, KAN-251) -->
+    <div class="form-card">
+      <form [formGroup]="form" (ngSubmit)="enviarSolicitud()">
+        <div class="form-sections">
+          
+          <!-- SECCIÓN 1: DATOS DEL CLIENTE Y EVENTO -->
+          <div class="form-section">
+            <h2 class="section-title">1. Información del Evento</h2>
+
+            <!-- SI ES CLIENTE MAYORISTA: MUESTRA SU PERFIL AUTOMÁTICO (NO SELECTOR) -->
+            @if (esClienteMayorista()) {
+              <div class="wholesale-profile-card">
+                <div class="profile-header">
+                  <div class="profile-icon">🏢</div>
+                  <div>
+                    <div class="profile-badge">CUENTA COMERCIAL MAYORISTA</div>
+                    <h3 class="profile-title">
+                      {{ clienteMayoristaActual()?.companyName || 'Cargando datos de tu empresa...' }}
+                    </h3>
+                  </div>
+                </div>
+                <div class="profile-details">
+                  <div class="profile-item">
+                    <span class="profile-label">Titular / Contacto:</span>
+                    <span class="profile-val">{{ clienteMayoristaActual()?.contactName || '-' }}</span>
+                  </div>
+                  <div class="profile-item">
+                    <span class="profile-label">Email:</span>
+                    <span class="profile-val">{{ clienteMayoristaActual()?.email || '-' }}</span>
+                  </div>
+                  @if (clienteMayoristaActual()?.cuit) {
+                    <div class="profile-item">
+                      <span class="profile-label">CUIT:</span>
+                      <span class="profile-val">{{ clienteMayoristaActual()?.cuit }}</span>
+                    </div>
+                  }
+                </div>
+              </div>
+            }
+
+            <div class="form-grid">
+              <!-- SI ES ADMINISTRADOR O EMPLEADO: SELECTOR DE CLIENTE -->
+              @if (!esClienteMayorista()) {
+                <div class="form-group span-2">
+                  <label for="customerId" class="form-label">Cliente Mayorista *</label>
+                  <select id="customerId" formControlName="customerId" class="form-control">
+                    <option [ngValue]="null" disabled>-- Seleccioná el cliente comercial --</option>
+                    @for (c of clientes(); track c.id) {
+                      <option [value]="c.id">
+                        {{ c.companyName }} ({{ c.contactName }} - CUIT: {{ c.cuit || 'N/A' }})
+                      </option>
+                    }
+                  </select>
+                  @if (form.get('customerId')?.touched && form.get('customerId')?.invalid) {
+                    <small class="field-error">Es obligatorio seleccionar el cliente mayorista.</small>
+                  }
+                </div>
+              }
+
+              <!-- Cantidad en Kg -->
+              <div class="form-group">
+                <label for="quantity" class="form-label">Cantidad requerida (Kg) *</label>
+                <div class="input-with-unit">
+                  <input
+                    id="quantity"
+                    type="number"
+                    min="1"
+                    step="1"
+                    formControlName="quantity"
+                    class="form-control"
+                    placeholder="Ej. 20"
+                  />
+                  <span class="unit-tag">Kg</span>
+                </div>
+                @if (form.get('quantity')?.touched && form.get('quantity')?.invalid) {
+                  <small class="field-error">Ingresá una cantidad mayor a 0 kg.</small>
+                }
+              </div>
+
+              <!-- Fecha del evento -->
+              <div class="form-group">
+                <label for="eventDate" class="form-label">Fecha del Evento *</label>
+                <input
+                  id="eventDate"
+                  type="date"
+                  [min]="fechaMinima"
+                  formControlName="eventDate"
+                  class="form-control"
+                />
+                @if (form.get('eventDate')?.touched && form.get('eventDate')?.invalid) {
+                  <small class="field-error">La fecha del evento debe ser posterior a hoy.</small>
+                }
+              </div>
+
+              <!-- Anticipo -->
+              <div class="form-group span-2">
+                <label class="checkbox-label">
+                  <input type="checkbox" formControlName="advancePayment" />
+                  <span>Deseo pagar un anticipo / seña para reservar el pedido prioritariamente</span>
+                </label>
+              </div>
+            </div>
+          </div>
+
+          <!-- SECCIÓN 2: SELECCIÓN DE SABORES -->
+          <div class="form-section">
+            <div class="section-header-flex">
+              <div>
+                <h2 class="section-title">2. Selección de Sabores *</h2>
+                <p class="section-subtitle">
+                  Elegí los sabores que formarán parte de tu pedido. Hacé clic para agregarlos o quitarlos.
+                </p>
+              </div>
+              <div class="count-badge">
+                {{ saboresSeleccionados().length }} seleccionados
+              </div>
+            </div>
+
+            <!-- Chips de sabores seleccionados -->
+            @if (saboresSeleccionados().length > 0) {
+              <div class="selected-box">
+                <span class="selected-box-label">Sabores elegidos para el evento:</span>
+                <div class="chips-list">
+                  @for (s of saboresSeleccionados(); track s.id) {
+                    <span class="chip-item">
+                      🍦 {{ s.nombre }}
+                      <button type="button" class="chip-remove" (click)="eliminarSabor(s.id)">✕</button>
+                    </span>
+                  }
+                </div>
+              </div>
+            } @else {
+              <div class="no-selection-notice">
+                <span>⚠️ Aún no has seleccionado ningún sabor. Hacé clic en los sabores disponibles para armar tu pedido.</span>
+              </div>
+            }
+
+            <!-- Buscador y catálogo de sabores -->
+            <div class="flavors-catalog-container">
+              <div class="catalog-search">
+                <input
+                  type="text"
+                  placeholder="🔍 Buscar sabor por nombre (ej. Dulce de leche, Chocolate, Frutilla...)"
+                  (input)="buscarSabores($event)"
+                  class="form-control search-input"
+                />
+              </div>
+
+              <div class="flavors-grid">
+                @for (sabor of saboresFiltrados(); track sabor.id) {
+                  <button
+                    type="button"
+                    class="flavor-card-button"
+                    [class.selected]="estaSeleccionado(sabor)"
+                    (click)="toggleSabor(sabor)"
+                  >
+                    <span class="flavor-status-icon">
+                      {{ estaSeleccionado(sabor) ? '✓' : '+' }}
+                    </span>
+                    <span class="flavor-name">{{ sabor.nombre }}</span>
+                  </button>
+                } @empty {
+                  <div class="no-flavors">No se encontraron sabores que coincidan con la búsqueda.</div>
+                }
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-footer">
+          @if (!esClienteMayorista()) {
+            <a routerLink="/clientes-mayoristas" class="btn btn-secondary">Cancelar</a>
+          } @else {
+            <a routerLink="/sabores" class="btn btn-secondary">Cancelar</a>
+          }
+          <button
+            type="submit"
+            class="btn btn-primary btn-submit"
+            [disabled]="enviando() || form.invalid || saboresSeleccionados().length === 0"
+          >
+            @if (enviando()) {
+              <span class="spinner"></span>
+              <span>Enviando Solicitud...</span>
+            } @else {
+              <span>Enviar Solicitud de Presupuesto</span>
+            }
+          </button>
+        </div>
+      </form>
+    </div>
+  }
+</section>

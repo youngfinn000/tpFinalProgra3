@@ -584,3 +584,12 @@
   font-weight: 500;
   margin-top: 0.5rem;
 }
+
+.actions-cell {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+

@@ -1,0 +1,423 @@
+<div class="anticipo-page">
+  <!-- ENCABEZADO PRINCIPAL -->
+  <header class="page-header">
+    <div class="header-content">
+      <nav class="breadcrumb">
+        <a routerLink="/mis-solicitudes">Mis Solicitudes</a>
+        <span class="sep">/</span>
+        <span class="current">Confirmar Pedido y Anticipo</span>
+      </nav>
+      <div class="header-titles">
+        <span class="badge-tag">Confirmación de Pedido Mayorista</span>
+        <h1 class="page-title">Enviar Anticipo para Confirmación de Pedido</h1>
+        <p class="header-desc">
+          Realizá la transferencia mediante Alias para congelar el presupuesto y reservar tu pedido.
+        </p>
+      </div>
+    </div>
+  </header>
+
+  <main class="page-container">
+    <!-- MENSAJES DE ALERTA -->
+    @if (mensajeError()) {
+      <div class="alert alert-danger" role="alert">
+        <div class="alert-body">
+          <strong>Atención:</strong> {{ mensajeError() }}
+        </div>
+        <button type="button" class="btn-close-alert" (click)="mensajeError.set('')">✕</button>
+      </div>
+    }
+
+    @if (mensajeExito() && !pagoConfirmado()) {
+      <div class="alert alert-success" role="alert">
+        <div class="alert-body">{{ mensajeExito() }}</div>
+      </div>
+    }
+
+    <!-- SPINNER DE CARGA -->
+    @if (cargando()) {
+      <div class="loading-state">
+        <div class="spinner-large"></div>
+        <p>Cargando información del pedido y cotización...</p>
+      </div>
+    }
+
+    <!-- SELECTOR SI EL CLIENTE TIENE MÚLTIPLES PEDIDOS PENDIENTES -->
+    @if (!cargando() && !pedido() && !solicitud() && pedidosPendientesAnticipo().length > 1) {
+      <div class="card select-order-card">
+        <h2>Seleccioná el pedido para el cual deseás enviar el anticipo:</h2>
+        <div class="pending-orders-grid">
+          @for (ord of pedidosPendientesAnticipo(); track ord.id) {
+            <div class="order-select-item" (click)="seleccionarPedido(ord)">
+              <div class="order-item-header">
+                <strong>Pedido #{{ ord.id }}</strong>
+                <span class="badge-pending">Pendiente de Anticipo</span>
+              </div>
+              <p class="order-item-desc">Presupuesto original: #{{ ord.requestBudgetId }}</p>
+              @if (ord.budget) {
+                <p class="order-item-price">${{ ord.budget | number:'1.2-2' }}</p>
+              }
+              <button type="button" class="btn btn-sm btn-primary">Seleccionar este pedido</button>
+            </div>
+          }
+        </div>
+      </div>
+    }
+
+    <!-- VISTA PRINCIPAL CUANDO YA SE CONFIRMÓ EL PAGO -->
+    @if (!cargando() && pagoConfirmado() && reciboPago(); as rec) {
+      <div class="receipt-container">
+        <div class="receipt-card">
+          <div class="receipt-header">
+            <div class="receipt-success-badge">Pago de anticipo registrado con éxito</div>
+            <h2>Comprobante Oficial de Confirmación de Pedido</h2>
+            <p class="receipt-subtitle">STRETTO Gelato • División Mayorista y Eventos</p>
+          </div>
+
+          <div class="receipt-body">
+            <div class="receipt-meta-grid">
+              <div class="meta-item">
+                <span class="meta-label">Número de Recibo</span>
+                <strong class="meta-value text-accent">{{ rec.numeroRecibo }}</strong>
+              </div>
+              <div class="meta-item">
+                <span class="meta-label">ID de Pedido Mayorista</span>
+                <strong class="meta-value">#{{ pedido()?.id }}</strong>
+              </div>
+              <div class="meta-item">
+                <span class="meta-label">Fecha y Hora de Confirmación</span>
+                <span class="meta-value">{{ rec.fechaHora | date:'dd/MM/yyyy HH:mm' }} hs</span>
+              </div>
+              <div class="meta-item">
+                <span class="meta-label">Razón Social / Titular</span>
+                <span class="meta-value">{{ rec.titular }}</span>
+              </div>
+            </div>
+
+            <hr class="receipt-divider" />
+
+            <!-- DESGLOSE FINANCIERO -->
+            <div class="financial-summary">
+              <h3>Desglose de Cotización y Anticipo</h3>
+              <div class="financial-row">
+                <span>Monto Total del Presupuesto Cotizado:</span>
+                <strong>${{ presupuestoTotal() | number:'1.2-2' }}</strong>
+              </div>
+              <div class="financial-row highlight-row">
+                <span class="text-success font-bold">Anticipo Abonado:</span>
+                <strong class="text-success font-bold">${{ rec.montoAbonado | number:'1.2-2' }}</strong>
+              </div>
+              <div class="financial-row balance-row">
+                <span>Saldo Pendiente (a liquidar contra entrega):</span>
+                <strong class="text-accent font-bold">${{ rec.saldoRestante | number:'1.2-2' }}</strong>
+              </div>
+            </div>
+
+            <hr class="receipt-divider" />
+
+            <!-- DETALLES DEL EVENTO -->
+            <div class="order-context-box">
+              <h4>Detalles del Pedido Reservado</h4>
+              <div class="context-grid">
+                <div>
+                  <strong>Fecha del Evento:</strong>
+                  <span>{{ (pedido()?.eventDate || solicitud()?.eventDate) | date:'dd/MM/yyyy' }}</span>
+                </div>
+                <div>
+                  <strong>Cantidad Solicitada:</strong>
+                  <span>{{ pedido()?.quantity || solicitud()?.quantity }} Kg de Helado Artesanal</span>
+                </div>
+                <div>
+                  <strong>Medio de Pago:</strong>
+                  <span class="method-tag">{{ rec.metodoPago }}</span>
+                </div>
+                <div>
+                  <strong>N° de Comprobante / Transacción:</strong>
+                  <span class="code-tag">{{ rec.comprobante }}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="receipt-footer">
+            <button type="button" class="btn btn-outline" (click)="imprimirComprobante()">
+              Imprimir / Guardar PDF
+            </button>
+            <button type="button" class="btn btn-primary" (click)="volverAMisSolicitudes()">
+              Volver a Mis Solicitudes
+            </button>
+          </div>
+        </div>
+      </div>
+    }
+
+    <!-- FORMULARIO DE ANTICIPO MEDIANTE ALIAS -->
+    @if (!cargando() && (pedido() || solicitud()) && !pagoConfirmado()) {
+      <div class="anticipo-layout">
+        
+        <!-- COLUMNA IZQUIERDA: PAGO CON ALIAS -->
+        <div class="anticipo-main-column">
+          <form [formGroup]="form" (ngSubmit)="enviarAnticipo()" class="anticipo-form-card">
+            
+            <!-- PASO 1: DATOS DE LA CUENTA Y ALIAS DE STRETTO -->
+            <div class="form-block">
+              <div class="block-title">
+                <span class="step-num">1</span>
+                <h3>Datos para Transferir mediante Alias</h3>
+              </div>
+
+              <p class="block-desc">
+                Transferí el anticipo a la cuenta oficial de STRETTO usando el alias o los datos bancarios:
+              </p>
+
+              <!-- CAJA DESTACADA DE ALIAS -->
+              <div class="alias-highlight-card">
+                <div class="alias-main">
+                  <div class="alias-title-wrap">
+                    <span class="alias-label">Alias de Transferencia:</span>
+                    <strong class="alias-text">{{ aliasStretto }}</strong>
+                  </div>
+                  <button type="button" class="btn btn-sm btn-outline btn-copy" (click)="copiarAlias()">
+                    {{ aliasCopiado() ? 'Copiado' : 'Copiar Alias' }}
+                  </button>
+                </div>
+
+                <div class="bank-grid">
+                  <div>
+                    <span class="bank-label">Titular de la Cuenta:</span>
+                    <strong>{{ titularStretto }}</strong>
+                  </div>
+                  <div>
+                    <span class="bank-label">Banco:</span>
+                    <strong>{{ bancoStretto }}</strong>
+                  </div>
+                  <div>
+                    <span class="bank-label">CUIT:</span>
+                    <strong>{{ cuitStretto }}</strong>
+                  </div>
+                  <div>
+                    <span class="bank-label">CBU:</span>
+                    <code class="cbu-code">{{ cbuStretto }}</code>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- PASO 2: DEFINICIÓN DEL MONTO DEL ANTICIPO -->
+            <div class="form-block">
+              <div class="block-title">
+                <span class="step-num">2</span>
+                <h3>Monto del Anticipo a Enviar</h3>
+              </div>
+
+              <p class="block-desc">
+                Podés abonar la seña mínima sugerida del 30% para asegurar stock, el 50% o el total de la cotización:
+              </p>
+
+              <!-- ACCESOS RÁPIDOS DE PORCENTAJE -->
+              <div class="percent-shortcuts">
+                <button
+                  type="button"
+                  class="btn-shortcut"
+                  (click)="seleccionarPorcentaje(30)"
+                >
+                  <span class="pct-val">30%</span>
+                  <span class="pct-amount">${{ montoMinimoAnticipo() | number:'1.0-0' }}</span>
+                  <span class="pct-tag">Seña Mínima</span>
+                </button>
+
+                <button
+                  type="button"
+                  class="btn-shortcut"
+                  (click)="seleccionarPorcentaje(50)"
+                >
+                  <span class="pct-val">50%</span>
+                  <span class="pct-amount">${{ monto50PorCiento() | number:'1.0-0' }}</span>
+                  <span class="pct-tag">Recomendado</span>
+                </button>
+
+                <button
+                  type="button"
+                  class="btn-shortcut"
+                  (click)="seleccionarPorcentaje(100)"
+                >
+                  <span class="pct-val">100%</span>
+                  <span class="pct-amount">${{ presupuestoTotal() | number:'1.0-0' }}</span>
+                  <span class="pct-tag">Pago Total</span>
+                </button>
+              </div>
+
+              <!-- INPUT DE MONTO -->
+              <div class="form-group monto-group">
+                <label for="monto" class="form-label">Monto transferido ($ ARS) *</label>
+                <div class="input-money-wrap">
+                  <span class="currency-symbol">$</span>
+                  <input
+                    id="monto"
+                    type="number"
+                    min="1"
+                    [max]="presupuestoTotal()"
+                    formControlName="monto"
+                    class="form-control input-lg"
+                    placeholder="Ej. 50000"
+                  />
+                </div>
+                @if (form.get('monto')?.touched && form.get('monto')?.invalid) {
+                  <small class="field-error">Ingresá un monto válido mayor a 0.</small>
+                }
+              </div>
+
+              <!-- BALANCE CALCULADO -->
+              <div class="balance-calculator">
+                <div class="calc-item">
+                  <span class="calc-label">Total Cotizado:</span>
+                  <strong>${{ presupuestoTotal() | number:'1.2-2' }}</strong>
+                </div>
+                <div class="calc-op">-</div>
+                <div class="calc-item">
+                  <span class="calc-label">Tu Anticipo:</span>
+                  <strong class="text-accent">${{ montoActualInput() | number:'1.2-2' }}</strong>
+                </div>
+                <div class="calc-op">=</div>
+                <div class="calc-item">
+                  <span class="calc-label">Saldo a la entrega:</span>
+                  <strong class="text-primary">${{ saldoRestanteCalculado() | number:'1.2-2' }}</strong>
+                </div>
+              </div>
+            </div>
+
+            <!-- PASO 3: REGISTRO DEL COMPROBANTE -->
+            <div class="form-block">
+              <div class="block-title">
+                <span class="step-num">3</span>
+                <h3>Comprobante de la Transferencia</h3>
+              </div>
+
+              <div class="fields-grid">
+                <!-- Titular de la cuenta emisora -->
+                <div class="form-group span-2">
+                  <label for="titular" class="form-label">Titular de la cuenta de origen *</label>
+                  <input
+                    id="titular"
+                    type="text"
+                    formControlName="titular"
+                    class="form-control"
+                    placeholder="Ej. Eventos Stretto S.A. / Juan Pérez"
+                  />
+                  @if (form.get('titular')?.touched && form.get('titular')?.invalid) {
+                    <small class="field-error">Ingresá el titular (mínimo 3 caracteres).</small>
+                  }
+                </div>
+
+                <!-- N° de Comprobante / Transacción -->
+                <div class="form-group span-2">
+                  <label for="comprobante" class="form-label">N° de Comprobante / Operación bancaria *</label>
+                  <input
+                    id="comprobante"
+                    type="text"
+                    formControlName="comprobante"
+                    class="form-control"
+                    placeholder="Ej. OP-94827104"
+                  />
+                  @if (form.get('comprobante')?.touched && form.get('comprobante')?.invalid) {
+                    <small class="field-error">Ingresá el número de comprobante o referencia de la transferencia.</small>
+                  }
+                </div>
+
+                <!-- Observaciones -->
+                <div class="form-group span-2">
+                  <label for="observaciones" class="form-label">Notas o Comentarios Adicionales (opcional)</label>
+                  <textarea
+                    id="observaciones"
+                    rows="2"
+                    formControlName="observaciones"
+                    class="form-control"
+                    placeholder="Instrucciones para facturación, horarios de recepción, etc."
+                  ></textarea>
+                </div>
+              </div>
+            </div>
+
+            <!-- BOTONES DE ACCIÓN -->
+            <div class="form-actions">
+              <button type="button" class="btn btn-secondary" routerLink="/mis-solicitudes">
+                Cancelar
+              </button>
+              <button
+                type="submit"
+                class="btn btn-primary"
+                [disabled]="enviando() || form.invalid"
+              >
+                @if (enviando()) {
+                  <span class="spinner"></span>
+                  <span>Registrando Anticipo...</span>
+                } @else {
+                  <span>Registrar Anticipo y Confirmar Pedido</span>
+                }
+              </button>
+            </div>
+          </form>
+        </div>
+
+        <!-- COLUMNA DERECHA: RESUMEN DE LA COTIZACIÓN -->
+        <aside class="anticipo-summary-sidebar">
+          <div class="summary-card">
+            <div class="summary-header">
+              <span class="card-tag">RESUMEN DEL PEDIDO</span>
+              <h2>Pedido #{{ pedido()?.id || solicitud()?.id }}</h2>
+              <span class="status-badge-confirmed">Cotización Aprobada</span>
+            </div>
+
+            <div class="summary-body">
+              <div class="summary-field">
+                <span class="lbl">Cliente:</span>
+                <strong>{{ pedido()?.wholesaleCustomerName || solicitud()?.customerName || cliente()?.companyName }}</strong>
+              </div>
+
+              <div class="summary-field">
+                <span class="lbl">Presupuesto Base:</span>
+                <span>Solicitud #{{ pedido()?.requestBudgetId || solicitud()?.id }}</span>
+              </div>
+
+              <div class="summary-field">
+                <span class="lbl">Fecha del Evento:</span>
+                <strong class="highlight-date">
+                  {{ (pedido()?.eventDate || solicitud()?.eventDate) | date:'dd/MM/yyyy' }}
+                </strong>
+              </div>
+
+              <div class="summary-field">
+                <span class="lbl">Volumen Solicitado:</span>
+                <span>{{ pedido()?.quantity || solicitud()?.quantity }} Kg de helado</span>
+              </div>
+
+              @if (solicitud()?.flavors && (solicitud()?.flavors)!.length > 0) {
+                <div class="summary-flavors">
+                  <span class="lbl">Sabores Seleccionados:</span>
+                  <div class="flavor-chips-wrap">
+                    @for (s of solicitud()!.flavors; track s.id) {
+                      <span class="flavor-badge">{{ s.name }}</span>
+                    }
+                  </div>
+                </div>
+              }
+
+              <div class="summary-total-box">
+                <span class="tot-label">Total Cotizado</span>
+                <span class="tot-amount">${{ presupuestoTotal() | number:'1.2-2' }}</span>
+              </div>
+
+              <div class="security-guarantee">
+                <div>
+                  <strong>Garantía Stretto Mayorista</strong>
+                  <p>Al confirmar tu anticipo mediante transferencia, se reservan tus cámaras de frío e insumos para la fecha de despacho.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </aside>
+
+      </div>
+    }
+  </main>
+</div>

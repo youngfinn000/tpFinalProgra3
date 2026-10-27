@@ -1,6 +1,5 @@
 package com.stretto.demo.features.wholesaleOrder.domain.dto;
 
-
 import lombok.*;
 
 import java.math.BigDecimal;
@@ -21,5 +20,9 @@ public class WholesaleOrderResponse {
     private Long requestBudgetId;
     private Long wholesaleCustomerId;
     private String wholesaleCustomerName;
+    private Double budget;
+    private Integer quantity;
+    private LocalDate eventDate;
+    private String stateRequestEnum;
 
 }

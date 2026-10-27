@@ -45,6 +45,22 @@ export const routes: Routes = [
           ),
       },
       {
+        path: 'enviar-anticipo',
+        canActivate: [authGuard],
+        loadComponent: () =>
+          import('./features/presupuestos/enviar-anticipo/enviar-anticipo').then(
+            (m) => m.EnviarAnticipo,
+          ),
+      },
+      {
+        path: 'enviar-anticipo/:orderId',
+        canActivate: [authGuard],
+        loadComponent: () =>
+          import('./features/presupuestos/enviar-anticipo/enviar-anticipo').then(
+            (m) => m.EnviarAnticipo,
+          ),
+      },
+      {
         path: 'sabores',
         loadComponent: () =>
           import('./features/sabores/sabor-list/sabor-list').then((m) => m.SaborList),

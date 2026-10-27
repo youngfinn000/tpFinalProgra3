@@ -160,10 +160,18 @@
                     <span class="text-muted text-sm">Pendiente</span>
                   }
                 </td>
-                <td class="text-center">
+                <td class="text-center actions-cell">
                   <button type="button" class="btn btn-sm btn-outline" (click)="verFicha(item)">
                     Ver Ficha
                   </button>
+                  @if (esClienteMayorista() && item.stateRequestEnum === 'CONFIRMED') {
+                    <a
+                      [routerLink]="['/enviar-anticipo']"
+                      [queryParams]="{ budgetId: item.id }"
+                      class="btn btn-sm btn-primary">
+                      Anticipo
+                    </a>
+                  }
                 </td>
               </tr>
             }
@@ -189,7 +197,7 @@
           <!-- Banners explicativos de estado -->
           @if (s.stateRequestEnum === 'CONFIRMED') {
             <div class="banner-status banner-confirmed">
-              <span class="banner-icon">🎉</span>
+              
               <div>
                 <strong>¡Presupuesto Cotizado y Aprobado!</strong>
                 <p>El equipo de STRETTO ha confirmado la cotización para tu evento. Ya podés enviar el anticipo para reservar.</p>
@@ -197,7 +205,7 @@
             </div>
           } @else if (s.stateRequestEnum === 'PENDING') {
             <div class="banner-status banner-pending">
-              <span class="banner-icon">⏳</span>
+              
               <div>
                 <strong>Solicitud en Evaluación</strong>
                 <p>Nuestros maestros heladeros están revisando la disponibilidad de stock para tu fecha.</p>
@@ -282,7 +290,7 @@
                   [disabled]="guardandoCotizacion() || montoCotizacion <= 0"
                   (click)="solicitarAprobacion()"
                 >
-                  ✓ Aprobar y Cotizar
+                  Aprobar y Cotizar
                 </button>
                 <button
                   type="button"
@@ -290,7 +298,7 @@
                   [disabled]="guardandoCotizacion()"
                   (click)="solicitarRechazo()"
                 >
-                  ✕ Rechazar
+                  Rechazar
                 </button>
               </div>
             </div>
@@ -304,13 +312,14 @@
 
           <!-- ENLACE DIRECTO A LA HISTORIA DE USUARIO 3 -->
           @if (s.stateRequestEnum === 'CONFIRMED' && esClienteMayorista()) {
-            <button
-              type="button"
-              class="btn btn-success"
+            <a
+              [routerLink]="['/enviar-anticipo']"
+              [queryParams]="{ budgetId: s.id }"
+              class="btn btn-primary"
               (click)="cerrarModal()"
             >
-              💳 Enviar Anticipo / Confirmar Pedido (HU-3)
-            </button>
+              Enviar Anticipo / Confirmar Pedido
+            </a>
           }
         </div>
       </div>

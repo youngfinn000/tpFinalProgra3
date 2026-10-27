@@ -29,7 +29,7 @@
     </div>
   }
 
-  <!-- BARRA DE FILTROS Y BÚSQUEDA (KAN-253) -->
+  <!-- BARRA DE FILTROS Y BÚSQUEDA (KAN-268, KAN-270) -->
   <div class="filters-card">
     <div class="status-tabs">
       <button
@@ -76,7 +76,7 @@
     </div>
   </div>
 
-  <!-- LISTADO DE SOLICITUDES (KAN-253) -->
+  <!-- LISTADO DE SOLICITUDES (KAN-268) -->
   <div class="table-card">
     @if (cargando()) {
       <div class="loading-state">
@@ -173,20 +173,20 @@
     }
   </div>
 
-  <!-- FICHA DE DETALLE MODAL (KAN-254 a KAN-260) -->
+  <!-- FICHA DE DETALLE COMPLETA (KAN-269) -->
   @if (modalDetalleAbierto() && solicitudSeleccionada(); as s) {
     <div class="modal-backdrop">
       <div class="modal-card modal-large">
         <div class="modal-header">
           <div class="header-left">
-            <span class="tag-title">FICHA DE SOLICITUD</span>
+            <span class="tag-title">FICHA COMPLETA DE SOLICITUD</span>
             <h2>Solicitud de Presupuesto #{{ s.id }}</h2>
           </div>
           <button type="button" class="btn-close" (click)="cerrarModal()">✕</button>
         </div>
 
         <div class="modal-body">
-          <!-- KAN-255: Mostrar estado con banner explicativo -->
+          <!-- Banners explicativos de estado -->
           @if (s.stateRequestEnum === 'CONFIRMED') {
             <div class="banner-status banner-confirmed">
               <span class="banner-icon">🎉</span>
@@ -207,32 +207,29 @@
             <div class="banner-status banner-rejected">
               <span class="banner-icon">✕</span>
               <div>
-                <strong>Solicitud No Disponible</strong>
-                <p>Lamentablemente no fue posible aceptar el presupuesto para las fechas o sabores requeridos.</p>
+                <strong>Solicitud Rechazada</strong>
+                <p>La solicitud no fue aceptada para las fechas o requerimientos indicados.</p>
               </div>
             </div>
           }
 
-          <!-- GRID DE DATOS (KAN-256, KAN-257, KAN-258, KAN-260) -->
+          <!-- GRID DE DATOS -->
           <div class="detail-grid">
             <div class="detail-box">
               <span class="detail-label">Cliente Mayorista</span>
               <strong class="detail-value">{{ s.customerName }}</strong>
             </div>
 
-            <!-- KAN-256: Fecha de solicitud -->
             <div class="detail-box">
               <span class="detail-label">Fecha de Solicitud</span>
               <span class="detail-value">{{ s.requestDateTime | date:'dd/MM/yyyy HH:mm' }}</span>
             </div>
 
-            <!-- KAN-257: Fecha del evento -->
             <div class="detail-box">
               <span class="detail-label">Fecha del Evento</span>
               <span class="detail-value highlight-date">{{ s.eventDate | date:'dd/MM/yyyy' }}</span>
             </div>
 
-            <!-- KAN-258: Cantidad de helado -->
             <div class="detail-box">
               <span class="detail-label">Cantidad Requerida</span>
               <strong class="detail-value text-accent">{{ s.quantity }} Kg de helado</strong>
@@ -243,7 +240,6 @@
               <span class="detail-value">{{ s.advancePayment ? 'Sí, incluye anticipo' : 'Sin anticipo inicial' }}</span>
             </div>
 
-            <!-- KAN-260: Total Cotizado / Presupuestado -->
             <div class="detail-box box-total">
               <span class="detail-label">Monto Cotizado Total</span>
               <strong class="detail-value total-price">
@@ -252,7 +248,7 @@
             </div>
           </div>
 
-          <!-- KAN-259: Mostrar sabores seleccionados -->
+          <!-- SABORES SOLICITADOS -->
           <div class="flavors-section">
             <h3 class="section-heading">Sabores Solicitados ({{ s.flavors.length }})</h3>
             <div class="flavors-chips-container">
@@ -264,11 +260,11 @@
             </div>
           </div>
 
-          <!-- PANEL DE COTIZACIÓN PARA EL ADMINISTRADOR (Si es Admin y está pendiente) -->
+          <!-- PANEL DE GESTIÓN PARA ADMINISTRADOR: KAN-271 Y KAN-272 -->
           @if (!esClienteMayorista() && s.stateRequestEnum === 'PENDING') {
             <div class="admin-quote-panel">
-              <h4>🛠️ Cotizar y Aprobar Presupuesto (Acción de Heladería)</h4>
-              <p class="text-sm">Ingresá el valor cotizado para esta solicitud y confirmala para que el cliente pueda confirmarla con anticipo:</p>
+              <h4>🛠️ Acciones de Gestión de Presupuesto (Administrador)</h4>
+              <p class="text-sm">Definí el precio total cotizado para confirmar la solicitud, o recházala si no hay disponibilidad:</p>
               <div class="quote-form-inline">
                 <div class="input-prefix">
                   <span class="prefix">$</span>
@@ -284,7 +280,7 @@
                   type="button"
                   class="btn btn-primary"
                   [disabled]="guardandoCotizacion() || montoCotizacion <= 0"
-                  (click)="cotizarSolicitud(s.id)"
+                  (click)="solicitarAprobacion()"
                 >
                   ✓ Aprobar y Cotizar
                 </button>
@@ -292,9 +288,9 @@
                   type="button"
                   class="btn btn-danger"
                   [disabled]="guardandoCotizacion()"
-                  (click)="rechazarSolicitud(s.id)"
+                  (click)="solicitarRechazo()"
                 >
-                  Rechazar
+                  ✕ Rechazar
                 </button>
               </div>
             </div>
@@ -306,8 +302,8 @@
             Cerrar Ficha
           </button>
 
-          <!-- ENLACE DIRECTO A LA HISTORIA DE USUARIO 3 (Si está cotizado) -->
-          @if (s.stateRequestEnum === 'CONFIRMED') {
+          <!-- ENLACE DIRECTO A LA HISTORIA DE USUARIO 3 -->
+          @if (s.stateRequestEnum === 'CONFIRMED' && esClienteMayorista()) {
             <button
               type="button"
               class="btn btn-success"
@@ -320,5 +316,58 @@
       </div>
     </div>
   }
-</section>
 
+  <!-- MODAL DE CONFIRMACIÓN ANTES DE CAMBIAR ESTADO (KAN-273) -->
+  @if (modalConfirmacionAbierto() && solicitudSeleccionada(); as s) {
+    <div class="modal-backdrop confirm-dialog-backdrop">
+      <div class="modal-card modal-small">
+        <div class="modal-header">
+          <h2>
+            {{ accionConfirmacion() === 'APROBAR' ? 'Confirmar Aprobación de Presupuesto' : 'Confirmar Rechazo de Solicitud' }}
+          </h2>
+          <button type="button" class="btn-close" (click)="cerrarModalConfirmacion()">✕</button>
+        </div>
+        <div class="modal-body">
+          @if (accionConfirmacion() === 'APROBAR') {
+            <p>
+              ¿Estás seguro de que deseás <strong>aprobar y cotizar</strong> la solicitud <strong>#{{ s.id }}</strong> para el cliente <strong>{{ s.customerName }}</strong>?
+            </p>
+            <div class="confirm-summary-box">
+              <div><strong>Monto cotizado:</strong> ${{ montoCotizacion | number:'1.2-2' }}</div>
+              <div><strong>Cantidad:</strong> {{ s.quantity }} Kg de helado</div>
+              <div><strong>Fecha de evento:</strong> {{ s.eventDate | date:'dd/MM/yyyy' }}</div>
+            </div>
+            <p class="text-sm text-muted">
+              Al confirmar, el estado cambiará a <strong>CONFIRMED</strong> y se generará la orden mayorista correspondiente.
+            </p>
+          } @else {
+            <p>
+              ¿Estás seguro de que deseás <strong>rechazar</strong> la solicitud <strong>#{{ s.id }}</strong> de <strong>{{ s.customerName }}</strong>?
+            </p>
+            <p class="text-sm text-danger-msg">
+              Esta solicitud cambiará su estado a <strong>REJECTED</strong> de forma definitiva.
+            </p>
+          }
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" (click)="cerrarModalConfirmacion()" [disabled]="guardandoCotizacion()">
+            Cancelar
+          </button>
+          <button
+            type="button"
+            [class]="accionConfirmacion() === 'APROBAR' ? 'btn btn-primary' : 'btn btn-danger'"
+            (click)="ejecutarAccionConfirmada()"
+            [disabled]="guardandoCotizacion()"
+          >
+            @if (guardandoCotizacion()) {
+              <span class="spinner"></span>
+              <span>Procesando...</span>
+            } @else {
+              <span>{{ accionConfirmacion() === 'APROBAR' ? 'Sí, Aprobar Cotización' : 'Sí, Rechazar Solicitud' }}</span>
+            }
+          </button>
+        </div>
+      </div>
+    </div>
+  }
+</section>

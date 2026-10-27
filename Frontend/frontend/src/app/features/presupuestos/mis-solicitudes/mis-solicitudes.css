@@ -556,3 +556,31 @@
   }
 }
 
+
+/* Modal de Confirmación (KAN-273) */
+.confirm-dialog-backdrop {
+  z-index: 1100;
+  background-color: rgba(0, 0, 0, 0.55);
+}
+
+.modal-small {
+  max-width: 480px;
+}
+
+.confirm-summary-box {
+  background-color: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 0.85rem 1rem;
+  margin: 0.75rem 0;
+  font-size: 0.875rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.text-danger-msg {
+  color: #dc2626;
+  font-weight: 500;
+  margin-top: 0.5rem;
+}

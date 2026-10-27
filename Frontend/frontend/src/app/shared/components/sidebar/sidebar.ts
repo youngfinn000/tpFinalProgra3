@@ -64,7 +64,18 @@ export class Sidebar {
     },
   ];
 
-  menu = computed(() =>
-    this.items.filter((item) => this.auth.tieneRol(...item.roles)),
-  );
+  menu = computed(() => {
+    const esMayorista = this.auth.rol() === 'ROLE_WHOLESALE';
+    return this.items
+      .filter((item) => this.auth.tieneRol(...item.roles))
+      .map((item) => {
+        if (item.ruta === '/mis-solicitudes') {
+          return {
+            ...item,
+            label: esMayorista ? 'Mis Solicitudes' : 'Solicitudes Mayoristas',
+          };
+        }
+        return item;
+      });
+  });
 }

@@ -27,6 +27,10 @@ export class MisSolicitudes implements OnInit {
   solicitudSeleccionada = signal<SolicitudPresupuestoResponse | null>(null);
   modalDetalleAbierto = signal<boolean>(false);
 
+  // KAN-273: Modal de confirmación antes de cambiar estado
+  modalConfirmacionAbierto = signal<boolean>(false);
+  accionConfirmacion = signal<'APROBAR' | 'RECHAZAR' | null>(null);
+
   cargando = signal<boolean>(true);
   mensajeError = signal<string>('');
   mensajeExito = signal<string>('');
@@ -151,48 +155,74 @@ export class MisSolicitudes implements OnInit {
     this.solicitudSeleccionada.set(null);
   }
 
-  // Acción para que el Administrador cotice / apruebe una solicitud
-  cotizarSolicitud(solicitudId: number): void {
+  // KAN-271 & KAN-273: Solicitar confirmación para Aprobar / Cotizar
+  solicitarAprobacion(): void {
     if (this.montoCotizacion <= 0) {
-      alert('Ingresá un monto de presupuesto válido mayor a 0.');
+      this.mensajeError.set('Ingresá un monto de presupuesto válido mayor a 0 para aprobar la solicitud.');
       return;
     }
-
-    this.guardandoCotizacion.set(true);
-    this.presupuestoService
-      .actualizarEstado(solicitudId, 'CONFIRMED', this.montoCotizacion)
-      .subscribe({
-        next: (actualizada) => {
-          this.guardandoCotizacion.set(false);
-          this.solicitudSeleccionada.set(actualizada);
-          this.mostrarExito('¡Presupuesto cotizado y aprobado con éxito!');
-          this.cargarSolicitudes();
-        },
-        error: (err) => {
-          this.guardandoCotizacion.set(false);
-          console.error('Error al actualizar estado:', err);
-          alert(err.error?.message ?? 'No se pudo actualizar la cotización.');
-        },
-      });
+    this.mensajeError.set('');
+    this.accionConfirmacion.set('APROBAR');
+    this.modalConfirmacionAbierto.set(true);
   }
 
-  rechazarSolicitud(solicitudId: number): void {
-    if (!confirm('¿Estás seguro de que querés rechazar esta solicitud de presupuesto?')) return;
+  // KAN-272 & KAN-273: Solicitar confirmación para Rechazar
+  solicitarRechazo(): void {
+    this.accionConfirmacion.set('RECHAZAR');
+    this.modalConfirmacionAbierto.set(true);
+  }
+
+  cerrarModalConfirmacion(): void {
+    this.modalConfirmacionAbierto.set(false);
+    this.accionConfirmacion.set(null);
+  }
+
+  // KAN-274 & KAN-275: Conectar acciones con API y actualizar listado
+  ejecutarAccionConfirmada(): void {
+    const seleccionada = this.solicitudSeleccionada();
+    const accion = this.accionConfirmacion();
+
+    if (!seleccionada || !accion) return;
 
     this.guardandoCotizacion.set(true);
-    this.presupuestoService.actualizarEstado(solicitudId, 'REJECTED', 0).subscribe({
-      next: (actualizada) => {
-        this.guardandoCotizacion.set(false);
-        this.solicitudSeleccionada.set(actualizada);
-        this.mostrarExito('La solicitud fue rechazada.');
-        this.cargarSolicitudes();
-      },
-      error: (err) => {
-        this.guardandoCotizacion.set(false);
-        console.error('Error al rechazar solicitud:', err);
-        alert(err.error?.message ?? 'No se pudo rechazar la solicitud.');
-      },
-    });
+
+    if (accion === 'APROBAR') {
+      this.presupuestoService
+        .actualizarEstado(seleccionada.id, 'CONFIRMED', this.montoCotizacion)
+        .subscribe({
+          next: (actualizada) => {
+            this.guardandoCotizacion.set(false);
+            this.solicitudSeleccionada.set(actualizada);
+            this.cerrarModalConfirmacion();
+            this.mostrarExito(`¡Solicitud #${actualizada.id} cotizada y aprobada por $${actualizada.budget}!`);
+            this.cargarSolicitudes();
+          },
+          error: (err) => {
+            this.guardandoCotizacion.set(false);
+            console.error('Error al actualizar estado:', err);
+            this.mensajeError.set(err.error?.message ?? 'No se pudo actualizar la cotización.');
+            this.cerrarModalConfirmacion();
+          },
+        });
+    } else if (accion === 'RECHAZAR') {
+      this.presupuestoService
+        .actualizarEstado(seleccionada.id, 'REJECTED', 0)
+        .subscribe({
+          next: (actualizada) => {
+            this.guardandoCotizacion.set(false);
+            this.solicitudSeleccionada.set(actualizada);
+            this.cerrarModalConfirmacion();
+            this.mostrarExito(`La solicitud #${actualizada.id} fue rechazada.`);
+            this.cargarSolicitudes();
+          },
+          error: (err) => {
+            this.guardandoCotizacion.set(false);
+            console.error('Error al rechazar solicitud:', err);
+            this.mensajeError.set(err.error?.message ?? 'No se pudo rechazar la solicitud.');
+            this.cerrarModalConfirmacion();
+          },
+        });
+    }
   }
 
   private mostrarExito(msj: string): void {
@@ -200,4 +230,3 @@ export class MisSolicitudes implements OnInit {
     setTimeout(() => this.mensajeExito.set(''), 4000);
   }
 }
-

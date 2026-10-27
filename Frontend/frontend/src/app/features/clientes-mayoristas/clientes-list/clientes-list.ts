@@ -1,13 +1,14 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, FormsModule, Validators } from '@angular/forms';
+import { RouterLink } from '@angular/router';
 import { ClienteMayoristaService } from '../services/cliente-mayorista.service';
 import { ClienteMayorista, ClienteMayoristaRequest } from '../models/cliente-mayorista.model';
 
 @Component({
   selector: 'app-clientes-list',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, FormsModule],
+  imports: [CommonModule, ReactiveFormsModule, FormsModule, RouterLink],
   templateUrl: './clientes-list.html',
   styleUrl: './clientes-list.css'
 })

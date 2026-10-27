@@ -466,3 +466,53 @@
     padding: 1rem;
   }
 }
+
+/* Estilos adicionales para navegación y modal de presupuestos */
+.header-buttons {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.btn-secondary-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.65rem 1rem;
+  background-color: #ffffff;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  color: var(--text-primary);
+  font-size: 0.875rem;
+  font-weight: 600;
+  text-decoration: none;
+  transition: all 0.2s ease;
+}
+
+.btn-secondary-link:hover {
+  background-color: #f3f4f6;
+  border-color: #cbd5e1;
+}
+
+.btn-link-action {
+  color: #2563eb;
+  font-weight: 600;
+  font-size: 0.875rem;
+  text-decoration: none;
+  margin-right: auto;
+}
+
+.btn-link-action:hover {
+  text-decoration: underline;
+}
+
+.badge-pending {
+  background-color: #fef3c7 !important;
+  color: #b45309 !important;
+}
+
+.badge-confirmed {
+  background-color: #dcfce7 !important;
+  color: #15803d !important;
+}

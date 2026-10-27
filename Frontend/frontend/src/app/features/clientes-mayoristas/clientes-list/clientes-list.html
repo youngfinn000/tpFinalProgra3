@@ -5,13 +5,18 @@
       <h1 class="page-title">Clientes Mayoristas</h1>
       <p class="page-subtitle">Gestión de cuentas comerciales, datos impositivos y solicitudes de presupuesto.</p>
     </div>
-    <button type="button" class="btn-primary" (click)="abrirModalCrear()">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-        <line x1="12" y1="5" x2="12" y2="19"></line>
-        <line x1="5" y1="12" x2="19" y2="12"></line>
-      </svg>
-      <span>Nuevo Cliente</span>
-    </button>
+    <div class="header-buttons">
+      <a routerLink="/mis-solicitudes" class="btn-secondary-link">
+        📋 Ver Todas las Solicitudes
+      </a>
+      <button type="button" class="btn-primary" (click)="abrirModalCrear()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="12" y1="5" x2="12" y2="19"></line>
+          <line x1="5" y1="12" x2="19" y2="12"></line>
+        </svg>
+        <span>Nuevo Cliente</span>
+      </button>
+    </div>
   </header>
 
   <!-- Mensajes de Notificación -->
@@ -232,7 +237,7 @@
   <div class="modal-backdrop">
     <div class="modal-card modal-large">
       <div class="modal-header">
-        <h2>Solicitudes de Presupuesto</h2>
+        <h2>Solicitudes de Presupuesto del Cliente</h2>
         <button type="button" class="btn-close" (click)="cerrarModalPresupuestos()">✕</button>
       </div>
       <div class="modal-body">
@@ -244,18 +249,30 @@
               <thead>
                 <tr>
                   <th># Solicitud</th>
-                  <th>Fecha</th>
+                  <th>Fecha Solicitud</th>
+                  <th>Fecha Evento</th>
+                  <th>Cantidad</th>
                   <th>Estado</th>
-                  <th>Total</th>
+                  <th>Cotización</th>
                 </tr>
               </thead>
               <tbody>
                 @for (req of presupuestosCliente; track req.id) {
                   <tr>
-                    <td>#{{ req.id }}</td>
-                    <td>{{ req.date | date:'dd/MM/yyyy HH:mm' }}</td>
-                    <td><span class="status-badge">{{ req.state }}</span></td>
-                    <td><strong>${{ req.total | number:'1.2-2' }}</strong></td>
+                    <td><strong>#{{ req.id }}</strong></td>
+                    <td>{{ (req.requestDateTime || req.date) | date:'dd/MM/yyyy HH:mm' }}</td>
+                    <td>{{ req.eventDate | date:'dd/MM/yyyy' }}</td>
+                    <td><strong>{{ req.quantity }} Kg</strong></td>
+                    <td>
+                      <span class="status-badge" [class.badge-pending]="(req.stateRequestEnum || req.state) === 'PENDING'" [class.badge-confirmed]="(req.stateRequestEnum || req.state) === 'CONFIRMED'">
+                        {{ req.stateRequestEnum || req.state }}
+                      </span>
+                    </td>
+                    <td>
+                      <strong>
+                        {{ req.budget && req.budget > 0 ? ('$' + (req.budget | number:'1.2-2')) : 'Pendiente' }}
+                      </strong>
+                    </td>
                   </tr>
                 }
               </tbody>
@@ -264,6 +281,9 @@
         }
       </div>
       <div class="modal-footer">
+        <a routerLink="/mis-solicitudes" class="btn-link-action" (click)="cerrarModalPresupuestos()">
+          Ir a Gestión Completa de Presupuestos →
+        </a>
         <button type="button" class="btn-secondary" (click)="cerrarModalPresupuestos()">Cerrar</button>
       </div>
     </div>

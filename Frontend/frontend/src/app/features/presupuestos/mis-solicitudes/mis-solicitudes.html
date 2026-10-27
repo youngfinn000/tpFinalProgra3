@@ -1,0 +1,324 @@
+<section class="page">
+  <!-- ENCABEZADO DE PÁGINA -->
+  <header class="page-header">
+    <div>
+      <h1 class="page-title">
+        {{ esClienteMayorista() ? 'Mis Solicitudes de Presupuesto' : 'Gestión de Solicitudes de Presupuesto' }}
+      </h1>
+      <p class="page-subtitle">
+        {{ esClienteMayorista() ? 'Seguimiento del estado, fechas y cotizaciones de tus pedidos para eventos.' : 'Panel de revisión y cotización de presupuestos mayoristas entrantes.' }}
+      </p>
+    </div>
+    <div class="header-actions">
+      <a routerLink="/solicitar-presupuesto" class="btn btn-primary">
+        + Nueva Solicitud
+      </a>
+    </div>
+  </header>
+
+  <!-- MENSAJES -->
+  @if (mensajeExito()) {
+    <div class="alert alert-success">
+      <span>✓ {{ mensajeExito() }}</span>
+    </div>
+  }
+
+  @if (mensajeError()) {
+    <div class="alert alert-danger">
+      <span>⚠️ {{ mensajeError() }}</span>
+    </div>
+  }
+
+  <!-- BARRA DE FILTROS Y BÚSQUEDA (KAN-253) -->
+  <div class="filters-card">
+    <div class="status-tabs">
+      <button
+        type="button"
+        class="tab-btn"
+        [class.active]="filtroEstado() === 'TODAS'"
+        (click)="cambiarFiltroEstado('TODAS')"
+      >
+        Todas ({{ solicitudes().length }})
+      </button>
+      <button
+        type="button"
+        class="tab-btn"
+        [class.active]="filtroEstado() === 'PENDING'"
+        (click)="cambiarFiltroEstado('PENDING')"
+      >
+        🟡 Pendientes
+      </button>
+      <button
+        type="button"
+        class="tab-btn"
+        [class.active]="filtroEstado() === 'CONFIRMED'"
+        (click)="cambiarFiltroEstado('CONFIRMED')"
+      >
+        🟢 Cotizadas / Aprobadas
+      </button>
+      <button
+        type="button"
+        class="tab-btn"
+        [class.active]="filtroEstado() === 'REJECTED'"
+        (click)="cambiarFiltroEstado('REJECTED')"
+      >
+        🔴 Rechazadas
+      </button>
+    </div>
+
+    <div class="search-box">
+      <input
+        type="text"
+        placeholder="🔍 Buscar por #ID, cliente o sabor..."
+        (input)="alBuscar($event)"
+        class="form-control"
+      />
+    </div>
+  </div>
+
+  <!-- LISTADO DE SOLICITUDES (KAN-253) -->
+  <div class="table-card">
+    @if (cargando()) {
+      <div class="loading-state">
+        <span class="spinner-dark"></span>
+        <p>Cargando solicitudes de presupuesto...</p>
+      </div>
+    } @else if (solicitudesFiltradas().length === 0) {
+      <div class="empty-state">
+        <div class="empty-icon">📋</div>
+        <h3>No se encontraron solicitudes</h3>
+        <p>
+          {{ esClienteMayorista() ? 'Aún no registrás solicitudes de presupuesto con este filtro.' : 'No hay solicitudes para mostrar.' }}
+        </p>
+        <a routerLink="/solicitar-presupuesto" class="btn btn-secondary">
+          Solicitar un nuevo presupuesto
+        </a>
+      </div>
+    } @else {
+      <div class="table-responsive">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th># Solicitud</th>
+              @if (!esClienteMayorista()) {
+                <th>Cliente</th>
+              }
+              <th>Fecha Solicitud</th>
+              <th>Fecha Evento</th>
+              <th>Cantidad</th>
+              <th>Sabores</th>
+              <th>Estado</th>
+              <th>Total Cotizado</th>
+              <th class="text-center">Acción</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (item of solicitudesFiltradas(); track item.id) {
+              <tr>
+                <td>
+                  <strong class="request-id">#{{ item.id }}</strong>
+                </td>
+                @if (!esClienteMayorista()) {
+                  <td>
+                    <span class="customer-name">{{ item.customerName }}</span>
+                  </td>
+                }
+                <td>
+                  <span class="text-sm">{{ item.requestDateTime | date:'dd/MM/yyyy HH:mm' }}</span>
+                </td>
+                <td>
+                  <span class="event-date-badge">{{ item.eventDate | date:'dd/MM/yyyy' }}</span>
+                </td>
+                <td>
+                  <strong class="quantity-highlight">{{ item.quantity }} Kg</strong>
+                </td>
+                <td>
+                  <div class="table-flavors">
+                    @for (s of item.flavors.slice(0, 2); track s.id) {
+                      <span class="flavor-mini-chip">{{ s.name }}</span>
+                    }
+                    @if (item.flavors.length > 2) {
+                      <span class="flavor-more">+{{ item.flavors.length - 2 }}</span>
+                    }
+                  </div>
+                </td>
+                <td>
+                  @if (item.stateRequestEnum === 'PENDING') {
+                    <span class="status-pill status-pending">En Evaluación</span>
+                  } @else if (item.stateRequestEnum === 'CONFIRMED') {
+                    <span class="status-pill status-confirmed">Cotizado</span>
+                  } @else if (item.stateRequestEnum === 'REJECTED') {
+                    <span class="status-pill status-rejected">Rechazado</span>
+                  } @else {
+                    <span class="status-pill">{{ item.stateRequestEnum }}</span>
+                  }
+                </td>
+                <td>
+                  @if (item.budget && item.budget > 0) {
+                    <strong class="price-highlight">${{ item.budget | number:'1.2-2' }}</strong>
+                  } @else {
+                    <span class="text-muted text-sm">Pendiente</span>
+                  }
+                </td>
+                <td class="text-center">
+                  <button type="button" class="btn btn-sm btn-outline" (click)="verFicha(item)">
+                    Ver Ficha
+                  </button>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    }
+  </div>
+
+  <!-- FICHA DE DETALLE MODAL (KAN-254 a KAN-260) -->
+  @if (modalDetalleAbierto() && solicitudSeleccionada(); as s) {
+    <div class="modal-backdrop">
+      <div class="modal-card modal-large">
+        <div class="modal-header">
+          <div class="header-left">
+            <span class="tag-title">FICHA DE SOLICITUD</span>
+            <h2>Solicitud de Presupuesto #{{ s.id }}</h2>
+          </div>
+          <button type="button" class="btn-close" (click)="cerrarModal()">✕</button>
+        </div>
+
+        <div class="modal-body">
+          <!-- KAN-255: Mostrar estado con banner explicativo -->
+          @if (s.stateRequestEnum === 'CONFIRMED') {
+            <div class="banner-status banner-confirmed">
+              <span class="banner-icon">🎉</span>
+              <div>
+                <strong>¡Presupuesto Cotizado y Aprobado!</strong>
+                <p>El equipo de STRETTO ha confirmado la cotización para tu evento. Ya podés enviar el anticipo para reservar.</p>
+              </div>
+            </div>
+          } @else if (s.stateRequestEnum === 'PENDING') {
+            <div class="banner-status banner-pending">
+              <span class="banner-icon">⏳</span>
+              <div>
+                <strong>Solicitud en Evaluación</strong>
+                <p>Nuestros maestros heladeros están revisando la disponibilidad de stock para tu fecha.</p>
+              </div>
+            </div>
+          } @else if (s.stateRequestEnum === 'REJECTED') {
+            <div class="banner-status banner-rejected">
+              <span class="banner-icon">✕</span>
+              <div>
+                <strong>Solicitud No Disponible</strong>
+                <p>Lamentablemente no fue posible aceptar el presupuesto para las fechas o sabores requeridos.</p>
+              </div>
+            </div>
+          }
+
+          <!-- GRID DE DATOS (KAN-256, KAN-257, KAN-258, KAN-260) -->
+          <div class="detail-grid">
+            <div class="detail-box">
+              <span class="detail-label">Cliente Mayorista</span>
+              <strong class="detail-value">{{ s.customerName }}</strong>
+            </div>
+
+            <!-- KAN-256: Fecha de solicitud -->
+            <div class="detail-box">
+              <span class="detail-label">Fecha de Solicitud</span>
+              <span class="detail-value">{{ s.requestDateTime | date:'dd/MM/yyyy HH:mm' }}</span>
+            </div>
+
+            <!-- KAN-257: Fecha del evento -->
+            <div class="detail-box">
+              <span class="detail-label">Fecha del Evento</span>
+              <span class="detail-value highlight-date">{{ s.eventDate | date:'dd/MM/yyyy' }}</span>
+            </div>
+
+            <!-- KAN-258: Cantidad de helado -->
+            <div class="detail-box">
+              <span class="detail-label">Cantidad Requerida</span>
+              <strong class="detail-value text-accent">{{ s.quantity }} Kg de helado</strong>
+            </div>
+
+            <div class="detail-box">
+              <span class="detail-label">Anticipo informado</span>
+              <span class="detail-value">{{ s.advancePayment ? 'Sí, incluye anticipo' : 'Sin anticipo inicial' }}</span>
+            </div>
+
+            <!-- KAN-260: Total Cotizado / Presupuestado -->
+            <div class="detail-box box-total">
+              <span class="detail-label">Monto Cotizado Total</span>
+              <strong class="detail-value total-price">
+                {{ s.budget > 0 ? ('$' + (s.budget | number:'1.2-2')) : 'Aún no cotizado' }}
+              </strong>
+            </div>
+          </div>
+
+          <!-- KAN-259: Mostrar sabores seleccionados -->
+          <div class="flavors-section">
+            <h3 class="section-heading">Sabores Solicitados ({{ s.flavors.length }})</h3>
+            <div class="flavors-chips-container">
+              @for (f of s.flavors; track f.id) {
+                <span class="flavor-badge">
+                  🍦 {{ f.name }}
+                </span>
+              }
+            </div>
+          </div>
+
+          <!-- PANEL DE COTIZACIÓN PARA EL ADMINISTRADOR (Si es Admin y está pendiente) -->
+          @if (!esClienteMayorista() && s.stateRequestEnum === 'PENDING') {
+            <div class="admin-quote-panel">
+              <h4>🛠️ Cotizar y Aprobar Presupuesto (Acción de Heladería)</h4>
+              <p class="text-sm">Ingresá el valor cotizado para esta solicitud y confirmala para que el cliente pueda confirmarla con anticipo:</p>
+              <div class="quote-form-inline">
+                <div class="input-prefix">
+                  <span class="prefix">$</span>
+                  <input
+                    type="number"
+                    min="1"
+                    [(ngModel)]="montoCotizacion"
+                    placeholder="Ej. 150000"
+                    class="form-control"
+                  />
+                </div>
+                <button
+                  type="button"
+                  class="btn btn-primary"
+                  [disabled]="guardandoCotizacion() || montoCotizacion <= 0"
+                  (click)="cotizarSolicitud(s.id)"
+                >
+                  ✓ Aprobar y Cotizar
+                </button>
+                <button
+                  type="button"
+                  class="btn btn-danger"
+                  [disabled]="guardandoCotizacion()"
+                  (click)="rechazarSolicitud(s.id)"
+                >
+                  Rechazar
+                </button>
+              </div>
+            </div>
+          }
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" (click)="cerrarModal()">
+            Cerrar Ficha
+          </button>
+
+          <!-- ENLACE DIRECTO A LA HISTORIA DE USUARIO 3 (Si está cotizado) -->
+          @if (s.stateRequestEnum === 'CONFIRMED') {
+            <button
+              type="button"
+              class="btn btn-success"
+              (click)="cerrarModal()"
+            >
+              💳 Enviar Anticipo / Confirmar Pedido (HU-3)
+            </button>
+          }
+        </div>
+      </div>
+    </div>
+  }
+</section>
+

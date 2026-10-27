@@ -37,6 +37,14 @@ export const routes: Routes = [
           ),
       },
       {
+        path: 'mis-solicitudes',
+        canActivate: [authGuard],
+        loadComponent: () =>
+          import('./features/presupuestos/mis-solicitudes/mis-solicitudes').then(
+            (m) => m.MisSolicitudes,
+          ),
+      },
+      {
         path: 'sabores',
         loadComponent: () =>
           import('./features/sabores/sabor-list/sabor-list').then((m) => m.SaborList),

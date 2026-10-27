@@ -56,6 +56,12 @@ export class Sidebar {
       roles: ['ROLE_ADMIN', 'ROLE_USER', 'ROLE_WHOLESALE'],
       icono: 'presupuesto',
     },
+    {
+      label: 'Mis Solicitudes',
+      ruta: '/mis-solicitudes',
+      roles: ['ROLE_ADMIN', 'ROLE_USER', 'ROLE_WHOLESALE'],
+      icono: 'presupuesto',
+    },
   ];
 
   menu = computed(() =>

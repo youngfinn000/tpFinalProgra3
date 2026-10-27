@@ -18,6 +18,10 @@ export class PresupuestoService {
     return this.http.post<SolicitudPresupuestoResponse>(this.baseUrl, solicitud);
   }
 
+  obtenerPorId(id: number): Observable<SolicitudPresupuestoResponse> {
+    return this.http.get<SolicitudPresupuestoResponse>(`${this.baseUrl}/${id}`);
+  }
+
   obtenerPorCliente(customerId: number): Observable<SolicitudPresupuestoResponse[]> {
     return this.http.get<SolicitudPresupuestoResponse[]>(`${this.baseUrl}/customer/${customerId}`);
   }
@@ -38,4 +42,3 @@ export class PresupuestoService {
     });
   }
 }
-

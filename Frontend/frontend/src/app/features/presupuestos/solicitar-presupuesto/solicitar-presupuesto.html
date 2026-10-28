@@ -21,7 +21,6 @@
 
   @if (mensajeError()) {
     <div class="alert alert-danger">
-      <span class="alert-icon">⚠️</span>
       <span class="alert-text">{{ mensajeError() }}</span>
       <button type="button" class="alert-close" (click)="mensajeError.set('')">✕</button>
     </div>
@@ -68,7 +67,7 @@
           <h3>Sabores Seleccionados ({{ res.flavors.length }})</h3>
           <div class="selected-tags">
             @for (s of res.flavors; track s.id) {
-              <span class="flavor-chip active">🍦 {{ s.name }}</span>
+              <span class="flavor-chip active"> {{ s.name }}</span>
             }
           </div>
         </div>
@@ -103,7 +102,6 @@
             @if (esClienteMayorista()) {
               <div class="wholesale-profile-card">
                 <div class="profile-header">
-                  <div class="profile-icon">🏢</div>
                   <div>
                     <div class="profile-badge">CUENTA COMERCIAL MAYORISTA</div>
                     <h3 class="profile-title">
@@ -215,7 +213,7 @@
                 <div class="chips-list">
                   @for (s of saboresSeleccionados(); track s.id) {
                     <span class="chip-item">
-                      🍦 {{ s.nombre }}
+                       {{ s.nombre }}
                       <button type="button" class="chip-remove" (click)="eliminarSabor(s.id)">✕</button>
                     </span>
                   }
@@ -223,7 +221,7 @@
               </div>
             } @else {
               <div class="no-selection-notice">
-                <span>⚠️ Aún no has seleccionado ningún sabor. Hacé clic en los sabores disponibles para armar tu pedido.</span>
+                <span> Aún no has seleccionado ningún sabor. Hacé clic en los sabores disponibles para armar tu pedido.</span>
               </div>
             }
 
@@ -232,7 +230,7 @@
               <div class="catalog-search">
                 <input
                   type="text"
-                  placeholder="🔍 Buscar sabor por nombre (ej. Dulce de leche, Chocolate, Frutilla...)"
+                  placeholder=" Buscar sabor por nombre (ej. Dulce de leche, Chocolate, Frutilla...)"
                   (input)="buscarSabores($event)"
                   class="form-control search-input"
                 />

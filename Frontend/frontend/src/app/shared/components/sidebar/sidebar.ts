@@ -53,13 +53,13 @@ export class Sidebar {
     {
       label: 'Solicitar Presupuesto',
       ruta: '/solicitar-presupuesto',
-      roles: ['ROLE_ADMIN', 'ROLE_USER', 'ROLE_WHOLESALE'],
+      roles: ['ROLE_WHOLESALE'],
       icono: 'presupuesto',
     },
     {
       label: 'Mis Solicitudes',
       ruta: '/mis-solicitudes',
-      roles: ['ROLE_ADMIN', 'ROLE_USER', 'ROLE_WHOLESALE'],
+      roles: ['ROLE_ADMIN', 'ROLE_WHOLESALE'],
       icono: 'presupuesto',
     },
   ];

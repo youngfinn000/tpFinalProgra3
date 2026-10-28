@@ -25,7 +25,7 @@
 
   @if (mensajeError()) {
     <div class="alert alert-danger">
-      <span>⚠️ {{ mensajeError() }}</span>
+      <span> {{ mensajeError() }}</span>
     </div>
   }
 
@@ -46,7 +46,7 @@
         [class.active]="filtroEstado() === 'PENDING'"
         (click)="cambiarFiltroEstado('PENDING')"
       >
-        🟡 Pendientes
+         Pendientes
       </button>
       <button
         type="button"
@@ -54,7 +54,7 @@
         [class.active]="filtroEstado() === 'CONFIRMED'"
         (click)="cambiarFiltroEstado('CONFIRMED')"
       >
-        🟢 Cotizadas / Aprobadas
+         Cotizadas / Aprobadas
       </button>
       <button
         type="button"
@@ -62,14 +62,14 @@
         [class.active]="filtroEstado() === 'REJECTED'"
         (click)="cambiarFiltroEstado('REJECTED')"
       >
-        🔴 Rechazadas
+         Rechazadas
       </button>
     </div>
 
     <div class="search-box">
       <input
         type="text"
-        placeholder="🔍 Buscar por #ID, cliente o sabor..."
+        placeholder=" Buscar por #ID, cliente o sabor..."
         (input)="alBuscar($event)"
         class="form-control"
       />
@@ -85,7 +85,6 @@
       </div>
     } @else if (solicitudesFiltradas().length === 0) {
       <div class="empty-state">
-        <div class="empty-icon">📋</div>
         <h3>No se encontraron solicitudes</h3>
         <p>
           {{ esClienteMayorista() ? 'Aún no registrás solicitudes de presupuesto con este filtro.' : 'No hay solicitudes para mostrar.' }}
@@ -262,7 +261,7 @@
             <div class="flavors-chips-container">
               @for (f of s.flavors; track f.id) {
                 <span class="flavor-badge">
-                  🍦 {{ f.name }}
+                   {{ f.name }}
                 </span>
               }
             </div>
@@ -271,7 +270,7 @@
           <!-- PANEL DE GESTIÓN PARA ADMINISTRADOR: KAN-271 Y KAN-272 -->
           @if (!esClienteMayorista() && s.stateRequestEnum === 'PENDING') {
             <div class="admin-quote-panel">
-              <h4>🛠️ Acciones de Gestión de Presupuesto (Administrador)</h4>
+              <h4> Acciones de Gestión de Presupuesto (Administrador)</h4>
               <p class="text-sm">Definí el precio total cotizado para confirmar la solicitud, o recházala si no hay disponibilidad:</p>
               <div class="quote-form-inline">
                 <div class="input-prefix">

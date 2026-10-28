@@ -66,8 +66,8 @@ export class Login implements OnInit {
     this.sesionExpiradaAviso = false;
 
     const credenciales = {
-      username: this.loginForm.value.username.trim(),
-      password: this.loginForm.value.password,
+      username: (this.loginForm.value.username || '').trim(),
+      password: (this.loginForm.value.password || '').trim(),
     };
 
     this.authService.login(credenciales).subscribe({

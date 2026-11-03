@@ -1,0 +1,92 @@
+<div class="page">
+  <header class="page-header">
+    <h1>Nuevo pedido</h1>
+    <a routerLink="/orders" class="btn">← Volver</a>
+  </header>
+
+  @if (created(); as c) {
+    <div class="alert alert-ok">
+      <strong>Pedido #{{ c.id }} registrado correctamente.</strong>
+      Total: {{ c.total | currency: 'ARS' : 'symbol-narrow' : '1.2-2' }}
+    </div>
+    <div class="actions">
+      <button class="btn btn-primary" (click)="goToDetail()">Ver detalle</button>
+      <button class="btn" (click)="newOrder()">Cargar otro pedido</button>
+      <a routerLink="/orders" class="btn">Ir al listado</a>
+    </div>
+  } @else {
+    @if (error()) { <div class="alert alert-error">{{ error() }}</div> }
+
+    <form [formGroup]="form" (ngSubmit)="submit()">
+      <div class="row">
+        <label>Canal de venta *
+          <select formControlName="channel">
+            <option value="">Seleccionar...</option>
+            @for (c of channels; track c) { <option [value]="c">{{ channelLabel[c] }}</option> }
+          </select>
+          @if (form.get('channel')?.touched && form.get('channel')?.invalid) {
+            <small class="err">Seleccioná un canal</small>
+          }
+        </label>
+        <label>Medio de pago *
+          <select formControlName="paymentMethod">
+            <option value="">Seleccionar...</option>
+            @for (p of paymentMethods; track p) { <option [value]="p">{{ paymentLabel[p] }}</option> }
+          </select>
+          @if (form.get('paymentMethod')?.touched && form.get('paymentMethod')?.invalid) {
+            <small class="err">Seleccioná un medio de pago</small>
+          }
+        </label>
+      </div>
+
+      <h3>Productos</h3>
+      <div formArrayName="items">
+        @for (item of items.controls; track $index; let i = $index) {
+          <div class="item" [formGroupName]="i">
+            <label>Producto *
+              <select formControlName="productId">
+                <option [ngValue]="null">Seleccionar...</option>
+                @for (p of products(); track p.id) {
+                  <option [ngValue]="p.id">{{ p.name }} ({{ p.price | currency: 'ARS' : 'symbol-narrow' : '1.0-0' }})</option>
+                }
+              </select>
+            </label>
+            <label>Cantidad *
+              <input type="number" min="1" [attr.max]="stockOf(i)" formControlName="quantity" />
+              @if (stockOf(i) != null) { <small>Stock: {{ stockOf(i) }}</small> }
+            </label>
+            <div class="subtotal">{{ subtotal(i) | currency: 'ARS' : 'symbol-narrow' : '1.2-2' }}</div>
+            <button type="button" class="btn btn-sm btn-danger" (click)="removeItem(i)" [disabled]="items.length === 1">Quitar</button>
+
+            <div class="flavors">
+              @if (productOf(i); as p) {
+                <strong>Sabores * ({{ selected(i).length }}/{{ p.maxFlavors }})</strong>
+                @for (f of flavors(); track f.id) {
+                  <label class="check">
+                    <input type="checkbox"
+                           [checked]="isChecked(i, f.id)"
+                           [disabled]="isDisabled(i, f.id)"
+                           (change)="toggleFlavor(i, f.id)" />
+                    {{ f.name }}
+                  </label>
+                }
+              } @else {
+                <small>Elegí un producto para seleccionar los sabores</small>
+              }
+            </div>
+          </div>
+        }
+      </div>
+      <button type="button" class="btn" (click)="addItem()">+ Agregar producto</button>
+
+      <div class="total">Total: <strong>{{ total() | currency: 'ARS' : 'symbol-narrow' : '1.2-2' }}</strong></div>
+
+      <div class="actions">
+        <button type="submit" class="btn btn-primary" [disabled]="saving()">
+          {{ saving() ? 'Guardando...' : 'Confirmar pedido' }}
+        </button>
+        <a routerLink="/orders" class="btn">Cancelar</a>
+      </div>
+    </form>
+  }
+</div>

@@ -126,6 +126,18 @@ export const routes: Routes = [
             (m) => m.ProductoDetalle,
           ),
       },
+      {
+        path: 'pedidos/nuevo',
+        canActivate: [authGuard],
+        loadComponent: () =>
+          import('./features/pedidos/pedido-form/pedido-form').then((m) => m.OrderForm),
+      },
+      {
+        path: 'pedidos/nuevo',
+        canActivate: [authGuard],
+        loadComponent: () =>
+          import('./features/pedidos/pedido-form/pedido-form').then((m) => m.OrderForm),
+      },
     ],
   },
   { path: '**', redirectTo: '' },

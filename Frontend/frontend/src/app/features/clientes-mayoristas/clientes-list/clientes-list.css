@@ -18,7 +18,7 @@
   box-sizing: border-box;
 }
 
-/* Header de la página */
+/* Header de la pÃ¡gina */
 .page-header {
   display: flex;
   justify-content: space-between;
@@ -162,6 +162,26 @@
   box-shadow: 0 0 0 3px rgba(219, 39, 119, 0.15);
 }
 
+
+.toolbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.btn-icon-only {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.6rem;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.btn-icon-only svg {
+  width: 18px;
+  height: 18px;
+}
 .records-count {
   font-size: 0.9rem;
   color: var(--text-secondary);
@@ -264,7 +284,7 @@
   color: #374151;
 }
 
-/* Botones de acción en tabla */
+/* Botones de acciÃ³n en tabla */
 .actions-group {
   display: flex;
   justify-content: flex-end;
@@ -467,7 +487,7 @@
   }
 }
 
-/* Estilos adicionales para navegación y modal de presupuestos */
+/* Estilos adicionales para navegaciÃ³n y modal de presupuestos */
 .header-buttons {
   display: flex;
   align-items: center;

@@ -18,4 +18,3 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         return credentialsRepository.findByUsername(username).orElseThrow(() -> new NotFoundException("User not found"));
     }
 }
-

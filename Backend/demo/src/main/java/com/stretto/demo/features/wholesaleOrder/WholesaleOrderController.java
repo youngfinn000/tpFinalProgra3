@@ -1,7 +1,5 @@
 package com.stretto.demo.features.wholesaleOrder;
 
-
-import com.stretto.demo.features.wholesaleOrder.domain.WholesaleOrderEntity;
 import com.stretto.demo.features.wholesaleOrder.domain.dto.WholesaleOrderRequest;
 import com.stretto.demo.features.wholesaleOrder.domain.dto.WholesaleOrderResponse;
 import jakarta.validation.Valid;
@@ -35,6 +33,11 @@ public class WholesaleOrderController {
         return ResponseEntity.ok(wholesaleOrderService.getWholesaleOrderById(id));
     }
 
+    @GetMapping("/by-budget/{requestBudgetId}")
+    public ResponseEntity<WholesaleOrderResponse> getOrderByRequestBudgetId(@PathVariable Long requestBudgetId){
+        return ResponseEntity.ok(wholesaleOrderService.getOrderByRequestBudgetId(requestBudgetId));
+    }
+
     @PatchMapping("/{id}")
     public ResponseEntity<WholesaleOrderResponse> updateWholesaleOrder(@PathVariable Long id, @Valid @RequestBody WholesaleOrderRequest request){
         return ResponseEntity.ok(wholesaleOrderService.updateWholesaleOrder(id, request));
@@ -47,7 +50,10 @@ public class WholesaleOrderController {
     }
 
     @PatchMapping("/{orderId}/advance-payment")
-    public ResponseEntity<WholesaleOrderResponse> registerAdvancePayment(@PathVariable Long orderId, @Valid@RequestParam Long customerId, @Valid@RequestParam BigDecimal amount){
+    public ResponseEntity<WholesaleOrderResponse> registerAdvancePayment(
+            @PathVariable Long orderId,
+            @RequestParam Long customerId,
+            @RequestParam BigDecimal amount){
         return ResponseEntity.ok(wholesaleOrderService.registerAdvancePayment(orderId, customerId, amount));
     }
 
@@ -55,6 +61,5 @@ public class WholesaleOrderController {
     public ResponseEntity<List<WholesaleOrderResponse>> getOrdersByCustomerId(@PathVariable Long customerId){
         return ResponseEntity.ok(wholesaleOrderService.getWholesaleOrdersByCustomerId(customerId));
     }
-
 
 }

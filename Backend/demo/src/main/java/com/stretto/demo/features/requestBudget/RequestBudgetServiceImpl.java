@@ -59,7 +59,7 @@ public class RequestBudgetServiceImpl implements RequestBudgetService {
     @Transactional(readOnly = true)
     public List<RequestBudgetDtoResponse> getAllRequest(String state){
         List<RequestBudgetEntity> results;
-        if(!state.isBlank()){
+        if(state != null && !state.isBlank()){
             StateRequestEnum stateEnum= StateRequestEnum.valueOf(state.toUpperCase());
             results= requestBudgetRepository.findByStateRequestEnum(stateEnum);
         }else {

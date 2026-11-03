@@ -1,0 +1,28 @@
+@if (abierto()) {
+  <div class="modal-backdrop" (click)="onCerrar()" role="presentation">
+    <div
+      class="modal-card"
+      [style.max-width]="anchoMaximo()"
+      (click)="$event.stopPropagation()"
+      role="dialog"
+      aria-modal="true"
+      [attr.aria-label]="titulo()"
+    >
+      <div class="modal-header">
+        <h2 class="modal-title">{{ titulo() }}</h2>
+        <button
+          type="button"
+          class="modal-close-btn"
+          (click)="onCerrar()"
+          aria-label="Cerrar modal"
+        >
+          ✕
+        </button>
+      </div>
+      <div class="modal-body">
+        <ng-content></ng-content>
+      </div>
+    </div>
+  </div>
+}
+

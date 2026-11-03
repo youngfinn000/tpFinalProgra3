@@ -10,3 +10,4 @@ public interface CredentialsRepository extends JpaRepository<CredentialsEntity,L
 
     Optional<CredentialsEntity> findByUsername(String username);
 }
+

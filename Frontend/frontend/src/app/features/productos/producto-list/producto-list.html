@@ -1,0 +1,478 @@
+<div class="productos-container">
+  <!-- Encabezado de página -->
+  <div class="page-header">
+    <div class="header-text">
+      <h1 class="page-title">Productos</h1>
+      <p class="page-subtitle">
+        Consultá, buscá y administrá los productos artesanales y sus precios vigentes
+      </p>
+    </div>
+
+    <div class="header-actions">
+      <button
+        type="button"
+        class="btn btn-primary"
+        routerLink="/productos/nuevo"
+      >
+        + Nuevo producto
+      </button>
+
+      <button
+        type="button"
+        class="btn btn-secondary btn-refresh"
+        (click)="cargarProductos()"
+        [disabled]="cargando()"
+        title="Actualizar listado de productos"
+      >
+        <svg
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          class="btn-icon"
+          [class.spinning]="cargando()"
+        >
+          <polyline points="23 4 23 10 17 10"></polyline>
+          <polyline points="1 20 1 14 7 14"></polyline>
+          <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path>
+        </svg>
+        <span>{{ cargando() ? 'Actualizando...' : 'Actualizar' }}</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Alertas de error -->
+  @if (error()) {
+    <div class="alert alert-danger" role="alert">
+      <svg class="alert-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <circle cx="12" cy="12" r="10"></circle>
+        <line x1="15" y1="9" x2="9" y2="15"></line>
+        <line x1="9" y1="9" x2="15" y2="15"></line>
+      </svg>
+      <span class="alert-text">{{ error() }}</span>
+      <button type="button" class="alert-close" (click)="error.set('')">✕</button>
+    </div>
+  }
+
+  <!-- Búsqueda y filtros -->
+  <div class="filter-card">
+    <div class="filter-top-row">
+      <div class="search-wrapper">
+        <svg
+          class="search-icon"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+        >
+          <circle cx="11" cy="11" r="8"></circle>
+          <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+        </svg>
+
+        <input
+          type="text"
+          class="form-control search-input"
+          placeholder="Buscar producto por nombre (ej: Kilo, Vaso, Torta, Milkshake)..."
+          [ngModel]="filtroNombre()"
+          (ngModelChange)="filtroNombre.set($event)"
+        />
+
+        @if (filtroNombre()) {
+          <button
+            type="button"
+            class="clear-search-btn"
+            (click)="limpiarBusqueda()"
+            title="Limpiar búsqueda"
+          >
+            ✕
+          </button>
+        }
+      </div>
+
+      <div class="filter-controls">
+        <div class="state-select-wrapper">
+          <label for="filtroEstado" class="filter-label">Estado:</label>
+          <select
+            id="filtroEstado"
+            class="form-control select-estado"
+            [ngModel]="filtroEstado()"
+            (ngModelChange)="filtroEstado.set($event)"
+          >
+            <option value="activos">Solo Activos</option>
+            <option value="todos">Todos los Estados</option>
+            <option value="inactivos">Solo Inactivos</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <!-- Categorías -->
+    <div class="category-pills">
+      <span class="pills-title">Categorías:</span>
+      <div class="pills-container">
+        @for (cat of categorias; track cat.id) {
+          <button
+            type="button"
+            class="category-pill"
+            [class.active]="filtroCategoria() === cat.id"
+            (click)="filtroCategoria.set(cat.id)"
+          >
+            <span class="pill-label">{{ cat.label }}</span>
+          </button>
+        }
+      </div>
+    </div>
+  </div>
+
+  <!-- Tabla de productos -->
+  <div class="table-card">
+    @if (cargando() && productos().length === 0) {
+      <div class="table-loading">
+        <span class="spinner-large"></span>
+        <p>Cargando productos artesanales...</p>
+      </div>
+    } @else {
+      @if (productosFiltrados().length === 0) {
+        <div class="table-empty">
+          <div class="empty-icon-wrapper">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="empty-icon">
+              <circle cx="12" cy="12" r="10"></circle>
+              <line x1="8" y1="12" x2="16" y2="12"></line>
+            </svg>
+          </div>
+
+          <h3>No se encontraron productos</h3>
+          <p>
+            @if (filtroNombre() || filtroCategoria() !== 'todas' || filtroEstado() !== 'todos') {
+              No hay productos que coincidan con los filtros aplicados. Intentá con otro término de búsqueda.
+            } @else {
+              Aún no hay productos registrados en el sistema.
+            }
+          </p>
+
+          @if (filtroNombre() || filtroCategoria() !== 'todas' || filtroEstado() !== 'activos') {
+            <button
+              type="button"
+              class="btn btn-secondary mt-2"
+              (click)="filtroNombre.set(''); filtroCategoria.set('todas'); filtroEstado.set('todos')"
+            >
+              Restablecer filtros
+            </button>
+          }
+        </div>
+      } @else {
+        <div class="table-responsive">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th class="col-id">ID</th>
+                <th class="col-nombre">Producto</th>
+                <th class="col-categoria">Categoría</th>
+                <th class="col-sabores">Sabores</th>
+                <th class="col-precio text-right">Precio</th>
+                <th class="col-stock text-center">Stock</th>
+                <th class="col-estado text-center">Estado</th>
+                <th class="col-acciones text-right">Acciones</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              @for (prod of productosFiltrados(); track prod.id) {
+                <tr [class.row-inactive]="!prod.activo" class="table-row">
+                  <td class="col-id font-mono text-muted">#{{ prod.id }}</td>
+
+                  <td class="col-nombre">
+                    <div class="product-name-cell" (click)="abrirDetalle(prod)">
+                      <div class="product-icon-avatar">
+                        @if (prod.categoria === 'GELATO') {
+                          <svg lucideIceCreamCone [size]="18" class="product-icon-svg"></svg>
+                        } @else if (prod.categoria === 'POSTRES_HELADOS') {
+                          <svg lucideCakeSlice [size]="18" class="product-icon-svg"></svg>
+                        } @else if (prod.categoria === 'BATIDOS') {
+                          <svg lucideCupSoda [size]="18" class="product-icon-svg"></svg>
+                        } @else {
+                          <svg lucideFlame [size]="18" class="product-icon-svg"></svg>
+                        }
+                      </div>
+
+                      <div class="product-info-texts">
+                        <span class="product-title">{{ prod.nombre }}</span>
+                        @if (prod.descripcion) {
+                          <span class="product-subtitle">{{ prod.descripcion }}</span>
+                        }
+                      </div>
+                    </div>
+                  </td>
+
+                  <td class="col-categoria">
+                    <span class="category-badge">
+                      {{ prod.categoriaLabel }}
+                    </span>
+                  </td>
+
+                  <td class="col-sabores">
+                    @if (prod.maxSabores && prod.maxSabores > 0) {
+                      <span class="flavors-badge" title="Hasta {{ prod.maxSabores }} gustos">
+                        Hasta {{ prod.maxSabores }} {{ prod.maxSabores === 1 ? 'sabor' : 'sabores' }}
+                      </span>
+                    } @else {
+                      <span class="text-muted text-sm">—</span>
+                    }
+                  </td>
+
+                  <td class="col-precio text-right">
+                    <span class="price-tag">
+                      {{ formatoPrecio(prod.precio) }}
+                    </span>
+                  </td>
+
+                  <td class="col-stock text-center">
+                    <span class="stock-badge" [ngClass]="obtenerClaseStock(prod.stock)">
+                      <span class="stock-dot"></span>
+                      {{ obtenerTextoStock(prod.stock) }}
+                    </span>
+                  </td>
+
+                  <td class="col-estado text-center">
+                    @if (prod.activo) {
+                      <span class="badge badge-active">Activo</span>
+                    } @else {
+                      <span class="badge badge-inactive">Inactivo</span>
+                    }
+                  </td>
+
+                  <td class="col-acciones text-right">
+                    <div class="actions-wrapper">
+                      <!-- Cambio rápido de precio -->
+                      <button
+                        type="button"
+                        class="btn-action btn-action-price"
+                        (click)="abrirModalPrecio(prod, $event)"
+                        title="Cambiar precio rápidamente"
+                      >
+                        $ Precio
+                      </button>
+
+                      <!-- Edición completa -->
+                      <a
+                        [routerLink]="['/productos', prod.id, 'editar']"
+                        class="btn-action btn-action-detail"
+                        title="Editar {{ prod.nombre }}"
+                      >
+                        Editar
+                      </a>
+
+                      <!-- Detalle rápido -->
+                      <button
+                        type="button"
+                        class="btn-action btn-action-detail"
+                        (click)="abrirDetalle(prod)"
+                        title="Ver detalle de {{ prod.nombre }}"
+                      >
+                        <svg lucideEye [size]="15" class="action-icon"></svg>
+                        <span>Detalle</span>
+                      </button>
+
+                      <!-- Página completa de detalle -->
+                      <a
+                        [routerLink]="['/productos', prod.id]"
+                        class="btn-action btn-action-link"
+                        title="Abrir página completa de {{ prod.nombre }}"
+                      >
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="action-icon">
+                          <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+                          <polyline points="15 3 21 3 21 9"></polyline>
+                          <line x1="10" y1="14" x2="21" y2="3"></line>
+                        </svg>
+                      </a>
+                    </div>
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Resumen de la tabla -->
+        <div class="table-footer">
+          <span class="results-count">
+            Mostrando <strong>{{ productosFiltrados().length }}</strong> de
+            <strong>{{ totalProductos() }}</strong> productos
+          </span>
+
+          <div class="footer-legend">
+            <span class="legend-item">
+              <span class="legend-dot dot-active"></span>
+              {{ totalActivos() }} Activos
+            </span>
+
+            @if (totalBajoStock() > 0) {
+              <span class="legend-item">
+                <span class="legend-dot dot-low"></span>
+                {{ totalBajoStock() }} Bajo Stock
+              </span>
+            }
+          </div>
+        </div>
+      }
+    }
+  </div>
+</div>
+
+<!-- Modal de detalle rápido -->
+<app-modal
+  [abierto]="modalDetalleAbierto()"
+  [titulo]="productoSeleccionado() ? productoSeleccionado()!.nombre : 'Detalle del Producto'"
+  [anchoMaximo]="'540px'"
+  (cerrar)="cerrarDetalle()"
+>
+  @if (productoSeleccionado(); as prod) {
+    <div class="detail-modal-body">
+      <div class="detail-header-card">
+        <div class="detail-main-info">
+          <div class="detail-icon-circle">
+            @if (prod.categoria === 'GELATO') {
+              <svg lucideIceCreamCone [size]="24" class="detail-icon-svg"></svg>
+            } @else if (prod.categoria === 'POSTRES_HELADOS') {
+              <svg lucideCakeSlice [size]="24" class="detail-icon-svg"></svg>
+            } @else if (prod.categoria === 'BATIDOS') {
+              <svg lucideCupSoda [size]="24" class="detail-icon-svg"></svg>
+            } @else {
+              <svg lucideFlame [size]="24" class="detail-icon-svg"></svg>
+            }
+          </div>
+
+          <div>
+            <h3 class="detail-product-name">{{ prod.nombre }}</h3>
+            <span class="category-badge">{{ prod.categoriaLabel }}</span>
+          </div>
+        </div>
+
+        <div class="detail-price-box">
+          <span class="price-caption">Precio Unitario</span>
+          <span class="price-value">{{ formatoPrecio(prod.precio) }}</span>
+        </div>
+      </div>
+
+      <!-- Especificaciones -->
+      <div class="specs-grid">
+        <div class="spec-card">
+          <span class="spec-label">Estado del Producto</span>
+          <div class="spec-value-container">
+            @if (prod.activo) {
+              <span class="badge badge-active">Activo para la venta</span>
+            } @else {
+              <span class="badge badge-inactive">Inactivo</span>
+            }
+          </div>
+        </div>
+
+        <div class="spec-card">
+          <span class="spec-label">Disponibilidad en Stock</span>
+          <div class="spec-value-container">
+            <span class="stock-badge" [ngClass]="obtenerClaseStock(prod.stock)">
+              <span class="stock-dot"></span>
+              {{ prod.stock }} unidades disponibles
+            </span>
+          </div>
+        </div>
+
+        <div class="spec-card">
+          <span class="spec-label">Capacidad de Sabores</span>
+          <span class="spec-text">
+            @if (prod.maxSabores && prod.maxSabores > 0) {
+              Hasta {{ prod.maxSabores }} {{ prod.maxSabores === 1 ? 'sabor' : 'sabores' }}
+            } @else {
+              No aplica / Porción predefinida
+            }
+          </span>
+        </div>
+
+        <div class="spec-card">
+          <span class="spec-label">Identificador (ID)</span>
+          <span class="spec-text font-mono">#{{ prod.id }}</span>
+        </div>
+      </div>
+
+      <!-- Descripción -->
+      <div class="detail-description-section">
+        <h4 class="description-title">Descripción y Preparación</h4>
+        <p class="description-text">
+          {{ prod.descripcion || 'Producto elaborado artesanalmente en STRETTO con ingredientes naturales seleccionados.' }}
+        </p>
+      </div>
+
+      <!-- Acciones del Modal -->
+      <div class="modal-footer-actions">
+        <button type="button" class="btn btn-secondary" (click)="cerrarDetalle()">
+          Cerrar
+        </button>
+
+        <a
+          [routerLink]="['/productos', prod.id]"
+          class="btn btn-primary"
+          (click)="cerrarDetalle()"
+        >
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="btn-icon">
+            <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+            <polyline points="15 3 21 3 21 9"></polyline>
+            <line x1="10" y1="14" x2="21" y2="3"></line>
+          </svg>
+          Ver Página de Detalle
+        </a>
+      </div>
+    </div>
+  }
+</app-modal>
+
+<!-- Modal Cambio Rápido de Precio -->
+<app-modal
+  [abierto]="modalPrecioAbierto()"
+  [titulo]="'Actualizar Precio: ' + (productoPrecioSel()?.nombre || '')"
+  [anchoMaximo]="'420px'"
+  (cerrar)="cerrarModalPrecio()"
+>
+  @if (productoPrecioSel(); as prod) {
+    <div style="display: flex; flex-direction: column; gap: 1.25rem; padding: 0.5rem 0;">
+      <div>
+        <label style="font-size: 0.85rem; font-weight: 600; color: var(--text-secondary);">
+          Precio actual: <strong>{{ formatoPrecio(prod.precio) }}</strong>
+        </label>
+      </div>
+
+      <div class="form-group">
+        <label for="nuevoPrecioVal" style="font-size: 0.9rem; font-weight: 700;">Nuevo Precio ($) *</label>
+        <input
+          id="nuevoPrecioVal"
+          type="number"
+          class="form-control"
+          style="padding: 0.75rem; font-size: 1.1rem; font-weight: 700;"
+          [ngModel]="nuevoPrecioInput()"
+          (ngModelChange)="nuevoPrecioInput.set($event)"
+        />
+      </div>
+
+      <!-- Accesos directos % de incremento -->
+      <div>
+        <span style="font-size: 0.8rem; font-weight: 600; color: var(--text-secondary); display: block; margin-bottom: 0.5rem;">
+          Aumento rápido por %:
+        </span>
+        <div style="display: flex; gap: 0.5rem;">
+          <button type="button" class="btn btn-secondary" style="flex: 1; padding: 0.4rem;" (click)="aplicarPorcentaje(5)">+5%</button>
+          <button type="button" class="btn btn-secondary" style="flex: 1; padding: 0.4rem;" (click)="aplicarPorcentaje(10)">+10%</button>
+          <button type="button" class="btn btn-secondary" style="flex: 1; padding: 0.4rem;" (click)="aplicarPorcentaje(15)">+15%</button>
+          <button type="button" class="btn btn-secondary" style="flex: 1; padding: 0.4rem;" (click)="aplicarPorcentaje(20)">+20%</button>
+        </div>
+      </div>
+
+      <div style="display: flex; justify-content: flex-end; gap: 0.75rem; margin-top: 1rem;">
+        <button type="button" class="btn btn-secondary" (click)="cerrarModalPrecio()" [disabled]="guardandoPrecio()">
+          Cancelar
+        </button>
+        <button type="button" class="btn btn-primary" (click)="guardarNuevoPrecio()" [disabled]="guardandoPrecio() || nuevoPrecioInput() <= 0">
+          {{ guardandoPrecio() ? 'Guardando...' : 'Guardar Precio' }}
+        </button>
+      </div>
+    </div>
+  }
+</app-modal>

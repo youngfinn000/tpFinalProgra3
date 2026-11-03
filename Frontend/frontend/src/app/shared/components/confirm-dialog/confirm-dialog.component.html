@@ -1,0 +1,57 @@
+<app-modal
+  [abierto]="abierto()"
+  [titulo]="titulo()"
+  [anchoMaximo]="'460px'"
+  (cerrar)="onCancelar()"
+>
+  <div class="confirm-content">
+    <div class="confirm-icon-wrapper" [class]="'icon-' + tipo()">
+      @if (tipo() === 'danger') {
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="confirm-icon">
+          <circle cx="12" cy="12" r="10"></circle>
+          <line x1="12" y1="8" x2="12" y2="12"></line>
+          <line x1="12" y1="16" x2="12.01" y2="16"></line>
+        </svg>
+      } @else if (tipo() === 'warning') {
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="confirm-icon">
+          <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
+          <line x1="12" y1="9" x2="12" y2="13"></line>
+          <line x1="12" y1="17" x2="12.01" y2="17"></line>
+        </svg>
+      } @else {
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="confirm-icon">
+          <circle cx="12" cy="12" r="10"></circle>
+          <line x1="12" y1="16" x2="12" y2="12"></line>
+          <line x1="12" y1="8" x2="12.01" y2="8"></line>
+        </svg>
+      }
+    </div>
+
+    <p class="confirm-message">{{ mensaje() }}</p>
+
+    <div class="confirm-actions">
+      <button
+        type="button"
+        class="btn btn-secondary"
+        (click)="onCancelar()"
+        [disabled]="cargando()"
+      >
+        {{ textoCancelar() }}
+      </button>
+
+      <button
+        type="button"
+        class="btn"
+        [class]="'btn-' + tipo()"
+        (click)="onConfirmar()"
+        [disabled]="cargando()"
+      >
+        @if (cargando()) {
+          <span class="spinner-small"></span>
+        }
+        {{ textoConfirmar() }}
+      </button>
+    </div>
+  </div>
+</app-modal>
+

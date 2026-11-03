@@ -37,6 +37,17 @@ public class JwtService {
                 .map(GrantedAuthority::getAuthority)
                 .collect(Collectors.toList());
         claims.put("roles", roles);
+        if (userDetails instanceof com.stretto.demo.auth.credentials.CredentialsEntity creds) {
+            if (creds.getUsuario() != null) {
+                claims.put("userId", creds.getUsuario().getId());
+                claims.put("id", creds.getUsuario().getId());
+            } else if (creds.getWholesaleCustomer() != null) {
+                claims.put("userId", creds.getWholesaleCustomer().getId());
+                claims.put("id", creds.getWholesaleCustomer().getId());
+            } else if (creds.getId() != null) {
+                claims.put("id", creds.getId());
+            }
+        }
         return buildToken(claims, userDetails, jwtExpiration);
     }
 

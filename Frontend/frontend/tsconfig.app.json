@@ -7,7 +7,7 @@
   },
   "include": [
     "src/**/*.ts"
-  ],
+, "src/app/core/models/cliente-mayorista"  ],
   "exclude": [
     "src/**/*.spec.ts"
   ]

@@ -1,0 +1,347 @@
+:host {
+  display: block;
+}
+
+.detalle-page {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+/* ============================================================
+   1. BREADCRUMB / NAVEGACIÓN
+   ============================================================ */
+.breadcrumb-bar {
+  display: flex;
+  align-items: center;
+}
+
+.back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--text-secondary, #64748b);
+  text-decoration: none;
+  font-size: 0.88rem;
+  font-weight: 600;
+  transition: color 0.15s ease;
+}
+
+.back-link:hover {
+  color: var(--color-accent, #9f1239);
+}
+
+.back-icon {
+  width: 18px;
+  height: 18px;
+}
+
+/* ============================================================
+   2. ENCABEZADO DE PÁGINA
+   ============================================================ */
+.detail-page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.product-badge-category {
+  display: inline-block;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-accent, #9f1239);
+  background-color: var(--color-accent-subtle, rgba(159, 18, 57, 0.08));
+  padding: 0.25rem 0.65rem;
+  border-radius: 50px;
+  margin-bottom: 0.35rem;
+}
+
+.product-title {
+  margin: 0;
+  font-size: 2.2rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: var(--text-primary, #0f172a);
+}
+
+.product-subtitle {
+  margin: 0.35rem 0 0;
+  font-size: 0.95rem;
+  color: var(--text-secondary, #64748b);
+}
+
+/* ============================================================
+   3. GRID DE TARJETAS
+   ============================================================ */
+.detail-grid {
+  display: grid;
+  grid-template-columns: 2fr 1.2fr;
+  gap: 1.5rem;
+}
+
+.card {
+  background: var(--bg-card, #ffffff);
+  border: 1px solid var(--border-color, #f1f5f9);
+  border-radius: var(--radius-lg, 12px);
+  padding: 1.5rem;
+  box-shadow: var(--shadow-card, 0 1px 3px rgba(0, 0, 0, 0.04));
+}
+
+.main-column,
+.side-column {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+/* ============================================================
+   4. TARJETA HERO PRECIO
+   ============================================================ */
+.card-hero {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+}
+
+.hero-icon-container {
+  width: 60px;
+  height: 60px;
+  border-radius: 14px;
+  background-color: var(--bg-canvas, #f8fafc);
+  border: 1px solid var(--border-color, #f1f5f9);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.hero-icon-svg {
+  width: 28px;
+  height: 28px;
+  color: var(--text-secondary, #64748b);
+}
+
+.hero-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.hero-tag {
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: var(--text-secondary, #64748b);
+  letter-spacing: 0.05em;
+}
+
+.hero-price {
+  font-size: 2.25rem;
+  font-weight: 800;
+  color: var(--color-accent, #9f1239);
+  line-height: 1.1;
+  margin: 0.15rem 0;
+}
+
+.hero-subtext {
+  font-size: 0.8125rem;
+  color: var(--text-muted, #94a3b8);
+}
+
+.card-divider {
+  height: 1px;
+  background-color: var(--border-color, #f1f5f9);
+  margin: 1.25rem 0;
+}
+
+.section-title {
+  margin: 0 0 0.6rem;
+  font-size: 0.8125rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-secondary, #64748b);
+}
+
+.section-description {
+  margin: 0;
+  font-size: 0.95rem;
+  line-height: 1.6;
+  color: var(--text-primary, #0f172a);
+}
+
+/* ============================================================
+   5. ESPECIFICACIONES
+   ============================================================ */
+.specs-list {
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+}
+
+.spec-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid var(--border-color, #f1f5f9);
+}
+
+.spec-row:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.spec-row dt {
+  font-size: 0.88rem;
+  color: var(--text-secondary, #64748b);
+  font-weight: 500;
+}
+
+.spec-row dd {
+  margin: 0;
+  font-size: 0.92rem;
+  font-weight: 600;
+  color: var(--text-primary, #0f172a);
+}
+
+.category-pill-sm {
+  background-color: var(--bg-canvas, #f8fafc);
+  border: 1px solid var(--border-color, #f1f5f9);
+  padding: 0.2rem 0.55rem;
+  border-radius: 6px;
+  font-size: 0.82rem;
+}
+
+/* ============================================================
+   6. STOCK CARD
+   ============================================================ */
+.stock-status-block {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.stock-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.45rem 0.85rem;
+  border-radius: 50px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  width: fit-content;
+}
+
+.stock-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+}
+
+.stock-disponible {
+  background-color: #f0fdf4;
+  color: #166534;
+}
+.stock-disponible .stock-dot { background-color: #22c55e; }
+
+.stock-bajo {
+  background-color: #fef3c7;
+  color: #92400e;
+}
+.stock-bajo .stock-dot { background-color: #f59e0b; }
+
+.stock-agotado {
+  background-color: #fee2e2;
+  color: #991b1b;
+}
+.stock-agotado .stock-dot { background-color: #ef4444; }
+
+.stock-hint {
+  margin: 0;
+  font-size: 0.82rem;
+  color: var(--text-secondary, #64748b);
+  line-height: 1.4;
+}
+
+.stock-meter {
+  height: 6px;
+  background-color: var(--bg-canvas, #f8fafc);
+  border-radius: 50px;
+  overflow: hidden;
+  margin-top: 1rem;
+}
+
+.stock-meter-bar {
+  height: 100%;
+  background-color: #22c55e;
+  border-radius: 50px;
+}
+
+/* ============================================================
+   7. ACCIONES Y HELPERS
+   ============================================================ */
+.full-width {
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.badge {
+  display: inline-block;
+  padding: 0.35rem 0.85rem;
+  border-radius: 50px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.badge-active {
+  background: #dcfce7;
+  color: #15803d;
+}
+
+.badge-inactive {
+  background: #f1f5f9;
+  color: #475569;
+}
+
+.font-mono {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+}
+
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 4rem 1rem;
+  gap: 1rem;
+  color: var(--text-secondary, #64748b);
+}
+
+.spinner-large {
+  width: 36px;
+  height: 36px;
+  border: 3px solid var(--border-input, #cbd5e1);
+  border-top-color: var(--color-accent, #9f1239);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+@media (max-width: 768px) {
+  .detail-grid {
+    grid-template-columns: 1fr;
+  }
+}
+

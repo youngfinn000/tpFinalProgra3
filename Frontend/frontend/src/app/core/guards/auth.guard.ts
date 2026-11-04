@@ -44,3 +44,19 @@ export const guestGuard: CanActivateFn = () => {
   return true;
 };
 
+export const staffGuard: CanActivateFn = () => {
+  const authService = inject(AuthService);
+  const router = inject(Router);
+
+  if (!authService.tokenVigente()) {
+    router.navigate(['/login']);
+    return false;
+  }
+
+  if (authService.tieneRol('ROLE_ADMIN', 'ROLE_USER')) {
+    return true;
+  }
+
+  router.navigateByUrl(authService.rutaInicial());
+  return false;
+};

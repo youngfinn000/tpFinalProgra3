@@ -1,4 +1,4 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, computed, inject, signal } from '@angular/core';
 import { toObservable, toSignal } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
@@ -14,6 +14,7 @@ import {
 
 import { Sabor } from '../models/sabor.model';
 import { SaborService } from '../services/sabor-service';
+import { AuthService } from '../../../core/services/auth.service';
 
 @Component({
   selector: 'app-sabor-list',
@@ -23,8 +24,9 @@ import { SaborService } from '../services/sabor-service';
 })
 export class SaborList {
   private svc = inject(SaborService);
+  private auth = inject(AuthService);
 
-  esAdmin = signal(true); // TEMPORAL: reemplazar por el rol real
+  esAdmin = computed(() => this.auth.tieneRol('ROLE_ADMIN'));
 
   texto = signal('');
   modo = signal<'parcial' | 'exacta'>('parcial');

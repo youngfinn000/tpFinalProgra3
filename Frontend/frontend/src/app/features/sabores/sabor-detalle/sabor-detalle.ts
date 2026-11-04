@@ -1,7 +1,8 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, computed, inject, signal } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { Sabor } from '../models/sabor.model';
 import { SaborService } from '../services/sabor-service';
+import { AuthService } from '../../../core/services/auth.service';
 
 @Component({
   selector: 'app-sabor-detalle',
@@ -11,9 +12,10 @@ import { SaborService } from '../services/sabor-service';
 })
 export class SaborDetalle {
   private svc = inject(SaborService);
+  private auth = inject(AuthService);
   private route = inject(ActivatedRoute);
 
-  esAdmin = signal(true); 
+  esAdmin = computed(() => this.auth.tieneRol('ROLE_ADMIN'));
 
   sabor = signal<Sabor | null>(null);
   error = signal('');

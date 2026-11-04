@@ -196,11 +196,16 @@ export class ProductoList implements OnInit {
     this.productoService.actualizarPrecio(prod.id, precio).subscribe({
       next: () => {
         this.guardandoPrecio.set(false);
+        this.productos.update((lista) =>
+          lista.map((p) => (p.id === prod.id ? { ...p, precio } : p))
+        );
         this.cerrarModalPrecio();
         this.cargarProductos(); // Recarga la grilla
       },
-      error: () => {
+      error: (err) => {
+        console.error('Error al actualizar precio', err);
         this.guardandoPrecio.set(false);
+        this.error.set('No se pudo actualizar el precio del producto.');
       }
     });
   }

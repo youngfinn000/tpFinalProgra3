@@ -367,16 +367,11 @@ export class ProductoService {
    * Actualización rápida de solo el precio
    */
   actualizarPrecio(id: number, nuevoPrecio: number): Observable<Producto> {
-    return this.http.patch<ProductoDTOResponse>(`${this.url}/${id}/precio`, { price: nuevoPrecio }).pipe(
+    return this.http.patch<ProductoDTOResponse>(`${this.url}/${id}/price`, { price: nuevoPrecio }).pipe(
       map((dto) => {
         const actualizado = mapDtoToProducto(dto);
         this.actualizarPrecioLocal(id, nuevoPrecio);
         return actualizado;
-      }),
-      catchError(() => {
-        this.actualizarPrecioLocal(id, nuevoPrecio);
-        const prod = this.mockProductos.find((p) => p.id === id);
-        return of(prod!);
       })
     );
   }

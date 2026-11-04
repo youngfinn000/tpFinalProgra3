@@ -6,38 +6,34 @@
       <p class="page-subtitle">Gestión de cuentas comerciales, datos impositivos y solicitudes de presupuesto.</p>
     </div>
     <div class="header-buttons">
-      <a routerLink="/mis-solicitudes" class="btn-secondary-link">
-        📋 Ver Todas las Solicitudes
+      <a routerLink="/mis-solicitudes" class="btn btn-secondary">
+        Ver Todas las Solicitudes
       </a>
-      <button type="button" class="btn-primary" (click)="abrirModalCrear()">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <line x1="12" y1="5" x2="12" y2="19"></line>
-          <line x1="5" y1="12" x2="19" y2="12"></line>
-        </svg>
-        <span>Nuevo Cliente</span>
+      <button type="button" class="btn btn-primary" (click)="abrirModalCrear()">
+        + Nuevo Cliente
       </button>
     </div>
   </header>
 
   <!-- Mensajes de Notificación -->
-  @if (mensajeExito) {
+  @if (mensajeExito()) {
     <div class="alert alert-success">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
         <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
         <polyline points="22 4 12 14.01 9 11.01"></polyline>
       </svg>
-      <span>{{ mensajeExito }}</span>
+      <span>{{ mensajeExito() }}</span>
     </div>
   }
 
-  @if (mensajeError) {
+  @if (mensajeError()) {
     <div class="alert alert-danger">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
         <circle cx="12" cy="12" r="10"></circle>
         <line x1="15" y1="9" x2="9" y2="15"></line>
         <line x1="9" y1="9" x2="15" y2="15"></line>
       </svg>
-      <span>{{ mensajeError }}</span>
+      <span>{{ mensajeError() }}</span>
     </div>
   }
 
@@ -54,18 +50,27 @@
         class="search-input" 
         placeholder="Buscar por Empresa, Contacto, CUIT o Email..." 
         aria-label="Buscar clientes por Empresa, Contacto, CUIT o Email"
-        [(ngModel)]="terminoBusqueda" 
-        (input)="filtrarClientes()"
+        [ngModel]="terminoBusqueda()" 
+        (ngModelChange)="terminoBusqueda.set($event)"
       />
     </div>
-    <div class="records-count">
-      Total: <strong>{{ clientesFiltrados.length }}</strong> cliente(s)
+    <div class="toolbar-actions">
+      <button type="button" class="btn btn-secondary btn-icon-only" (click)="cargarClientes()" title="Recargar lista">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="btn-icon">
+          <polyline points="23 4 23 10 17 10"></polyline>
+          <polyline points="1 20 1 14 7 14"></polyline>
+          <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path>
+        </svg>
+      </button>
+      <div class="records-count">
+        Total: <strong>{{ clientesFiltrados().length }}</strong> cliente(s)
+      </div>
     </div>
   </div>
 
   <!-- Tabla Principal de Clientes -->
   <div class="table-card">
-    @if (cargando) {
+    @if (cargando()) {
       <div class="loading-state">
         <span class="spinner-dark"></span>
         <p>Cargando listado de clientes mayoristas...</p>
@@ -85,7 +90,7 @@
             </tr>
           </thead>
           <tbody>
-            @for (cliente of clientesFiltrados; track cliente.id) {
+            @for (cliente of clientesFiltrados(); track cliente.id) {
               <tr>
                 <td>
                   <div class="client-info">
@@ -149,11 +154,11 @@
 </div>
 
 <!-- Modal: Crear / Editar Cliente -->
-@if (modalFormularioAbierto) {
+@if (modalFormularioAbierto()) {
   <div class="modal-backdrop">
     <div class="modal-card">
       <div class="modal-header">
-        <h2>{{ esEdicion ? 'Editar Cliente Mayorista' : 'Nuevo Cliente Mayorista' }}</h2>
+        <h2>{{ esEdicion() ? 'Editar Cliente Mayorista' : 'Nuevo Cliente Mayorista' }}</h2>
         <button type="button" class="btn-close" (click)="cerrarModalFormulario()">✕</button>
       </div>
       <form [formGroup]="clienteForm" (ngSubmit)="guardarCliente()" class="modal-body">
@@ -191,19 +196,22 @@
           </div>
 
           <div class="form-group span-2">
-            <label for="password" class="form-label">Contraseña {{ esEdicion ? '(Opcional para mantener la actual)' : '*' }}</label>
+            <label for="password" class="form-label">Contraseña {{ esEdicion() ? '(Opcional para mantener la actual)' : '*' }}</label>
             <input id="password" type="password" formControlName="password" class="form-control" placeholder="••••••••" />
+            @if (!esEdicion() && clienteForm.get('password')?.touched && clienteForm.get('password')?.invalid) {
+              <span class="field-error">La contraseña es obligatoria (mínimo 4 caracteres).</span>
+            }
           </div>
         </div>
 
         <div class="modal-footer">
-          <button type="button" class="btn-secondary" (click)="cerrarModalFormulario()">Cancelar</button>
-          <button type="submit" class="btn-primary" [disabled]="guardando">
-            @if (guardando) {
+          <button type="button" class="btn btn-secondary" (click)="cerrarModalFormulario()">Cancelar</button>
+          <button type="submit" class="btn btn-primary" [disabled]="guardando()">
+            @if (guardando()) {
               <span class="spinner-light"></span>
               <span>Guardando...</span>
             } @else {
-              <span>{{ esEdicion ? 'Actualizar Cliente' : 'Guardar Cliente' }}</span>
+              <span>{{ esEdicion() ? 'Actualizar Cliente' : 'Guardar Cliente' }}</span>
             }
           </button>
         </div>
@@ -213,7 +221,7 @@
 }
 
 <!-- Modal: Confirmar Eliminación -->
-@if (modalEliminarAbierto) {
+@if (modalEliminarAbierto()) {
   <div class="modal-backdrop">
     <div class="modal-card modal-small">
       <div class="modal-header">
@@ -221,19 +229,19 @@
         <button type="button" class="btn-close" (click)="cerrarModalEliminar()">✕</button>
       </div>
       <div class="modal-body">
-        <p>¿Estás seguro de que querés eliminar al cliente <strong>{{ clienteAEliminar?.companyName }}</strong>?</p>
+        <p>¿Estás seguro de que querés eliminar al cliente <strong>{{ clienteAEliminar()?.companyName }}</strong>?</p>
         <p class="text-sm text-muted">Esta acción no se puede deshacer.</p>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn-secondary" (click)="cerrarModalEliminar()">Cancelar</button>
-        <button type="button" class="btn-danger" (click)="ejecutarEliminacion()">Eliminar</button>
+        <button type="button" class="btn btn-secondary" (click)="cerrarModalEliminar()">Cancelar</button>
+        <button type="button" class="btn btn-danger" (click)="ejecutarEliminacion()">Eliminar</button>
       </div>
     </div>
   </div>
 }
 
 <!-- Modal: Presupuestos del Cliente -->
-@if (modalPresupuestosAbierto) {
+@if (modalPresupuestosAbierto()) {
   <div class="modal-backdrop">
     <div class="modal-card modal-large">
       <div class="modal-header">
@@ -241,7 +249,7 @@
         <button type="button" class="btn-close" (click)="cerrarModalPresupuestos()">✕</button>
       </div>
       <div class="modal-body">
-        @if (presupuestosCliente.length === 0) {
+        @if (presupuestosCliente().length === 0) {
           <p class="empty-state">Este cliente aún no registra solicitudes de presupuesto.</p>
         } @else {
           <div class="table-responsive">
@@ -257,7 +265,7 @@
                 </tr>
               </thead>
               <tbody>
-                @for (req of presupuestosCliente; track req.id) {
+                @for (req of presupuestosCliente(); track req.id) {
                   <tr>
                     <td><strong>#{{ req.id }}</strong></td>
                     <td>{{ (req.requestDateTime || req.date) | date:'dd/MM/yyyy HH:mm' }}</td>
@@ -281,10 +289,10 @@
         }
       </div>
       <div class="modal-footer">
-        <a routerLink="/mis-solicitudes" class="btn-link-action" (click)="cerrarModalPresupuestos()">
+        <a routerLink="/mis-solicitudes" class="btn btn-secondary" (click)="cerrarModalPresupuestos()">
           Ir a Gestión Completa de Presupuestos →
         </a>
-        <button type="button" class="btn-secondary" (click)="cerrarModalPresupuestos()">Cerrar</button>
+        <button type="button" class="btn btn-secondary" (click)="cerrarModalPresupuestos()">Cerrar</button>
       </div>
     </div>
   </div>

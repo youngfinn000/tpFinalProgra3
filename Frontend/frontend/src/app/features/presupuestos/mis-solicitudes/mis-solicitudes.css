@@ -89,9 +89,9 @@
 }
 
 .tab-btn.active {
-  background-color: #fce7f3;
-  color: #be185d;
-  border-color: #fbcfe8;
+  background-color: var(--color-accent-subtle, rgba(159, 18, 57, 0.08));
+  color: var(--color-accent, #9f1239);
+  border-color: rgba(159, 18, 57, 0.2);
 }
 
 .search-box {
@@ -151,22 +151,26 @@
   background-color: #fcfcfc;
 }
 
-.request-id {
-  color: #2563eb;
-  font-size: 0.95rem;
+.cell-id {
+  color: var(--text-secondary, #64748b);
+  font-size: 0.85rem;
+  font-weight: 600;
 }
 
 .customer-name {
   font-weight: 600;
 }
 
-.event-date-badge {
-  background-color: #eff6ff;
-  color: #1e40af;
+.event-date {
+  display: inline-block;
   padding: 0.25rem 0.6rem;
-  border-radius: 6px;
+  background-color: var(--bg-secondary, #f8fafc);
+  border: 1px solid var(--border-color, #e2e8f0);
+  border-radius: var(--radius-sm, 6px);
   font-size: 0.85rem;
   font-weight: 600;
+  color: var(--text-primary, #0f172a);
+  white-space: nowrap;
 }
 
 .quantity-highlight {
@@ -202,32 +206,40 @@
   color: #64748b;
 }
 
-/* Status Pills */
-.status-pill {
+/* Badges de Estado (idénticos a Insumos) */
+.badge {
   display: inline-block;
   padding: 0.3rem 0.75rem;
-  border-radius: 9999px;
-  font-size: 0.775rem;
+  border-radius: 999px;
+  font-size: 0.75rem;
   font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
+  white-space: nowrap;
+  border: 1px solid transparent;
 }
 
-.status-pending {
-  background-color: #fef3c7;
-  color: #b45309;
+.badge-success {
+  color: var(--success, #15803d);
+  background-color: var(--success-bg, #dcfce7);
+  border-color: var(--success-border, #bbf7d0);
 }
 
-.status-confirmed {
-  background-color: #dcfce7;
-  color: #15803d;
+.badge-warning {
+  color: var(--warning, #b45309);
+  background-color: var(--warning-bg, #fffbeb);
+  border-color: var(--warning-border, #fde68a);
 }
 
-.status-rejected {
-  background-color: #fee2e2;
-  color: #991b1b;
+.badge-danger {
+  color: var(--danger, #dc2626);
+  background-color: var(--danger-bg, #fef2f2);
+  border-color: var(--danger-border, #fecaca);
 }
 
+.badge-muted {
+  color: var(--text-secondary, #64748b);
+  background-color: var(--bg-secondary, #f8fafc);
+  border-color: var(--border-color, #e2e8f0);
+}
 /* Estados Vacío / Cargando */
 .empty-state, .loading-state {
   padding: 4rem 2rem;
@@ -277,12 +289,12 @@
 }
 
 .btn-primary {
-  background-color: #be185d;
+  background-color: var(--color-accent, #9f1239);
   color: #ffffff;
 }
 
 .btn-primary:hover {
-  background-color: #9d174d;
+  background-color: var(--color-accent-hover, #881337);
 }
 
 .btn-secondary {
@@ -295,16 +307,45 @@
   background-color: #f3f4f6;
 }
 
-.btn-outline {
-  background-color: #ffffff;
-  border-color: #3b82f6;
-  color: #2563eb;
+.col-actions {
+  text-align: right;
 }
 
-.btn-outline:hover {
-  background-color: #eff6ff;
+.actions {
+  display: inline-flex;
+  gap: 0.5rem;
+  justify-content: flex-end;
+  align-items: center;
 }
 
+.action-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.45rem 0.8rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+  font-family: inherit;
+  color: var(--text-primary, #0f172a);
+  background-color: var(--bg-card, #ffffff);
+  border: 1px solid var(--border-input, #cbd5e1);
+  border-radius: var(--radius-sm, 8px);
+  text-decoration: none;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  line-height: 1.2;
+}
+
+.action-btn:hover {
+  background-color: var(--bg-secondary, #f8fafc);
+  border-color: var(--border-input, #94a3b8);
+  color: var(--color-accent, #9f1239);
+}
+
+.action-icon {
+  width: 14px;
+  height: 14px;
+}
 .btn-success {
   background-color: #16a34a;
   color: #ffffff;
@@ -355,7 +396,7 @@
   font-size: 0.725rem;
   font-weight: 800;
   letter-spacing: 0.08em;
-  color: #be185d;
+  color: var(--color-accent, #9f1239);
 }
 
 .modal-header h2 {
@@ -456,11 +497,11 @@
 
 .highlight-date {
   font-weight: 700;
-  color: #1e40af;
+  color: var(--text-primary, #0f172a);
 }
 
 .text-accent {
-  color: #be185d;
+  color: var(--color-accent, #9f1239);
 }
 
 .box-total {

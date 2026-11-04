@@ -1,6 +1,6 @@
 import { Routes } from '@angular/router';
 import { MainLayout } from './layout/main-layout/main-layout';
-import { adminGuard, authGuard, guestGuard } from './core/guards/auth.guard';
+import { adminGuard, authGuard, guestGuard, staffGuard } from './core/guards/auth.guard';
 
 export const routes: Routes = [
   {
@@ -125,6 +125,18 @@ export const routes: Routes = [
           import('./features/productos/producto-detalle/producto-detalle').then(
             (m) => m.ProductoDetalle,
           ),
+      },
+      {
+        path: 'pedidos',
+        canActivate: [staffGuard],
+        loadComponent: () =>
+          import('./features/pedidos/pedidos-list/pedidos-list').then((m) => m.OrderList),
+      },
+      {
+        path: 'pedidos/nuevo',
+        canActivate: [staffGuard],
+        loadComponent: () =>
+          import('./features/pedidos/pedidos-form/pedidos-form').then((m) => m.OrderFormComponent),
       },
     ],
   },

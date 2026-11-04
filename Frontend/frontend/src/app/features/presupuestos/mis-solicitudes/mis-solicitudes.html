@@ -114,8 +114,8 @@
           <tbody>
             @for (item of solicitudesFiltradas(); track item.id) {
               <tr>
-                <td>
-                  <strong class="request-id">#{{ item.id }}</strong>
+                <td class="cell-id">
+                  #{{ item.id }}
                 </td>
                 @if (!esClienteMayorista()) {
                   <td>
@@ -126,7 +126,7 @@
                   <span class="text-sm">{{ item.requestDateTime | date:'dd/MM/yyyy HH:mm' }}</span>
                 </td>
                 <td>
-                  <span class="event-date-badge">{{ item.eventDate | date:'dd/MM/yyyy' }}</span>
+                  <span class="event-date">{{ item.eventDate | date:'dd/MM/yyyy' }}</span>
                 </td>
                 <td>
                   <strong class="quantity-highlight">{{ item.quantity }} Kg</strong>
@@ -143,13 +143,13 @@
                 </td>
                 <td>
                   @if (item.stateRequestEnum === 'PENDING') {
-                    <span class="status-pill status-pending">En Evaluación</span>
+                    <span class="badge badge-warning">En Evaluación</span>
                   } @else if (item.stateRequestEnum === 'CONFIRMED') {
-                    <span class="status-pill status-confirmed">Cotizado</span>
+                    <span class="badge badge-success">Cotizado</span>
                   } @else if (item.stateRequestEnum === 'REJECTED') {
-                    <span class="status-pill status-rejected">Rechazado</span>
+                    <span class="badge badge-danger">Rechazado</span>
                   } @else {
-                    <span class="status-pill">{{ item.stateRequestEnum }}</span>
+                    <span class="badge badge-muted">{{ item.stateRequestEnum }}</span>
                   }
                 </td>
                 <td>
@@ -159,18 +159,24 @@
                     <span class="text-muted text-sm">Pendiente</span>
                   }
                 </td>
-                <td class="text-center actions-cell">
-                  <button type="button" class="btn btn-sm btn-outline" (click)="verFicha(item)">
-                    Ver Ficha
-                  </button>
-                  @if (esClienteMayorista() && item.stateRequestEnum === 'CONFIRMED') {
-                    <a
-                      [routerLink]="['/enviar-anticipo']"
-                      [queryParams]="{ budgetId: item.id }"
-                      class="btn btn-sm btn-primary">
-                      Anticipo
-                    </a>
-                  }
+                <td class="col-actions actions-cell">
+                  <div class="actions">
+                    <button type="button" class="action-btn" (click)="verFicha(item)">
+                      <svg class="action-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M2.06 12.35a1 1 0 0 1 0-.7 10.75 10.75 0 0 1 19.88 0 1 1 0 0 1 0 .7 10.75 10.75 0 0 1-19.88 0"></path>
+                        <circle cx="12" cy="12" r="3"></circle>
+                      </svg>
+                      Ver Ficha
+                    </button>
+                    @if (esClienteMayorista() && item.stateRequestEnum === 'CONFIRMED') {
+                      <a
+                        [routerLink]="['/enviar-anticipo']"
+                        [queryParams]="{ budgetId: item.id }"
+                        class="btn btn-sm btn-primary">
+                        Anticipo
+                      </a>
+                    }
+                  </div>
                 </td>
               </tr>
             }

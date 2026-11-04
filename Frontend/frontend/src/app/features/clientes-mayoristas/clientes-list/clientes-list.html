@@ -6,15 +6,11 @@
       <p class="page-subtitle">Gestión de cuentas comerciales, datos impositivos y solicitudes de presupuesto.</p>
     </div>
     <div class="header-buttons">
-      <a routerLink="/mis-solicitudes" class="btn-secondary-link">
-        📋 Ver Todas las Solicitudes
+      <a routerLink="/mis-solicitudes" class="btn btn-secondary">
+        Ver Todas las Solicitudes
       </a>
-      <button type="button" class="btn-primary" (click)="abrirModalCrear()">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <line x1="12" y1="5" x2="12" y2="19"></line>
-          <line x1="5" y1="12" x2="19" y2="12"></line>
-        </svg>
-        <span>Nuevo Cliente</span>
+      <button type="button" class="btn btn-primary" (click)="abrirModalCrear()">
+        + Nuevo Cliente
       </button>
     </div>
   </header>
@@ -59,8 +55,8 @@
       />
     </div>
     <div class="toolbar-actions">
-      <button type="button" class="btn-secondary btn-icon-only" (click)="cargarClientes()" title="Recargar lista">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <button type="button" class="btn btn-secondary btn-icon-only" (click)="cargarClientes()" title="Recargar lista">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="btn-icon">
           <polyline points="23 4 23 10 17 10"></polyline>
           <polyline points="1 20 1 14 7 14"></polyline>
           <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path>
@@ -209,8 +205,8 @@
         </div>
 
         <div class="modal-footer">
-          <button type="button" class="btn-secondary" (click)="cerrarModalFormulario()">Cancelar</button>
-          <button type="submit" class="btn-primary" [disabled]="guardando()">
+          <button type="button" class="btn btn-secondary" (click)="cerrarModalFormulario()">Cancelar</button>
+          <button type="submit" class="btn btn-primary" [disabled]="guardando()">
             @if (guardando()) {
               <span class="spinner-light"></span>
               <span>Guardando...</span>
@@ -237,8 +233,8 @@
         <p class="text-sm text-muted">Esta acción no se puede deshacer.</p>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn-secondary" (click)="cerrarModalEliminar()">Cancelar</button>
-        <button type="button" class="btn-danger" (click)="ejecutarEliminacion()">Eliminar</button>
+        <button type="button" class="btn btn-secondary" (click)="cerrarModalEliminar()">Cancelar</button>
+        <button type="button" class="btn btn-danger" (click)="ejecutarEliminacion()">Eliminar</button>
       </div>
     </div>
   </div>
@@ -293,10 +289,10 @@
         }
       </div>
       <div class="modal-footer">
-        <a routerLink="/mis-solicitudes" class="btn-link-action" (click)="cerrarModalPresupuestos()">
+        <a routerLink="/mis-solicitudes" class="btn btn-secondary" (click)="cerrarModalPresupuestos()">
           Ir a Gestión Completa de Presupuestos →
         </a>
-        <button type="button" class="btn-secondary" (click)="cerrarModalPresupuestos()">Cerrar</button>
+        <button type="button" class="btn btn-secondary" (click)="cerrarModalPresupuestos()">Cerrar</button>
       </div>
     </div>
   </div>

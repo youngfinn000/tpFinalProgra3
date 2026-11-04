@@ -1,0 +1,68 @@
+<div class="page">
+  <header class="page-header">
+    <h1>Pedidos</h1>
+    <a routerLink="/pedidos/nuevo" class="btn btn-primary">+ Nuevo pedido</a>
+  </header>
+
+  @if (message(); as m) {
+    <div class="alert" [class.alert-ok]="m.type === 'ok'" [class.alert-error]="m.type === 'error'">
+      {{ m.text }}
+      <button class="close" (click)="message.set(null)">×</button>
+    </div>
+  }
+
+  <form [formGroup]="filters" class="filters">
+    <label>Estado
+      <select formControlName="status">
+        <option value="">Todos</option>
+        @for (s of statuses; track s) { <option [value]="s">{{ statusLabel[s] }}</option> }
+      </select>
+    </label>
+    <label>Canal
+      <select formControlName="channel">
+        <option value="">Todos</option>
+        @for (c of channels; track c) { <option [value]="c">{{ channelLabel[c] }}</option> }
+      </select>
+    </label>
+    <label>Desde <input type="date" formControlName="from" /></label>
+    <label>Hasta <input type="date" formControlName="to" /></label>
+    <label>Usuario <input type="text" formControlName="user" placeholder="Nombre de usuario" /></label>
+    <button type="button" class="btn" (click)="clearFilters()">Limpiar filtros</button>
+  </form>
+
+  @if (loading()) {
+    <p>Cargando...</p>
+  } @else if (orders().length === 0) {
+    <p class="empty">No hay pedidos para mostrar.</p>
+  } @else {
+    <table class="table">
+      <thead>
+        <tr>
+          <th>#</th><th>Fecha</th><th>Importe</th><th>Estado</th>
+          <th>Canal</th><th>Pago</th><th>Registró</th><th></th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (o of orders(); track o.id) {
+          <tr>
+            <td>{{ o.id }}</td>
+            <td>{{ o.createdAt | date: 'dd/MM/yyyy HH:mm' }}</td>
+            <td>{{ o.total | currency: 'ARS' : 'symbol-narrow' : '1.2-2' }}</td>
+            <td><span class="badge" [attr.data-status]="o.status">{{ statusLabel[o.status] }}</span></td>
+            <td>{{ channelLabel[o.channel] }}</td>
+            <td>{{ paymentLabel[o.paymentMethod] }}</td>
+            <td>{{ o.userName }}</td>
+            <td class="actions">
+              @if (canAdvance(o.status)) {
+                <button class="btn btn-sm btn-primary" (click)="advance(o)">{{ nextLabel[o.status] }}</button>
+              }
+              @if (canCancel(o.status)) {
+                <button class="btn btn-sm btn-danger" (click)="cancel(o)">Cancelar</button>
+              }
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  }
+</div>

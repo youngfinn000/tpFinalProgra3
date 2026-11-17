@@ -138,6 +138,24 @@ export const routes: Routes = [
         loadComponent: () =>
           import('./features/pedidos/pedidos-form/pedidos-form').then((m) => m.OrderFormComponent),
       },
+      {
+        path: 'recetas',
+        canActivate: [staffGuard],
+        loadComponent: () =>
+          import('./features/recetas/recetas-list/recetas-list').then((m) => m.RecetasList),
+      },
+      {
+        path: 'recetas/nueva',
+        canActivate: [adminGuard],
+        loadComponent: () =>
+          import('./features/recetas/receta-form/receta-form').then((m) => m.RecetaForm),
+      },
+      {
+        path: 'recetas/:id/editar',
+        canActivate: [adminGuard],
+        loadComponent: () =>
+          import('./features/recetas/receta-form/receta-form').then((m) => m.RecetaForm),
+      },
     ],
   },
   { path: '**', redirectTo: '' },

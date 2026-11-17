@@ -156,6 +156,24 @@ export const routes: Routes = [
         loadComponent: () =>
           import('./features/recetas/receta-form/receta-form').then((m) => m.RecetaForm),
       },
+      {
+        path: 'recetas/:id',
+        canActivate: [staffGuard],
+        loadComponent: () =>
+          import('./features/recetas/receta-detalle/receta-detalle').then((m) => m.RecetaDetalle),
+      },
+      {
+        path: 'produccion/nuevo',
+        canActivate: [staffGuard],
+        loadComponent: () =>
+          import('./features/produccion/lote-form/lote-form').then((m) => m.LoteForm),
+      },
+      {
+        path: 'produccion',
+        canActivate: [staffGuard],
+        loadComponent: () =>
+          import('./features/produccion/lote-form/lote-form').then((m) => m.LoteForm),
+      },
     ],
   },
   { path: '**', redirectTo: '' },

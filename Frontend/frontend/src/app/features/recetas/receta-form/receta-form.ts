@@ -71,7 +71,7 @@ export class RecetaForm implements OnInit {
 
   private cargarCatalogos() {
     this.saborService
-      .listar({ estado: 'activos', nombre: '', modo: 'parcial' })
+      .listar({ estado: 'todos', nombre: '', modo: 'parcial' })
       .subscribe({
         next: (lista) => this.sabores.set(lista),
         error: () => this.error.set('No se pudieron cargar los sabores.'),
@@ -169,8 +169,13 @@ export class RecetaForm implements OnInit {
   }
 
   guardar() {
-    if (this.form.invalid || this.guardando()) {
+    if (this.guardando()) return;
+
+    if (this.form.invalid) {
       this.form.markAllAsTouched();
+      this.error.set(
+        'Completá todos los campos obligatorios (*) antes de guardar la receta.',
+      );
       return;
     }
 

@@ -54,6 +54,12 @@ export class Sidebar {
       icono: 'recetas',
     },
     {
+      label: 'Producción',
+      ruta: '/produccion',
+      roles: ['ROLE_ADMIN', 'ROLE_USER'],
+      icono: 'produccion',
+    },
+    {
       label: 'Empleados',
       ruta: '/empleados',
       roles: ['ROLE_ADMIN'],

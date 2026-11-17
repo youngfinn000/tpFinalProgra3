@@ -1,0 +1,431 @@
+:host {
+  display: block;
+}
+
+.page {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.page-title {
+  margin: 0;
+  font-size: 1.85rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: var(--text-primary);
+}
+
+.page-subtitle {
+  margin: 0.25rem 0 0;
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+}
+
+/* ---------- Formulario ---------- */
+.form-card {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-width: 920px;
+  box-sizing: border-box;
+  padding: 2rem;
+  background-color: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-card);
+}
+
+.form-card form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1.35rem;
+}
+
+.full-width {
+  grid-column: 1 / -1;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+}
+
+.form-group label {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.form-group input,
+.form-group select {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 0.8rem 0.9rem;
+  font: inherit;
+  font-size: 0.95rem;
+  color: var(--text-primary);
+  background-color: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.form-group input:focus,
+.form-group select:focus {
+  border-color: var(--color-accent);
+  box-shadow: 0 0 0 3px rgba(159, 18, 57, 0.1);
+}
+
+.input-with-unit {
+  display: flex;
+  align-items: stretch;
+  gap: 0.5rem;
+}
+
+.unit-tag {
+  display: inline-flex;
+  align-items: center;
+  padding: 0 1.1rem;
+  border-radius: var(--radius-md);
+  font-size: 0.9rem;
+  font-weight: 800;
+  color: var(--color-accent);
+  background-color: var(--color-accent-subtle, rgba(159, 18, 57, 0.08));
+  border: 1px solid rgba(159, 18, 57, 0.2);
+}
+
+.quick-kg-row {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  flex-wrap: wrap;
+  margin-top: 0.25rem;
+}
+
+.quick-label {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+
+.quick-chip {
+  padding: 0.3rem 0.7rem;
+  border-radius: 999px;
+  font-family: inherit;
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  background-color: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  cursor: pointer;
+}
+
+.quick-chip:hover {
+  border-color: var(--color-accent);
+}
+
+.quick-chip-active {
+  color: var(--text-on-accent);
+  background-color: var(--color-accent);
+  border-color: var(--color-accent);
+}
+
+.recipe-preview-banner {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+  padding: 1rem 1.25rem;
+  background-color: var(--bg-secondary);
+  border-left: 4px solid var(--color-accent);
+  border-radius: var(--radius-md);
+}
+
+.preview-kicker {
+  display: block;
+  font-size: 0.7rem;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  color: var(--text-secondary);
+}
+
+.preview-name {
+  font-size: 1rem;
+  color: var(--text-primary);
+}
+
+.preview-meta {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  font-size: 0.88rem;
+  color: var(--text-secondary);
+}
+
+.preview-link {
+  font-weight: 700;
+  color: var(--color-accent);
+  text-decoration: none;
+}
+
+.preview-link:hover {
+  text-decoration: underline;
+}
+
+.field-hint {
+  margin: 0;
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+}
+
+.field-error {
+  margin: 0;
+  font-size: 0.8rem;
+  color: var(--text-error);
+}
+
+/* ---------- Tarjeta de Confirmación y Rótulo ---------- */
+.confirmation-card {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  max-width: 780px;
+  padding: 2rem;
+  background-color: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-card);
+}
+
+.confirm-banner {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.confirm-check {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: #166534;
+  background-color: #dcfce7;
+  border: 2px solid #86efac;
+}
+
+.confirm-kicker {
+  font-size: 0.75rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  color: #166534;
+}
+
+.confirm-title {
+  margin: 0.15rem 0 0;
+  font-size: 1.35rem;
+  font-weight: 800;
+  color: var(--text-primary);
+}
+
+.label-ticket {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  padding: 1.5rem;
+  background-color: var(--bg-secondary);
+  border: 2px dashed var(--color-accent);
+  border-radius: var(--radius-lg);
+}
+
+.ticket-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.75rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.ticket-brand {
+  font-size: 0.75rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  color: var(--text-secondary);
+}
+
+.ticket-status {
+  padding: 0.25rem 0.7rem;
+  border-radius: 999px;
+  font-size: 0.72rem;
+  font-weight: 800;
+  color: #166534;
+  background-color: #dcfce7;
+}
+
+.ticket-lot-code {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 1rem;
+  background-color: var(--bg-card);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-color);
+}
+
+.lot-prefix {
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  color: var(--text-secondary);
+}
+
+.lot-number {
+  font-size: 2.3rem;
+  font-weight: 900;
+  letter-spacing: -0.02em;
+  color: var(--color-accent);
+}
+
+.ticket-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+}
+
+.ticket-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  padding: 0.85rem 1rem;
+  background-color: var(--bg-card);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-color);
+}
+
+.field-label {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+
+.field-value {
+  font-size: 1.1rem;
+  font-weight: 800;
+  color: var(--text-primary);
+}
+
+.field-value.highlight {
+  font-size: 1.3rem;
+  color: var(--color-accent);
+}
+
+.field-sub {
+  font-size: 0.78rem;
+  color: var(--text-secondary);
+}
+
+/* ---------- Botones ---------- */
+.form-actions,
+.confirm-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.75rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid var(--border-color);
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.75rem 1.35rem;
+  font-family: inherit;
+  font-size: 0.9rem;
+  font-weight: 600;
+  border-radius: var(--radius-md);
+  border: 1px solid transparent;
+  text-decoration: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-lg {
+  padding: 0.9rem 1.8rem;
+  font-size: 0.95rem;
+}
+
+.btn-primary {
+  color: var(--text-on-accent);
+  background-color: var(--color-accent);
+  border-color: var(--color-accent);
+}
+
+.btn-primary:hover:not(:disabled) {
+  background-color: var(--color-accent-hover);
+}
+
+.btn-secondary {
+  color: var(--text-primary);
+  background-color: var(--bg-card);
+  border-color: var(--border-input);
+}
+
+.btn-outline {
+  color: var(--color-accent);
+  background-color: var(--bg-card);
+  border-color: var(--color-accent);
+}
+
+.alert {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.75rem 1rem;
+  border-radius: var(--radius-md);
+}
+
+.alert-danger {
+  color: var(--text-error);
+  background-color: var(--bg-error);
+  border: 1px solid var(--text-error);
+}
+
+.alert-close {
+  background: transparent;
+  border: none;
+  color: inherit;
+  cursor: pointer;
+}
+
+@media (max-width: 700px) {
+  .form-grid,
+  .ticket-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .confirm-actions {
+    flex-direction: column;
+  }
+}

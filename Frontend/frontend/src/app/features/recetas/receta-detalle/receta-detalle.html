@@ -1,0 +1,186 @@
+<section class="page">
+  <header class="page-header">
+    <div class="header-left">
+      <a routerLink="/recetas" class="back-link">← Volver al listado de recetas</a>
+      @if (receta(); as r) {
+        <div class="title-row">
+          <h1 class="page-title">{{ r.nombre }}</h1>
+          <span class="flavor-pill">Sabor: {{ r.saborNombre }}</span>
+        </div>
+        <p class="page-subtitle">
+          Ficha técnica de elaboración para fábrica · Fórmula #{{ r.id }}
+        </p>
+      } @else {
+        <h1 class="page-title">Ficha Técnica de Receta</h1>
+      }
+    </div>
+
+    @if (receta(); as r) {
+      <div class="header-actions">
+        <a
+          [routerLink]="['/produccion/nuevo']"
+          [queryParams]="{ recetaId: r.id }"
+          class="btn btn-primary"
+        >
+          + Registrar lote producido
+        </a>
+        @if (esAdmin()) {
+          <a [routerLink]="['/recetas', r.id, 'editar']" class="btn btn-secondary">
+            Editar fórmula
+          </a>
+          <button type="button" class="btn btn-danger-outline" (click)="eliminar()">
+            Eliminar
+          </button>
+        }
+      </div>
+    }
+  </header>
+
+  @if (error()) {
+    <div class="alert alert-danger">
+      <span>{{ error() }}</span>
+      <button type="button" class="alert-close" (click)="error.set('')">✕</button>
+    </div>
+  }
+
+  @if (cargando()) {
+    <div class="loading-card">Cargando ficha técnica...</div>
+  } @else if (receta(); as r) {
+    <!-- Panel de resumen y Escalador en Vivo -->
+    <div class="top-panels">
+      <!-- Ficha resumen base -->
+      <article class="info-card">
+        <span class="card-kicker">PARÁMETROS DE LA FÓRMULA BASE</span>
+        <div class="info-metrics">
+          <div class="metric-item">
+            <span class="metric-label">Sabor asociado</span>
+            <strong class="metric-value">{{ r.saborNombre }}</strong>
+          </div>
+          <div class="metric-item">
+            <span class="metric-label">Rendimiento base (Batch)</span>
+            <strong class="metric-value accent">{{ r.cantidadBase }} Kg</strong>
+          </div>
+          <div class="metric-item">
+            <span class="metric-label">Total de insumos</span>
+            <strong class="metric-value">{{ r.ingredientes.length }}</strong>
+          </div>
+        </div>
+      </article>
+
+      <!-- Escalador interactivo para el Maestro Heladero -->
+      <article class="scaler-card">
+        <div class="scaler-header">
+          <div>
+            <span class="card-kicker">ESCALADOR EN VIVO PARA OBRADOR</span>
+            <h2 class="scaler-title">Calcular insumos para X Kg</h2>
+          </div>
+
+          <span class="scale-badge" [class.scale-badge-active]="esEscalaModificada()">
+            Factor: x{{ factorEscala() | number: '1.1-2' }}
+          </span>
+        </div>
+
+        <div class="scaler-controls">
+          <div class="scaler-input-wrap">
+            <label for="kgInput">Kilogramos a fabricar hoy</label>
+            <div class="scaler-input-box">
+              <input
+                id="kgInput"
+                type="number"
+                min="0.5"
+                step="0.5"
+                [ngModel]="kgDeseados()"
+                (ngModelChange)="actualizarKg($event)"
+              />
+              <span class="scaler-unit">KG</span>
+            </div>
+          </div>
+
+          <div class="scaler-presets">
+            <span class="presets-label">Tiradas rápidas:</span>
+            <div class="preset-chips">
+              @for (p of presetsKg; track p) {
+                <button
+                  type="button"
+                  class="preset-chip"
+                  [class.preset-chip-active]="kgDeseados() === p"
+                  (click)="seleccionarPreset(p)"
+                >
+                  {{ p }} Kg
+                </button>
+              }
+              @if (esEscalaModificada()) {
+                <button
+                  type="button"
+                  class="preset-chip preset-reset"
+                  (click)="restablecerBase()"
+                >
+                  Volver a base ({{ r.cantidadBase }} Kg)
+                </button>
+              }
+            </div>
+          </div>
+        </div>
+      </article>
+    </div>
+
+    <!-- Tabla de Ingredientes y Proporciones -->
+    <div class="table-card">
+      <div class="table-card-header">
+        <div>
+          <h2 class="table-title">Desglose de Ingredientes y Cantidades</h2>
+          <p class="table-subtitle">
+            Comparativa entre la fórmula original ({{ r.cantidadBase }} Kg) y la tirada seleccionada ({{ kgDeseados() }} Kg)
+          </p>
+        </div>
+      </div>
+
+      <div class="table-scroll">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Ingrediente / Insumo</th>
+              <th>Unidad de medida</th>
+              <th>Cantidad Base ({{ r.cantidadBase }} Kg)</th>
+              <th class="col-scaled">
+                Cantidad para {{ kgDeseados() }} Kg
+              </th>
+            </tr>
+          </thead>
+
+          <tbody>
+            @for (ing of ingredientesEscalados(); track $index; let idx = $index) {
+              <tr>
+                <td class="cell-index">{{ idx + 1 }}</td>
+
+                <td class="cell-name">{{ ing.nombreInsumo }}</td>
+
+                <td>
+                  <span class="unit-chip">
+                    {{ etiquetaUnidad(ing.unidad) }}
+                  </span>
+                </td>
+
+                <td class="cell-qty">
+                  {{ ing.cantidadRequerida | number: '1.0-3' }} {{ ing.unidad }}
+                </td>
+
+                <td class="cell-scaled" [class.cell-scaled-highlight]="esEscalaModificada()">
+                  <strong>{{ ing.cantidadCalculada | number: '1.0-3' }}</strong>
+                  <span class="scaled-unit">{{ ing.unidad }}</span>
+                </td>
+              </tr>
+            } @empty {
+              <tr>
+                <td colspan="5" class="empty-state">
+                  Esta receta no tiene ingredientes registrados.
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </div>
+  }
+</section>

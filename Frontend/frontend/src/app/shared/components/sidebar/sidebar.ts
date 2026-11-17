@@ -7,7 +7,16 @@ interface MenuItem {
   label: string;
   ruta: string;
   roles: Rol[];
-  icono: 'empleados' | 'clientes' | 'sabores' | 'productos' | 'insumos' | 'presupuesto' | 'pedidos';
+  icono:
+    | 'empleados'
+    | 'clientes'
+    | 'sabores'
+    | 'productos'
+    | 'insumos'
+    | 'presupuesto'
+    | 'pedidos'
+    | 'recetas'
+    | 'produccion';
 }
 
 @Component({
@@ -37,6 +46,18 @@ export class Sidebar {
       ruta: '/insumos',
       roles: ['ROLE_ADMIN'],
       icono: 'insumos',
+    },
+    {
+      label: 'Recetas',
+      ruta: '/recetas',
+      roles: ['ROLE_ADMIN', 'ROLE_USER'],
+      icono: 'recetas',
+    },
+    {
+      label: 'Producción',
+      ruta: '/produccion',
+      roles: ['ROLE_ADMIN', 'ROLE_USER'],
+      icono: 'produccion',
     },
     {
       label: 'Empleados',

@@ -1,0 +1,208 @@
+<section class="page">
+  <header class="page-header">
+    <div>
+      <h1 class="page-title">Gestión de Recetas</h1>
+      <p class="page-subtitle">
+        Fórmulas de elaboración, insumos requeridos y rendimiento base por batch en STRETTO
+      </p>
+    </div>
+
+    @if (esAdmin()) {
+      <a routerLink="/recetas/nueva" class="btn btn-primary">
+        + Nueva Receta
+      </a>
+    }
+  </header>
+
+  @if (error()) {
+    <div class="alert alert-danger">
+      <span class="alert-text">{{ error() }}</span>
+      <button type="button" class="alert-close" (click)="error.set('')">✕</button>
+    </div>
+  }
+
+  @if (mensajeExito()) {
+    <div class="alert alert-success">
+      <span class="alert-text">{{ mensajeExito() }}</span>
+      <button type="button" class="alert-close" (click)="mensajeExito.set('')">✕</button>
+    </div>
+  }
+
+  <!-- Resumen de Recetas -->
+  <div class="summary-grid">
+    <article class="summary-card">
+      <span class="summary-label">Fórmulas registradas</span>
+      <strong class="summary-number">{{ totalRecetas() }}</strong>
+    </article>
+
+    <article class="summary-card">
+      <span class="summary-label">Sabores estandarizados</span>
+      <strong class="summary-number">{{ saboresConReceta() }}</strong>
+    </article>
+
+    <article class="summary-card">
+      <span class="summary-label">Rendimiento base promedio</span>
+      <strong class="summary-number">{{ promedioBatchKg() }} Kg</strong>
+    </article>
+  </div>
+
+  <!-- Buscador rápido -->
+  <div class="filter-bar">
+    <div class="search-box">
+      <input
+        type="text"
+        placeholder="Buscar por sabor, nombre de fórmula o ingrediente..."
+        [ngModel]="busqueda()"
+        (ngModelChange)="busqueda.set($event)"
+      />
+      @if (busqueda()) {
+        <button type="button" class="clear-btn" (click)="busqueda.set('')">Limpiar</button>
+      }
+    </div>
+  </div>
+
+  <!-- Tabla de Recetas -->
+  <div class="table-card">
+    <div class="table-scroll">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Sabor asociado</th>
+            <th>Nombre de fórmula</th>
+            <th>Rendimiento base (Batch)</th>
+            <th>Ingredientes</th>
+            <th class="col-actions">Acciones</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          @for (r of recetasFiltradas(); track r.id) {
+            <tr>
+              <td class="cell-id">#{{ r.id }}</td>
+
+              <td>
+                <span class="flavor-badge">
+                  {{ r.saborNombre }}
+                </span>
+              </td>
+
+              <td class="cell-name">
+                {{ r.nombre }}
+              </td>
+
+              <td>
+                <span class="batch-chip">
+                  {{ r.cantidadBase }} Kg
+                </span>
+              </td>
+
+              <td>
+                <div class="ingredients-preview">
+                  <span class="ing-count">{{ r.ingredientes.length }} insumo(s)</span>
+                  @if (r.ingredientes.length > 0) {
+                    <span class="ing-names">
+                      @for (ing of r.ingredientes.slice(0, 3); track $index; let last = $last) {
+                        {{ ing.nombreInsumo }}{{ !last ? ', ' : '' }}
+                      }
+                      @if (r.ingredientes.length > 3) {
+                        y {{ r.ingredientes.length - 3 }} más
+                      }
+                    </span>
+                  }
+                </div>
+              </td>
+
+              <td class="col-actions">
+                <div class="actions">
+                  <a
+                    class="action-btn action-view"
+                    [routerLink]="['/recetas', r.id]"
+                    title="Consultar ficha técnica y escalador"
+                  >
+                    <svg
+                      class="action-icon"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    >
+                      <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"></path>
+                      <circle cx="12" cy="12" r="3"></circle>
+                    </svg>
+                    Ficha técnica
+                  </a>
+
+                  @if (esAdmin()) {
+                    <a
+                      class="action-btn"
+                      [routerLink]="['/recetas', r.id, 'editar']"
+                    >
+                      <svg
+                        class="action-icon"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                      >
+                        <path
+                          d="M12 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"
+                        ></path>
+                        <path
+                          d="M18.375 2.625a1.5 1.5 0 0 1 3 3l-9.013 9.014a2 2 0 0 1-.853.505l-2.873.84a.5.5 0 0 1-.62-.62l.84-2.873a2 2 0 0 1 .506-.852z"
+                        ></path>
+                      </svg>
+                      Editar
+                    </a>
+
+                    <button
+                      type="button"
+                      class="action-btn action-danger"
+                      (click)="eliminar(r)"
+                    >
+                      <svg
+                        class="action-icon"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                      >
+                        <polyline points="3 6 5 6 21 6"></polyline>
+                        <path
+                          d="m19 6-.867 14.142A2 2 0 0 1 16.138 22H7.862a2 2 0 0 1-1.995-1.858L5 6"
+                        ></path>
+                        <path d="M10 11v6M14 11v6"></path>
+                        <path
+                          d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"
+                        ></path>
+                      </svg>
+                      Eliminar
+                    </button>
+                  }
+                </div>
+              </td>
+            </tr>
+          } @empty {
+            <tr>
+              <td colspan="6" class="empty-state">
+                @if (cargando()) {
+                  Cargando recetas...
+                } @else if (busqueda()) {
+                  No se encontraron recetas para "{{ busqueda() }}"
+                } @else {
+                  No hay recetas cargadas todavía
+                }
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>

@@ -34,7 +34,7 @@ public class ProductionLotEntity {
     @JoinColumn(name = "user_id")
     private InternalUserEntity internalUser;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "recipe_id")
     private RecipeEntity recipe;
 }

@@ -19,36 +19,43 @@ public class RecipeController {
     private final RecipeService recipeService;
 
     @PostMapping
-    public ResponseEntity<RecipeDTOResponse> create(@Valid @RequestBody RecipeDTORequest request)
-    {
+    public ResponseEntity<RecipeDTOResponse> create(@Valid @RequestBody RecipeDTORequest request) {
         RecipeDTOResponse response = recipeService.create(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
     @GetMapping
-    public ResponseEntity<List<RecipeDTOResponse>> findAll()
-    {
+    public ResponseEntity<List<RecipeDTOResponse>> findAll() {
         List<RecipeDTOResponse> responses = recipeService.findAll();
         return ResponseEntity.ok(responses);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<RecipeDTOResponse> findById(@PathVariable Long id)
-    {
+    public ResponseEntity<RecipeDTOResponse> findById(@PathVariable Long id) {
         RecipeDTOResponse response = recipeService.findById(id);
         return ResponseEntity.ok(response);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<RecipeDTOResponse> update(@PathVariable Long id, @RequestBody RecipeDTORequest request)
-    {
-        RecipeDTOResponse response = recipeService.update(request,id);
+    public ResponseEntity<RecipeDTOResponse> update(
+            @PathVariable Long id,
+            @Valid @RequestBody RecipeDTORequest request
+    ) {
+        RecipeDTOResponse response = recipeService.update(request, id);
         return ResponseEntity.ok(response);
     }
 
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> delete(@PathVariable Long id) {
+        recipeService.delete(id);
+        return ResponseEntity.noContent().build();
+    }
+
     @GetMapping("/{id}/calculate-inputs")
-    public ResponseEntity<List<RecipeSuppliesDTOResponse>> calculateIngredients(@PathVariable Long id, @RequestParam Double kg)
-    {
+    public ResponseEntity<List<RecipeSuppliesDTOResponse>> calculateIngredients(
+            @PathVariable Long id,
+            @RequestParam Double kg
+    ) {
         List<RecipeSuppliesDTOResponse> response = recipeService.calculateIngredients(id, kg);
         return ResponseEntity.ok(response);
     }

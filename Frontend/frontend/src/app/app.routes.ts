@@ -138,6 +138,42 @@ export const routes: Routes = [
         loadComponent: () =>
           import('./features/pedidos/pedidos-form/pedidos-form').then((m) => m.OrderFormComponent),
       },
+      {
+        path: 'recetas',
+        canActivate: [staffGuard],
+        loadComponent: () =>
+          import('./features/recetas/recetas-list/recetas-list').then((m) => m.RecetasList),
+      },
+      {
+        path: 'recetas/nueva',
+        canActivate: [adminGuard],
+        loadComponent: () =>
+          import('./features/recetas/receta-form/receta-form').then((m) => m.RecetaForm),
+      },
+      {
+        path: 'recetas/:id/editar',
+        canActivate: [adminGuard],
+        loadComponent: () =>
+          import('./features/recetas/receta-form/receta-form').then((m) => m.RecetaForm),
+      },
+      {
+        path: 'recetas/:id',
+        canActivate: [staffGuard],
+        loadComponent: () =>
+          import('./features/recetas/receta-detalle/receta-detalle').then((m) => m.RecetaDetalle),
+      },
+      {
+        path: 'produccion/nuevo',
+        canActivate: [staffGuard],
+        loadComponent: () =>
+          import('./features/produccion/lote-form/lote-form').then((m) => m.LoteForm),
+      },
+      {
+        path: 'produccion',
+        canActivate: [staffGuard],
+        loadComponent: () =>
+          import('./features/produccion/lote-form/lote-form').then((m) => m.LoteForm),
+      },
     ],
   },
   { path: '**', redirectTo: '' },

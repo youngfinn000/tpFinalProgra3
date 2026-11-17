@@ -119,14 +119,6 @@ export const routes: Routes = [
           import('./features/productos/producto-form/producto-form').then((m) => m.ProductoForm),
       },
       {
-        path: 'productos/:id',
-        canActivate: [authGuard],
-        loadComponent: () =>
-          import('./features/productos/producto-detalle/producto-detalle').then(
-            (m) => m.ProductoDetalle,
-          ),
-      },
-      {
         path: 'pedidos',
         canActivate: [staffGuard],
         loadComponent: () =>

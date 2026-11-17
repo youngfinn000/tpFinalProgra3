@@ -178,11 +178,11 @@
 
             <tbody>
               @for (prod of productosFiltrados(); track prod.id) {
-                <tr [class.row-inactive]="!prod.activo" class="table-row">
+                <tr [class.row-inactive]="!prod.activo" class="table-row" (click)="abrirDetalle(prod)">
                   <td class="col-id font-mono text-muted">#{{ prod.id }}</td>
 
                   <td class="col-nombre">
-                    <div class="product-name-cell" (click)="abrirDetalle(prod)">
+                    <div class="product-name-cell">
                       <div class="product-icon-avatar">
                         @if (prod.categoria === 'GELATO') {
                           <svg lucideIceCreamCone [size]="18" class="product-icon-svg"></svg>
@@ -253,38 +253,36 @@
                         $ Precio
                       </button>
 
-                      <!-- Edición completa -->
+                      <!-- Edición completa (solo ícono lápiz) -->
                       <a
                         [routerLink]="['/productos', prod.id, 'editar']"
-                        class="btn-action btn-action-detail"
+                        (click)="$event.stopPropagation()"
+                        class="btn-action btn-icon-only btn-action-detail"
                         title="Editar {{ prod.nombre }}"
                       >
-                        Editar
+                        <svg
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          stroke-width="2"
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          class="action-icon"
+                        >
+                          <path d="M12 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                          <path d="M18.375 2.625a1.5 1.5 0 0 1 3 3l-9.013 9.014a2 2 0 0 1-.853.505l-2.873.84a.5.5 0 0 1-.62-.62l.84-2.873a2 2 0 0 1 .506-.852z"></path>
+                        </svg>
                       </a>
 
-                      <!-- Detalle rápido -->
+                      <!-- Detalle rápido (solo ícono ojo) -->
                       <button
                         type="button"
-                        class="btn-action btn-action-detail"
-                        (click)="abrirDetalle(prod)"
+                        class="btn-action btn-icon-only btn-action-detail"
+                        (click)="abrirDetalle(prod); $event.stopPropagation()"
                         title="Ver detalle de {{ prod.nombre }}"
                       >
                         <svg lucideEye [size]="15" class="action-icon"></svg>
-                        <span>Detalle</span>
                       </button>
-
-                      <!-- Página completa de detalle -->
-                      <a
-                        [routerLink]="['/productos', prod.id]"
-                        class="btn-action btn-action-link"
-                        title="Abrir página completa de {{ prod.nombre }}"
-                      >
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="action-icon">
-                          <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
-                          <polyline points="15 3 21 3 21 9"></polyline>
-                          <line x1="10" y1="14" x2="21" y2="3"></line>
-                        </svg>
-                      </a>
                     </div>
                   </td>
                 </tr>
@@ -407,19 +405,6 @@
         <button type="button" class="btn btn-secondary" (click)="cerrarDetalle()">
           Cerrar
         </button>
-
-        <a
-          [routerLink]="['/productos', prod.id]"
-          class="btn btn-primary"
-          (click)="cerrarDetalle()"
-        >
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="btn-icon">
-            <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
-            <polyline points="15 3 21 3 21 9"></polyline>
-            <line x1="10" y1="14" x2="21" y2="3"></line>
-          </svg>
-          Ver Página de Detalle
-        </a>
       </div>
     </div>
   }

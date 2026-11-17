@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit, computed, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { Router, RouterLink } from '@angular/router';
+import { RouterLink } from '@angular/router';
 import { AuthService } from '../../../core/services/auth.service';
 import { ModalComponent } from '../../../shared/components/modal/modal.component';
 import { CategoriaProducto, Producto } from '../models/producto.model';
@@ -34,7 +34,6 @@ import {
 export class ProductoList implements OnInit {
   private productoService = inject(ProductoService);
   private authService = inject(AuthService);
-  private router = inject(Router);
 
   // Permisos y usuario
   esAdmin = computed(() => this.authService.tieneRol('ROLE_ADMIN'));
@@ -131,13 +130,6 @@ export class ProductoList implements OnInit {
   cerrarDetalle(): void {
     this.modalDetalleAbierto.set(false);
     this.productoSeleccionado.set(null);
-  }
-
-  /**
-   * Navega a la vista de página completa de detalle
-   */
-  irADetallePagina(id: number): void {
-    this.router.navigate(['/productos', id]);
   }
 
   /**

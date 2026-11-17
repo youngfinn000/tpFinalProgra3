@@ -12,7 +12,7 @@ import { CHANNEL_LABEL, CHANNELS, Flavor, Order, PAYMENT_LABEL, PAYMENT_METHODS,
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule, RouterLink],
   templateUrl: './pedidos-form.html',
-  styleUrl: './pedidos-form.css',  
+  styleUrl: './pedidos-form.css',
 })
 export class OrderFormComponent implements OnInit {
   private fb = inject(FormBuilder);
@@ -99,7 +99,11 @@ export class OrderFormComponent implements OnInit {
   }
 
   submit() {
-    if (this.form.invalid) { this.form.markAllAsTouched(); return; }
+    if (this.form.invalid) {
+      this.form.markAllAsTouched();
+      this.error.set(this.firstInvalidMessage());
+      return;
+    }
 
     for (let i = 0; i < this.items.length; i++) {
       const max = this.maxFlavors(i);
@@ -116,9 +120,7 @@ export class OrderFormComponent implements OnInit {
     }
 
     const v = this.form.getRawValue();
-    this.saving.set(true);
-    this.error.set(null);
-    this.service.create({
+    const payload = {
       channel: v.channel as any,
       paymentMethod: v.paymentMethod as any,
       items: v.items.map((it: any) => ({
@@ -126,13 +128,30 @@ export class OrderFormComponent implements OnInit {
         flavorIds: it.flavorIds as number[],
         quantity: Number(it.quantity),
       })),
-    }).subscribe({
+    };
+
+    this.saving.set(true);
+    this.error.set(null);
+    this.service.create(payload).subscribe({
       next: (order) => { this.saving.set(false); this.created.set(order); },
       error: (e) => {
+        console.error('Error al crear pedido', e);
         this.saving.set(false);
-        this.error.set(e?.error?.message ?? 'No se pudo registrar el pedido');
+        this.error.set(e?.error?.message ?? `No se pudo registrar el pedido (HTTP ${e?.status})`);
       },
     });
+  }
+
+  private firstInvalidMessage(): string {
+    if (this.form.get('channel')?.invalid) return 'Seleccioná un canal de venta';
+    if (this.form.get('paymentMethod')?.invalid) return 'Seleccioná un medio de pago';
+    for (let i = 0; i < this.items.length; i++) {
+      const g = this.items.at(i);
+      if (g.get('productId')?.invalid) return `Producto ${i + 1}: elegí un producto`;
+      if (g.get('flavorIds')?.invalid) return `Producto ${i + 1}: elegí al menos 1 sabor`;
+      if (g.get('quantity')?.invalid) return `Producto ${i + 1}: la cantidad debe ser al menos 1`;
+    }
+    return 'Revisá los campos del formulario';
   }
 
   newOrder() {
@@ -143,5 +162,5 @@ export class OrderFormComponent implements OnInit {
     this.addItem();
   }
 
-  goToDetail() { this.router.navigate(['/orders', this.created()!.id]); }
+  goToDetail() { this.router.navigate(['/pedidos', this.created()!.id]); }
 }

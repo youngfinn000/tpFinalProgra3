@@ -1,0 +1,64 @@
+<div class="page">
+  <header class="page-header">
+    <h1>Pedido #{{ order()?.id }}</h1>
+    <a routerLink="/pedidos" class="btn">← Volver</a>
+  </header>
+
+  @if (message(); as m) {
+    <div class="alert" [class.alert-ok]="m.type === 'ok'" [class.alert-error]="m.type === 'error'">
+      {{ m.text }}
+      <button class="close" (click)="message.set(null)">×</button>
+    </div>
+  }
+
+  @if (loading()) {
+    <p>Cargando...</p>
+  } @else if (order(); as o) {
+    <section class="summary">
+      <div><span class="label">Estado</span>
+        <span class="badge" [attr.data-status]="o.status">{{ statusLabel[o.status] }}</span>
+      </div>
+      <div><span class="label">Fecha</span> {{ o.createdAt | date: 'dd/MM/yyyy HH:mm' }}</div>
+      <div><span class="label">Canal</span> {{ channelLabel[o.channel] }}</div>
+      <div><span class="label">Medio de pago</span> {{ paymentLabel[o.paymentMethod] }}</div>
+      <div><span class="label">Registró</span> {{ o.userName }}</div>
+    </section>
+
+    <h3>Productos</h3>
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Producto</th><th>Sabores</th><th>Cantidad</th>
+          <th>Precio unit.</th><th>Subtotal</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (d of o.details; track d.id) {
+          <tr>
+            <td>{{ d.productName }}</td>
+            <td>{{ d.flavorNames.join(', ') }}</td>
+            <td>{{ d.quantity }}</td>
+            <td>{{ d.unitPrice | currency: 'ARS' : 'symbol-narrow' : '1.2-2' }}</td>
+            <td>{{ d.subtotal | currency: 'ARS' : 'symbol-narrow' : '1.2-2' }}</td>
+          </tr>
+        } @empty {
+          <tr><td colspan="5" class="empty">Este pedido no tiene productos.</td></tr>
+        }
+      </tbody>
+    </table>
+
+    <div class="total">
+      {{ totalUnits() }} unidades · Total:
+      <strong>{{ o.total | currency: 'ARS' : 'symbol-narrow' : '1.2-2' }}</strong>
+    </div>
+
+    <div class="actions">
+      @if (canAdvance(o.status)) {
+        <button class="btn btn-primary" (click)="advance()">{{ nextLabel[o.status] }}</button>
+      }
+      @if (canCancel(o.status)) {
+        <button class="btn btn-danger" (click)="cancel()">Cancelar pedido</button>
+      }
+    </div>
+  }
+</div>

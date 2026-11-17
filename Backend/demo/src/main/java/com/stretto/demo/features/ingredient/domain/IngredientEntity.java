@@ -28,7 +28,7 @@ public class IngredientEntity {
     @JoinColumn(name = "recipe_id")
     private RecipeEntity recipe;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "stock_id")
     private StockEntity stock;
 }

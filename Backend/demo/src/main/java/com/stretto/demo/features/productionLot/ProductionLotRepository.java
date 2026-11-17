@@ -7,5 +7,7 @@ import java.time.LocalDate;
 import java.util.List;
 
 public interface ProductionLotRepository extends JpaRepository<ProductionLotEntity, Long> {
-    List<ProductionLotEntity> findByProductionDate(LocalDate date); //Listar por fecha
+    List<ProductionLotEntity> findByProductionDate(LocalDate date);
+
+    List<ProductionLotEntity> findByRecipe_Id(Long recipeId);
 }

@@ -5,7 +5,6 @@ import lombok.*;
 
 import java.time.LocalDate;
 
-
 @Getter
 @Setter
 @NoArgsConstructor
@@ -20,17 +19,18 @@ public class ProductionLotActivityDTOResponse {
     private InternalUserSummary user;
     private LocalDate productionDate;
 
-
     @Getter
     @Builder
-    public static class RecipeSummary{
+    public static class RecipeSummary {
         private Long id;
         private String name;
+        private Long flavorId;
+        private String flavorName;
     }
 
     @Getter
     @Builder
-    public static class InternalUserSummary{
+    public static class InternalUserSummary {
         private Long id;
         private String name;
     }

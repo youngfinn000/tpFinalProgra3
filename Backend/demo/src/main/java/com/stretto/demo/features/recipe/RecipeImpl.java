@@ -1,8 +1,10 @@
 package com.stretto.demo.features.recipe;
 
 import com.stretto.demo.common.exception.NotFoundException;
-import com.stretto.demo.features.ingredient.domain.IngredientEntity;
+import com.stretto.demo.features.flavors.FlavorsRepository;
+import com.stretto.demo.features.flavors.domain.FlavorsEntity;
 import com.stretto.demo.features.ingredient.IngredientRepository;
+import com.stretto.demo.features.ingredient.domain.IngredientEntity;
 import com.stretto.demo.features.product.ProductRepository;
 import com.stretto.demo.features.product.domain.ProductEntity;
 import com.stretto.demo.features.productionLot.ProductionLotRepository;
@@ -11,36 +13,66 @@ import com.stretto.demo.features.recipe.domain.RecipeEntity;
 import com.stretto.demo.features.recipe.domain.dto.RecipeDTORequest;
 import com.stretto.demo.features.recipe.domain.dto.RecipeDTOResponse;
 import com.stretto.demo.features.recipe.domain.dto.RecipeSuppliesDTOResponse;
+import com.stretto.demo.features.recipe.domain.enums.UnitMeasurementEnum;
 import com.stretto.demo.features.recipe.domain.mapper.RecipeMapper;
+import com.stretto.demo.features.stock.StockRepository;
+import com.stretto.demo.features.stock.domain.StockEntity;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class RecipeImpl implements RecipeService{
+public class RecipeImpl implements RecipeService {
 
     private final RecipeRepository repository;
     private final ProductionLotRepository productionLotRepository;
     private final ProductRepository productRepository;
+    private final FlavorsRepository flavorsRepository;
     private final IngredientRepository ingredientRepository;
-    @Override
-    public RecipeDTOResponse create(RecipeDTORequest request) {
-        ProductEntity productId = productRepository.findById(request.getProductId())
-                .orElseThrow(() -> new NotFoundException("Product not found"));
+    private final StockRepository stockRepository;
 
-        ProductionLotEntity productionLotId = null;
+    @Override
+    @Transactional
+    public RecipeDTOResponse create(RecipeDTORequest request) {
+        FlavorsEntity flavor = null;
+        if (request.getFlavorId() != null) {
+            flavor = flavorsRepository.findById(request.getFlavorId())
+                    .orElseThrow(() -> new NotFoundException("Flavor not found"));
+        }
+
+        ProductEntity product = null;
+        if (request.getProductId() != null) {
+            product = productRepository.findById(request.getProductId())
+                    .orElseThrow(() -> new NotFoundException("Product not found"));
+        }
+
+        ProductionLotEntity productionLot = null;
         if (request.getProductionLotId() != null) {
-            productionLotId = productionLotRepository.findById(request.getProductionLotId())
+            productionLot = productionLotRepository.findById(request.getProductionLotId())
                     .orElseThrow(() -> new NotFoundException("Production Lot not found"));
         }
 
-        List<IngredientEntity> ingredients = ingredientRepository.findAllById(request.getIngredientIds());
+        List<RecipeEntity> subRecipes = request.getSubRecipeIds() != null && !request.getSubRecipeIds().isEmpty()
+                ? repository.findAllById(request.getSubRecipeIds())
+                : new ArrayList<>();
 
-        List<RecipeEntity> subRecipes = repository.findAllById(request.getSubRecipeIds());
+        RecipeEntity entity = RecipeMapper.toEntity(
+                request,
+                flavor,
+                product,
+                productionLot,
+                new ArrayList<>(),
+                subRecipes
+        );
 
-        RecipeEntity entity = RecipeMapper.toEntity(request, productId, productionLotId, ingredients, subRecipes);
+        List<IngredientEntity> ingredients = buildIngredients(request, entity);
+        entity.getIngredients().addAll(ingredients);
+
         RecipeEntity saved = repository.save(entity);
         return RecipeMapper.toResponse(saved);
     }
@@ -62,13 +94,30 @@ public class RecipeImpl implements RecipeService{
     }
 
     @Override
+    @Transactional
     public RecipeDTOResponse update(RecipeDTORequest request, Long id) {
         RecipeEntity entity = repository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Recipe not found"));
 
-        entity.setName(request.getName());
+        if (request.getFlavorId() != null) {
+            FlavorsEntity flavor = flavorsRepository.findById(request.getFlavorId())
+                    .orElseThrow(() -> new NotFoundException("Flavor not found"));
+            entity.setFlavor(flavor);
+        }
+
+        if (request.getProductId() != null) {
+            ProductEntity product = productRepository.findById(request.getProductId())
+                    .orElseThrow(() -> new NotFoundException("Product not found"));
+            entity.setProduct(product);
+        }
+
+        String resolvedName = (request.getName() != null && !request.getName().isBlank())
+                ? request.getName().trim()
+                : (entity.getFlavor() != null ? entity.getFlavor().getName() : entity.getName());
+
+        entity.setName(resolvedName);
         entity.setBaseQuantity(request.getBaseQuantity());
-        entity.setUnitBase(request.getUnitBase());
+        entity.setUnitBase(request.getUnitBase() != null ? request.getUnitBase() : UnitMeasurementEnum.KG);
 
         if (request.getProductionLotId() != null) {
             ProductionLotEntity productionLot = productionLotRepository.findById(request.getProductionLotId())
@@ -76,27 +125,90 @@ public class RecipeImpl implements RecipeService{
             entity.setProductionLot(productionLot);
         }
 
+        if (request.getIngredients() != null || request.getIngredientIds() != null) {
+            if (entity.getIngredients() == null) {
+                entity.setIngredients(new ArrayList<>());
+            } else {
+                entity.getIngredients().clear();
+            }
+            List<IngredientEntity> updatedIngredients = buildIngredients(request, entity);
+            entity.getIngredients().addAll(updatedIngredients);
+        }
+
         RecipeEntity saved = repository.save(entity);
         return RecipeMapper.toResponse(saved);
     }
 
     @Override
-    public List<RecipeSuppliesDTOResponse> calculateIngredients(Long recipeId, Double kg) {
+    @Transactional
+    public void delete(Long id) {
+        RecipeEntity entity = repository.findById(id)
+                .orElseThrow(() -> new NotFoundException("Recipe not found"));
 
+        List<ProductionLotEntity> lots = productionLotRepository.findByRecipe_Id(id);
+        if (!lots.isEmpty()) {
+            productionLotRepository.deleteAll(lots);
+        }
+
+        repository.delete(entity);
+    }
+
+    @Override
+    public List<RecipeSuppliesDTOResponse> calculateIngredients(Long recipeId, Double kg) {
         RecipeEntity entity = repository.findById(recipeId)
                 .orElseThrow(() -> new NotFoundException("Recipe not found"));
 
-        List<RecipeSuppliesDTOResponse> amount = entity.getIngredients()
-                .stream()
-                .map((i) -> RecipeSuppliesDTOResponse.builder()
-                        .id(i.getId())
-                        .ingredientName(i.getStock().getName())
-                        .requiredQuantity((kg / entity.getBaseQuantity()) * i.getRequiredAmount())
-                        .build()
-                )
-                .toList();
+        Double baseQty = (entity.getBaseQuantity() != null && entity.getBaseQuantity() > 0)
+                ? entity.getBaseQuantity()
+                : 1.0;
 
-        return amount;
+        List<IngredientEntity> ingredients = entity.getIngredients() != null
+                ? entity.getIngredients()
+                : Collections.emptyList();
+
+        return ingredients.stream()
+                .map(i -> {
+                    UnitMeasurementEnum unit = i.getUnit() != null
+                            ? i.getUnit()
+                            : (i.getStock() != null ? i.getStock().getUnit() : null);
+                    return RecipeSuppliesDTOResponse.builder()
+                            .id(i.getId())
+                            .stockId(i.getStock() != null ? i.getStock().getId() : null)
+                            .ingredientName(i.getStock() != null ? i.getStock().getName() : "")
+                            .baseQuantity(i.getRequiredAmount())
+                            .requiredQuantity((kg / baseQty) * i.getRequiredAmount())
+                            .unit(unit)
+                            .build();
+                })
+                .toList();
     }
 
+    private List<IngredientEntity> buildIngredients(RecipeDTORequest request, RecipeEntity recipe) {
+        List<IngredientEntity> result = new ArrayList<>();
+
+        if (request.getIngredients() != null && !request.getIngredients().isEmpty()) {
+            for (RecipeDTORequest.RecipeIngredientRequest item : request.getIngredients()) {
+                StockEntity stock = stockRepository.findById(item.getStockId())
+                        .orElseThrow(() -> new NotFoundException("Stock not found with id: " + item.getStockId()));
+
+                UnitMeasurementEnum unit = item.getUnit() != null ? item.getUnit() : stock.getUnit();
+
+                IngredientEntity ing = IngredientEntity.builder()
+                        .recipe(recipe)
+                        .stock(stock)
+                        .requiredAmount(item.getRequiredAmount())
+                        .unit(unit)
+                        .build();
+                result.add(ing);
+            }
+        } else if (request.getIngredientIds() != null && !request.getIngredientIds().isEmpty()) {
+            List<IngredientEntity> existing = ingredientRepository.findAllById(request.getIngredientIds());
+            for (IngredientEntity ing : existing) {
+                ing.setRecipe(recipe);
+                result.add(ing);
+            }
+        }
+
+        return result;
+    }
 }

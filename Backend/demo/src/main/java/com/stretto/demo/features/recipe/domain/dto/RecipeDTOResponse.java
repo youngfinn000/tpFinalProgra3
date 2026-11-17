@@ -1,6 +1,5 @@
 package com.stretto.demo.features.recipe.domain.dto;
 
-import com.stretto.demo.features.productionLot.domain.dto.ProductionLotDTOResponse;
 import com.stretto.demo.features.recipe.domain.enums.UnitMeasurementEnum;
 import lombok.*;
 
@@ -16,6 +15,7 @@ public class RecipeDTOResponse {
     private String name;
     private Double baseQuantity;
     private UnitMeasurementEnum unitBase;
+    private FlavorSummary flavor;
     private ProductSummary product;
     private ProductionLotSummary productionLot;
     private List<IngredientSummary> ingredients;
@@ -23,21 +23,33 @@ public class RecipeDTOResponse {
 
     @Getter
     @Builder
-    public static class ProductionLotSummary{
-        private Long id;
-    }
-
-    @Getter
-    @Builder
-    public static class ProductSummary{
+    public static class FlavorSummary {
         private Long id;
         private String name;
     }
 
     @Getter
     @Builder
-    public static class IngredientSummary{
+    public static class ProductionLotSummary {
         private Long id;
+    }
+
+    @Getter
+    @Builder
+    public static class ProductSummary {
+        private Long id;
+        private String name;
+    }
+
+    @Getter
+    @Builder
+    public static class IngredientSummary {
+        private Long id;
+        private Long stockId;
+        private String stockName;
+        private String ingredientName;
+        private Double requiredAmount;
+        private UnitMeasurementEnum unit;
     }
 
     @Getter

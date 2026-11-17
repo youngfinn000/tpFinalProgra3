@@ -56,7 +56,7 @@
 
           <div class="ticket-field">
             <span class="field-label">Fecha de elaboración</span>
-            <strong class="field-value">{{ lote.fechaProduccion | date: 'dd/MM/yyyy' }}</strong>
+            <strong class="field-value">{{ formatearFechaLocal(lote.fechaProduccion) }}</strong>
           </div>
 
           <div class="ticket-field">

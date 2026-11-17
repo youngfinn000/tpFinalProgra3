@@ -1,4 +1,4 @@
-import { DatePipe, DecimalPipe } from '@angular/common';
+import { DecimalPipe } from '@angular/common';
 import { Component, OnInit, computed, inject, signal } from '@angular/core';
 import {
   FormBuilder,
@@ -9,21 +9,17 @@ import { ActivatedRoute, RouterLink } from '@angular/router';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { Receta } from '../../recetas/models/receta.model';
 import { RecetaService } from '../../recetas/services/receta.service';
-import { LoteProduccion } from '../models/produccion.model';
+import {
+  LoteProduccion,
+  formatearFechaLocal,
+  obtenerFechaHoyLocal,
+} from '../models/produccion.model';
 import { ProduccionService } from '../services/produccion.service';
-
-function obtenerFechaHoyLocal(): string {
-  const hoy = new Date();
-  const anio = hoy.getFullYear();
-  const mes = String(hoy.getMonth() + 1).padStart(2, '0');
-  const dia = String(hoy.getDate()).padStart(2, '0');
-  return `${anio}-${mes}-${dia}`;
-}
 
 @Component({
   selector: 'app-lote-form',
   standalone: true,
-  imports: [ReactiveFormsModule, RouterLink, DecimalPipe, DatePipe],
+  imports: [ReactiveFormsModule, RouterLink, DecimalPipe],
   templateUrl: './lote-form.html',
   styleUrl: './lote-form.css',
 })
@@ -40,6 +36,7 @@ export class LoteForm implements OnInit {
   loteCreado = signal<LoteProduccion | null>(null);
   copiado = signal(false);
 
+  formatearFechaLocal = formatearFechaLocal;
   presetsKg = [5, 10, 15, 20, 30, 50];
 
   form = this.fb.group({
@@ -68,7 +65,9 @@ export class LoteForm implements OnInit {
   });
 
   ngOnInit() {
-    const recetaIdParam = this.route.snapshot.queryParamMap.get('recetaId');
+    const queryMap = this.route.snapshot.queryParamMap;
+    const recetaIdParam = queryMap.get('recetaId');
+    const kgParam = Number(queryMap.get('kg'));
     const preselectId = recetaIdParam ? Number(recetaIdParam) : null;
 
     this.recetaService.listar().subscribe({
@@ -76,9 +75,20 @@ export class LoteForm implements OnInit {
         this.recetas.set(lista);
         this.cargandoRecetas.set(false);
 
-        if (preselectId && lista.some((r) => r.id === preselectId)) {
-          this.form.patchValue({ recipeId: preselectId });
-          this.alCambiarReceta();
+        const recetaPreseleccionada = preselectId
+          ? lista.find((r) => r.id === preselectId)
+          : undefined;
+
+        if (recetaPreseleccionada) {
+          const kgInicial =
+            !isNaN(kgParam) && kgParam > 0
+              ? kgParam
+              : recetaPreseleccionada.cantidadBase;
+
+          this.form.patchValue({
+            recipeId: recetaPreseleccionada.id,
+            amountProduced: kgInicial,
+          });
         }
       },
       error: () => {
@@ -91,7 +101,7 @@ export class LoteForm implements OnInit {
   alCambiarReceta() {
     const id = Number(this.form.value.recipeId);
     const receta = this.recetas().find((r) => r.id === id);
-    if (receta && !this.form.value.amountProduced) {
+    if (receta) {
       this.form.patchValue({ amountProduced: receta.cantidadBase });
     }
   }
@@ -140,7 +150,8 @@ export class LoteForm implements OnInit {
     const lote = this.loteCreado();
     if (!lote) return;
 
-    const texto = `LOTE #${lote.id} | Sabor: ${lote.saborNombre} (${lote.recetaNombre}) | Cantidad: ${lote.cantidadProducida} Kg | Fecha: ${lote.fechaProduccion}`;
+    const fechaFormateada = this.formatearFechaLocal(lote.fechaProduccion);
+    const texto = `LOTE #${lote.id} | Sabor: ${lote.saborNombre} (${lote.recetaNombre}) | Cantidad: ${lote.cantidadProducida} Kg | Fecha: ${fechaFormateada}`;
     navigator.clipboard?.writeText(texto);
     this.copiado.set(true);
   }

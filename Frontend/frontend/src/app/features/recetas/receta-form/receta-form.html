@@ -45,6 +45,7 @@
             type="text"
             formControlName="nombre"
             placeholder="Ej.: Base Dulce de Leche Granizado"
+            (input)="alEscribirNombre()"
           />
           @if (form.controls.nombre.touched && form.controls.nombre.hasError('required')) {
             <small class="field-error">El nombre de la fórmula es obligatorio.</small>

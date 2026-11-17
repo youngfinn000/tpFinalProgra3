@@ -7,6 +7,7 @@ import {
   Validators,
 } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
+import { forkJoin } from 'rxjs';
 import { Insumo, etiquetaUnidad } from '../../insumos/models/insumo';
 import { InsumoService } from '../../insumos/services/insumo.service';
 import { Sabor } from '../../sabores/models/sabor.model';
@@ -40,6 +41,7 @@ export class RecetaForm implements OnInit {
   etiquetaUnidad = etiquetaUnidad;
 
   private id: number | null = null;
+  private nombreEditadoManualmente = false;
 
   form = this.fb.group({
     flavorId: [null as number | null, Validators.required],
@@ -53,9 +55,8 @@ export class RecetaForm implements OnInit {
   }
 
   ngOnInit() {
-    this.cargarCatalogos();
-
     const idParam = this.route.snapshot.paramMap.get('id');
+
     if (idParam !== null) {
       this.id = Number(idParam);
       if (!Number.isInteger(this.id) || this.id <= 0) {
@@ -63,50 +64,48 @@ export class RecetaForm implements OnInit {
         return;
       }
       this.esEdicion.set(true);
-      this.cargarReceta(this.id);
+      this.nombreEditadoManualmente = true;
+      this.cargarEdicionConForkJoin(this.id);
     } else {
+      this.cargarCatalogos();
       this.agregarIngrediente();
     }
   }
 
   private cargarCatalogos() {
-    this.saborService
-      .listar({ estado: 'todos', nombre: '', modo: 'parcial' })
-      .subscribe({
-        next: (lista) => this.sabores.set(lista),
-        error: () => this.error.set('No se pudieron cargar los sabores.'),
-      });
-
-    this.insumoService.listar().subscribe({
-      next: (lista) => this.insumos.set(lista),
-      error: () => this.error.set('No se pudieron cargar los insumos.'),
+    forkJoin({
+      sabores: this.saborService.listar({
+        estado: 'todos',
+        nombre: '',
+        modo: 'parcial',
+      }),
+      insumos: this.insumoService.listar(),
+    }).subscribe({
+      next: ({ sabores, insumos }) => {
+        this.sabores.set(sabores);
+        this.insumos.set(insumos);
+      },
+      error: () => {
+        this.error.set('No se pudieron cargar los catálogos de sabores e insumos.');
+      },
     });
   }
 
-  private cargarReceta(id: number) {
+  private cargarEdicionConForkJoin(id: number) {
     this.cargando.set(true);
-    this.recetaService.obtener(id).subscribe({
-      next: (receta: Receta) => {
-        this.form.patchValue({
-          flavorId: receta.saborId,
-          nombre: receta.nombre,
-          cantidadBase: receta.cantidadBase,
-        });
-
-        this.ingredientes.clear();
-        if (receta.ingredientes.length > 0) {
-          for (const ing of receta.ingredientes) {
-            this.ingredientes.push(
-              this.crearFilaIngrediente(
-                ing.stockId,
-                ing.cantidadRequerida,
-                ing.unidad,
-              ),
-            );
-          }
-        } else {
-          this.agregarIngrediente();
-        }
+    forkJoin({
+      sabores: this.saborService.listar({
+        estado: 'todos',
+        nombre: '',
+        modo: 'parcial',
+      }),
+      insumos: this.insumoService.listar(),
+      receta: this.recetaService.obtener(id),
+    }).subscribe({
+      next: ({ sabores, insumos, receta }) => {
+        this.sabores.set(sabores);
+        this.insumos.set(insumos);
+        this.aplicarRecetaEnFormulario(receta);
         this.cargando.set(false);
       },
       error: () => {
@@ -114,6 +113,29 @@ export class RecetaForm implements OnInit {
         this.cargando.set(false);
       },
     });
+  }
+
+  private aplicarRecetaEnFormulario(receta: Receta) {
+    this.form.patchValue({
+      flavorId: receta.saborId,
+      nombre: receta.nombre,
+      cantidadBase: receta.cantidadBase,
+    });
+
+    this.ingredientes.clear();
+    if (receta.ingredientes.length > 0) {
+      for (const ing of receta.ingredientes) {
+        this.ingredientes.push(
+          this.crearFilaIngrediente(
+            ing.stockId,
+            ing.cantidadRequerida,
+            ing.unidad,
+          ),
+        );
+      }
+    } else {
+      this.agregarIngrediente();
+    }
   }
 
   private crearFilaIngrediente(
@@ -150,13 +172,19 @@ export class RecetaForm implements OnInit {
     }
   }
 
+  alEscribirNombre() {
+    const texto = (this.form.value.nombre ?? '').trim();
+    this.nombreEditadoManualmente = texto.length > 0;
+  }
+
   alCambiarSabor() {
     const flavorId = Number(this.form.value.flavorId);
     const sabor = this.sabores().find((s) => s.id === flavorId);
     const nombreActual = (this.form.value.nombre ?? '').trim();
 
-    if (sabor && !nombreActual) {
+    if (sabor && (!this.nombreEditadoManualmente || !nombreActual)) {
       this.form.patchValue({ nombre: sabor.nombre });
+      this.nombreEditadoManualmente = false;
     }
   }
 

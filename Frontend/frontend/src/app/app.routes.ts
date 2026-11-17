@@ -139,6 +139,14 @@ export const routes: Routes = [
           import('./features/pedidos/pedidos-form/pedidos-form').then((m) => m.OrderFormComponent),
       },
       {
+        path: 'pedidos/:id',
+        canActivate: [staffGuard],
+        loadComponent: () =>
+          import('./features/pedidos/pedidos-detail/pedidos-detail').then(
+            (m) => m.OrderDetailComponent,
+          ),
+      },
+      {
         path: 'recetas',
         canActivate: [staffGuard],
         loadComponent: () =>

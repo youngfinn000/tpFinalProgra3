@@ -7,8 +7,8 @@
       </p>
     </div>
 
-    <a routerLink="/recetas" class="btn btn-secondary">
-      Ver Recetas
+    <a routerLink="/produccion" class="btn btn-secondary">
+      ← Ver Historial de Producción
     </a>
   </header>
 
@@ -68,6 +68,10 @@
       </div>
 
       <div class="confirm-actions">
+        <a routerLink="/produccion" class="btn btn-secondary">
+          Ver en Historial
+        </a>
+
         <button type="button" class="btn btn-outline" (click)="copiarRotulo()">
           {{ copiado() ? '✓ Rótulo copiado al portapapeles' : 'Copiar datos para rótulo' }}
         </button>

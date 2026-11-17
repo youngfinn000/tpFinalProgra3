@@ -172,7 +172,9 @@ export const routes: Routes = [
         path: 'produccion',
         canActivate: [staffGuard],
         loadComponent: () =>
-          import('./features/produccion/lote-form/lote-form').then((m) => m.LoteForm),
+          import('./features/produccion/produccion-historial/produccion-historial').then(
+            (m) => m.ProduccionHistorial,
+          ),
       },
     ],
   },

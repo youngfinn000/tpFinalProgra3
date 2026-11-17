@@ -12,7 +12,7 @@
     <div class="actions">
       <button class="btn btn-primary" (click)="goToDetail()">Ver detalle</button>
       <button class="btn" (click)="newOrder()">Cargar otro pedido</button>
-      <a routerLink="/orders" class="btn">Ir al listado</a>
+      <a routerLink="/pedidos" class="btn">Ir al listado</a>
     </div>
   } @else {
     @if (error()) { <div class="alert alert-error">{{ error() }}</div> }
@@ -85,7 +85,7 @@
         <button type="submit" class="btn btn-primary" [disabled]="saving()">
           {{ saving() ? 'Guardando...' : 'Confirmar pedido' }}
         </button>
-        <a routerLink="/orders" class="btn">Cancelar</a>
+        <a routerLink="/pedidos" class="btn">Cancelar</a>
       </div>
     </form>
   }

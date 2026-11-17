@@ -1,13 +1,13 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { map, switchMap } from 'rxjs';
+import { map, switchMap, throwError } from 'rxjs';
 import { environment } from '../../../../environments/environment';
 import { CreateOrderRequest, Flavor, NEXT_STATUS, Order, OrderDetail, Product } from '../models/pedido';
 
 @Injectable({ providedIn: 'root' })
 export class PedidoService {
   private http = inject(HttpClient);
-  private api = environment.apiUrl;         
+  private api = environment.apiUrl;
   private url = `${this.api}/orders`;
 
   findAll() {
@@ -19,10 +19,15 @@ export class PedidoService {
   }
 
   create(body: CreateOrderRequest) {
+    const userId = this.currentUserId();
+    if (!userId) {
+      return throwError(() => ({ error: { message: 'No hay usuario logueado (falta userId en localStorage)' } }));
+    }
+
     const request = {
       saleChannelEnum: body.channel,
       paymentMethodEnum: body.paymentMethod,
-      userID: this.currentUserId(),
+      userID: userId,
       details: body.items.map((i) => ({
         productId: i.productId,
         flavorsId: i.flavorIds,
@@ -45,20 +50,36 @@ export class PedidoService {
   }
 
   getProducts() {
-    return this.http.get<Product[]>(`${this.api}/products/available`);
+    return this.http.get<any[]>(`${this.api}/products/available`).pipe(
+      map((l) => l.map((p): Product => ({
+        id: p.id,
+        name: p.name,
+        price: Number(p.price),
+        maxFlavors: p.maxFlavors,  
+        stock: p.stock,           
+      }))),
+    );
   }
 
   getFlavors() {
     return this.http.get<any[]>(`${this.api}/flavors`).pipe(
       map((l) => l
-        .filter((f) => f.activeInactive)          // true = activo (si es al revés, sacá el "!" o invertilo)
+        .filter((f) => f.activeInactive)        
         .map((f): Flavor => ({ id: f.id, name: f.name }))),
     );
   }
 
   private currentUserId(): number {
-    return Number(localStorage.getItem('userId'));
+  const token = localStorage.getItem('token');
+  if (!token) return 0;
+  try {
+    const payload = JSON.parse(atob(token.split('.')[1].replace(/-/g, '+').replace(/_/g, '/')));
+    const n = Number(payload?.userId ?? payload?.id);
+    return Number.isFinite(n) && n > 0 ? n : 0;
+  } catch {
+    return 0;
   }
+}
 
   private toOrder(r: any): Order {
     return {

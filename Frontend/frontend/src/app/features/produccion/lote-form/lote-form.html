@@ -62,7 +62,7 @@
           <div class="ticket-field">
             <span class="field-label">Operador / Rendimiento</span>
             <strong class="field-value">{{ lote.usuarioNombre }}</strong>
-            <small class="field-sub">{{ lote.rendimientoPct | number: '1.0-1' }}% del batch base</small>
+            <small class="field-sub">{{ lote.rendimientoPct | number: '1.0-1' }}% del rendimiento base</small>
           </div>
         </div>
       </div>
@@ -103,7 +103,7 @@
               </option>
               @for (r of recetas(); track r.id) {
                 <option [ngValue]="r.id">
-                  {{ r.saborNombre }} — {{ r.nombre }} (Batch base: {{ r.cantidadBase }} Kg)
+                  {{ r.saborNombre }} — {{ r.nombre }} (Base: {{ r.cantidadBase }} Kg)
                 </option>
               }
             </select>
@@ -119,7 +119,7 @@
                 <strong class="preview-name">{{ rec.nombre }} (Sabor: {{ rec.saborNombre }})</strong>
               </div>
               <div class="preview-meta">
-                <span>Batch estándar: <strong>{{ rec.cantidadBase }} Kg</strong></span>
+                <span>Rendimiento base: <strong>{{ rec.cantidadBase }} Kg</strong></span>
                 <a [routerLink]="['/recetas', rec.id]" class="preview-link">
                   Ver ficha técnica →
                 </a>

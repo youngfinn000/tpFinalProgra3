@@ -30,6 +30,7 @@ export class ClientesList implements OnInit {
   modalPresupuestosAbierto = signal<boolean>(false);
   
   esEdicion = signal<boolean>(false);
+  mostrarPassword = signal<boolean>(false);
   clienteSeleccionadoId = signal<number | null>(null);
   clienteAEliminar = signal<ClienteMayorista | null>(null);
   
@@ -91,6 +92,7 @@ export class ClientesList implements OnInit {
 
   abrirModalCrear(): void {
     this.esEdicion.set(false);
+    this.mostrarPassword.set(false);
     this.clienteSeleccionadoId.set(null);
     this.clienteForm.reset();
     this.clienteForm.get('password')?.setValidators([Validators.required, Validators.minLength(4)]);
@@ -101,6 +103,7 @@ export class ClientesList implements OnInit {
 
   abrirModalEditar(cliente: ClienteMayorista): void {
     this.esEdicion.set(true);
+    this.mostrarPassword.set(false);
     this.clienteSeleccionadoId.set(cliente.id);
     this.clienteForm.patchValue({
       companyName: cliente.companyName,
@@ -117,8 +120,13 @@ export class ClientesList implements OnInit {
 
   cerrarModalFormulario(): void {
     this.modalFormularioAbierto.set(false);
+    this.mostrarPassword.set(false);
     this.clienteForm.reset();
     this.cdr.markForCheck();
+  }
+
+  toggleMostrarPassword(): void {
+    this.mostrarPassword.update((v) => !v);
   }
 
   guardarCliente(): void {

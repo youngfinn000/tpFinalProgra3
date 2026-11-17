@@ -1,4 +1,4 @@
-import { Component, effect, inject, input, output } from '@angular/core';
+import { Component, effect, inject, input, output, signal } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ModalComponent } from '../../../../shared/components/modal/modal.component';
 import { Empleado, EmpleadoRequest, RolEmpleado } from '../../models/empleado.model';
@@ -22,6 +22,8 @@ export class EmpleadoFormModalComponent {
   readonly guardar = output<EmpleadoRequest>();
   readonly cerrar = output<void>();
 
+  mostrarPassword = signal(false);
+
   empleadoForm: FormGroup = this.fb.group({
     name: ['', [Validators.required, Validators.maxLength(50)]],
     email: ['', [Validators.required, Validators.email]],
@@ -32,15 +34,16 @@ export class EmpleadoFormModalComponent {
   constructor() {
     effect(() => {
       if (this.abierto()) {
+        this.mostrarPassword.set(false);
         const emp = this.empleado();
         if (this.modo() === 'editar' && emp) {
           this.empleadoForm.reset({
             name: emp.name,
             email: emp.email,
-            password: 'dummyPassword123',
+            password: '',
             rol: emp.rol,
           });
-          this.empleadoForm.get('password')?.clearValidators();
+          this.empleadoForm.get('password')?.setValidators([Validators.minLength(4)]);
           this.empleadoForm.get('password')?.updateValueAndValidity();
         } else {
           this.empleadoForm.reset({
@@ -56,6 +59,10 @@ export class EmpleadoFormModalComponent {
     });
   }
 
+  toggleMostrarPassword(): void {
+    this.mostrarPassword.update((v) => !v);
+  }
+
   onSubmit(): void {
     if (this.empleadoForm.invalid) {
       this.empleadoForm.markAllAsTouched();
@@ -63,10 +70,11 @@ export class EmpleadoFormModalComponent {
     }
 
     const val = this.empleadoForm.value;
+    const rawPass = (val.password ?? '').trim();
     const request: EmpleadoRequest = {
       name: val.name.trim(),
       email: val.email.trim(),
-      passwordHash: val.password || 'password123',
+      passwordHash: rawPass || 'dummyPassword123',
       rol: val.rol,
     };
 

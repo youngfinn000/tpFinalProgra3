@@ -20,11 +20,3 @@
   box-sizing: border-box;
 }
 
-@media (max-width: 768px) {
-  .body {
-    flex-direction: column;
-  }
-  .content {
-    padding: 1.25rem;
-  }
-}

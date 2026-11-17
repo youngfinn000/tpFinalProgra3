@@ -69,7 +69,25 @@
             <td>{{ paymentLabel[o.paymentMethod] }}</td>
             <td>{{ o.userName }}</td>
             <td class="actions">
-              <a [routerLink]="['/pedidos', o.id]" class="btn btn-sm">Ver detalle</a>
+              <a
+                [routerLink]="['/pedidos', o.id]"
+                class="btn btn-sm btn-detail"
+                title="Ver detalle del pedido"
+                aria-label="Ver detalle del pedido"
+              >
+                <svg
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  class="action-svg"
+                >
+                  <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"></path>
+                  <circle cx="12" cy="12" r="3"></circle>
+                </svg>
+              </a>
               @if (canAdvance(o.status)) {
                 <button class="btn btn-sm btn-primary" (click)="advance(o)">
                   {{ nextLabel[o.status] }}

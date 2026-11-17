@@ -278,6 +278,26 @@ td.actions {
   font-size: 0.8rem;
 }
 
+.btn-detail {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.45rem 0.65rem;
+  color: var(--text-secondary);
+}
+
+.btn-detail:hover:not(:disabled) {
+  color: var(--color-accent);
+  border-color: var(--color-accent);
+  background-color: rgba(219, 39, 119, 0.08);
+}
+
+.action-svg {
+  width: 16px;
+  height: 16px;
+  display: block;
+}
+
 .btn:disabled {
   opacity: 0.6;
   cursor: not-allowed;

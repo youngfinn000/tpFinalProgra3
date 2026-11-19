@@ -16,6 +16,8 @@ public interface WholesaleOrderService {
         List<WholesaleOrderResponse> getallWholesaleOrders();
         // Ficha completa
         WholesaleOrderResponse getWholesaleOrderById(Long id);
+        // Buscar por id de solicitud de presupuesto
+        WholesaleOrderResponse getOrderByRequestBudgetId(Long requestBudgetId);
         // Baja lógica
         void deleteWholesaleOrder(Long id);
         // Admin actualiza deliveryDate y/o discount

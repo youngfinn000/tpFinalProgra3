@@ -1,0 +1,61 @@
+<section class="page">
+  @if (sabor(); as s) {
+    <header class="page-header">
+      <div>
+        <h1 class="page-title">{{ s.nombre }}</h1>
+        <p class="page-subtitle">Detalle del sabor</p>
+      </div>
+      <span class="badge" [class.badge-success]="s.activo" [class.badge-muted]="!s.activo">
+        {{ s.activo ? 'Activo' : 'Inactivo' }}
+      </span>
+    </header>
+
+    <div class="detail-card">
+      <dl class="detail-list">
+        <div class="detail-row">
+          <dt>ID</dt>
+          <dd>#{{ s.id }}</dd>
+        </div>
+        <div class="detail-row">
+          <dt>Nombre</dt>
+          <dd>{{ s.nombre }}</dd>
+        </div>
+        <div class="detail-row">
+          <dt>Estado</dt>
+          <dd>{{ s.activo ? 'Activo' : 'Inactivo' }}</dd>
+        </div>
+      </dl>
+
+      @if (errorAccion()) {
+        <div class="alert alert-danger">
+          <span class="alert-text">{{ errorAccion() }}</span>
+        </div>
+      }
+
+      <div class="detail-actions">
+        <a routerLink="/sabores" class="btn btn-secondary">Volver</a>
+
+        @if (esAdmin()) {
+          <a [routerLink]="['/sabores', s.id, 'editar']" class="btn btn-secondary">Editar</a>
+
+          @if (s.activo) {
+            <button type="button" class="btn btn-danger" (click)="cambiarEstado(false)">
+              Desactivar
+            </button>
+          } @else {
+            <button type="button" class="btn btn-success" (click)="cambiarEstado(true)">
+              Reactivar
+            </button>
+          }
+        }
+      </div>
+    </div>
+  } @else if (error()) {
+    <div class="alert alert-danger">
+      <span class="alert-text">{{ error() }}</span>
+    </div>
+    <div><a routerLink="/sabores" class="btn btn-secondary">Volver</a></div>
+  } @else {
+    <p class="loading">Cargando…</p>
+  }
+</section>

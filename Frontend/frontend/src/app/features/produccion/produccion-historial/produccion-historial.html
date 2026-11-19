@@ -1,0 +1,199 @@
+<section class="page">
+  <header class="page-header">
+    <div>
+      <h1 class="page-title">Historial de Producción</h1>
+      <p class="page-subtitle">
+        Registro de lotes fabricados en obrador con filtros por sabor, fecha y totalizador de kilogramos
+      </p>
+    </div>
+
+    <a routerLink="/produccion/nuevo" class="btn btn-primary">
+      + Registrar Lote Producido
+    </a>
+  </header>
+
+  @if (error()) {
+    <div class="alert alert-danger">
+      <span>{{ error() }}</span>
+      <button type="button" class="alert-close" (click)="error.set('')">✕</button>
+    </div>
+  }
+
+  <!-- Panel de Filtros y Chips Rápidos de Período -->
+  <div class="filters-card">
+    <div class="period-row">
+      <span class="period-label">Período rápido:</span>
+      <div class="period-chips">
+        <button
+          type="button"
+          class="period-chip"
+          [class.period-chip-active]="periodoActivo() === 'todos'"
+          (click)="seleccionarChipPeriodo('todos')"
+        >
+          Todos los registros
+        </button>
+
+        <button
+          type="button"
+          class="period-chip"
+          [class.period-chip-active]="periodoActivo() === 'hoy'"
+          (click)="seleccionarChipPeriodo('hoy')"
+        >
+          Hoy
+        </button>
+
+        <button
+          type="button"
+          class="period-chip"
+          [class.period-chip-active]="periodoActivo() === 'semana'"
+          (click)="seleccionarChipPeriodo('semana')"
+        >
+          Esta semana
+        </button>
+      </div>
+
+      @if (tieneFiltrosActivos()) {
+        <button type="button" class="btn-clear" (click)="limpiarFiltros()">
+          Limpiar filtros
+        </button>
+      }
+    </div>
+
+    <div class="filters-grid">
+      <div class="filter-group">
+        <label for="saborFilter">Filtrar por Sabor</label>
+        <select
+          id="saborFilter"
+          [ngModel]="saborSeleccionado()"
+          (ngModelChange)="saborSeleccionado.set($event)"
+        >
+          <option value="">Todos los sabores</option>
+          @for (sabor of saboresDisponibles(); track sabor) {
+            <option [value]="sabor">{{ sabor }}</option>
+          }
+        </select>
+      </div>
+
+      <div class="filter-group">
+        <label for="recetaFilter">Filtrar por Receta</label>
+        <select
+          id="recetaFilter"
+          [ngModel]="recetaSeleccionadaId()"
+          (ngModelChange)="alCambiarReceta($event)"
+        >
+          <option [ngValue]="null">Todas las fórmulas</option>
+          @for (r of recetas(); track r.id) {
+            <option [ngValue]="r.id">{{ r.nombre }} ({{ r.saborNombre }})</option>
+          }
+        </select>
+      </div>
+
+      <div class="filter-group">
+        <label for="fechaFilter">Fecha específica</label>
+        <input
+          id="fechaFilter"
+          type="date"
+          [ngModel]="fechaSeleccionada()"
+          (ngModelChange)="alCambiarFecha($event)"
+        />
+      </div>
+
+      <div class="filter-group">
+        <label for="searchFilter">Búsqueda rápida</label>
+        <input
+          id="searchFilter"
+          type="text"
+          placeholder="N° de lote, sabor u operador..."
+          [ngModel]="busquedaTexto()"
+          (ngModelChange)="busquedaTexto.set($event)"
+        />
+      </div>
+    </div>
+  </div>
+
+  <!-- Tabla de Historial de Producción con Totalizador al Pie -->
+  <div class="table-card">
+    <div class="table-scroll">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Lote</th>
+            <th>Fecha</th>
+            <th>Sabor</th>
+            <th>Receta / Fórmula</th>
+            <th>Responsable</th>
+            <th>Rendimiento</th>
+            <th class="col-kg">Cantidad Producida</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          @for (lote of lotesFiltrados(); track lote.id) {
+            <tr>
+              <td class="cell-lot">
+                <span class="lot-badge">LOTE #{{ lote.id }}</span>
+              </td>
+
+              <td class="cell-date">
+                {{ formatearFechaLocal(lote.fechaProduccion) }}
+              </td>
+
+              <td>
+                <span class="flavor-chip">{{ lote.saborNombre }}</span>
+              </td>
+
+              <td class="cell-recipe">
+                @if (lote.recetaId) {
+                  <a [routerLink]="['/recetas', lote.recetaId]" class="recipe-link">
+                    {{ lote.recetaNombre }}
+                  </a>
+                } @else {
+                  {{ lote.recetaNombre }}
+                }
+              </td>
+
+              <td class="cell-user">
+                {{ lote.usuarioNombre }}
+              </td>
+
+              <td>
+                <span class="perf-tag">
+                  {{ lote.rendimientoPct | number: '1.0-1' }}%
+                </span>
+              </td>
+
+              <td class="col-kg cell-kg">
+                <strong>{{ lote.cantidadProducida | number: '1.0-2' }} Kg</strong>
+              </td>
+            </tr>
+          } @empty {
+            <tr>
+              <td colspan="7" class="empty-state">
+                @if (cargando()) {
+                  Cargando historial de producción...
+                } @else if (tieneFiltrosActivos()) {
+                  No se encontraron lotes producidos para los filtros seleccionados.
+                } @else {
+                  Todavía no hay lotes de producción registrados.
+                }
+              </td>
+            </tr>
+          }
+        </tbody>
+
+        @if (lotesFiltrados().length > 0) {
+          <tfoot>
+            <tr class="tfoot-total-row">
+              <td colspan="6" class="tfoot-label">
+                Total acumulado ({{ lotesFiltrados().length }} lote{{ lotesFiltrados().length === 1 ? '' : 's' }} filtrado{{ lotesFiltrados().length === 1 ? '' : 's' }}):
+              </td>
+              <td class="col-kg tfoot-total-kg">
+                {{ totalKilosFiltrados() | number: '1.0-2' }} Kg
+              </td>
+            </tr>
+          </tfoot>
+        }
+      </table>
+    </div>
+  </div>
+</section>

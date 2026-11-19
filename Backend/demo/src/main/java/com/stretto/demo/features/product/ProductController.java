@@ -9,8 +9,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import com.stretto.demo.common.exception.InvalidStateException;
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequiredArgsConstructor
@@ -81,12 +83,26 @@ public class ProductController {
     }
 
     //ACTUALIZAR PRECIO
-    @GetMapping("/{id}/price")
+    @PatchMapping({ "/{id}/price", "/{id}/precio" })
     public ResponseEntity<ProductDTOResponse> updatePrice(
             @PathVariable Long id,
+            @RequestBody(required = false) Map<String, BigDecimal> body,
+            @RequestParam(required = false) BigDecimal price
+    ) {
+        BigDecimal finalPrice = (body != null && body.containsKey("price"))
+                ? body.get("price")
+                : price;
+        if (finalPrice == null) {
+            throw new InvalidStateException("Price is required");
+        }
+        return ResponseEntity.ok(productService.updatePrice(id, finalPrice));
+    }
+
+    @GetMapping("/{id}/price")
+    public ResponseEntity<ProductDTOResponse> getUpdatePrice(
+            @PathVariable Long id,
             @RequestParam BigDecimal price
-            )
-    {
+    ) {
         return ResponseEntity.ok(productService.updatePrice(id, price));
     }
 }

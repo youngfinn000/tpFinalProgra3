@@ -32,15 +32,17 @@ public class AuthService {
     private final PasswordEncoder passwordEncoder;
 
     public UserDetails authenticate(AuthRequest input) {
+        String identifier = input.username().trim();
+        CredentialsEntity creds = credentialsRepository.findByIdentifier(identifier)
+                .orElseThrow(() -> new NotFoundException("Usuario o email no encontrado"));
+
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
-                        input.username(),
-                        input.password()
+                        creds.getUsername(),
+                        input.password().trim()
                 )
         );
-        return credentialsRepository.findByUsername(input.username()).orElseThrow(
-                () -> new NotFoundException("Usuario no encontrado")
-        );
+        return creds;
     }
 
     @Transactional

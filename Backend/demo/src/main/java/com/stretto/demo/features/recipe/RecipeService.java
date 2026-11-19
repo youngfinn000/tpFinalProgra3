@@ -16,5 +16,7 @@ public interface RecipeService {
 
     RecipeDTOResponse update(RecipeDTORequest request, Long id);
 
+    void delete(Long id);
+
     List<RecipeSuppliesDTOResponse> calculateIngredients(Long recipeId, Double kg);
 }

@@ -1,0 +1,171 @@
+<section class="page">
+  <header class="page-header">
+    <div>
+      <h1 class="page-title">
+        {{ esEdicion() ? 'Editar receta' : 'Nueva receta' }}
+      </h1>
+      <p class="page-subtitle">
+        {{
+          esEdicion()
+            ? 'Actualizá la fórmula, el rendimiento base o las proporciones de insumos.'
+            : 'Definí el sabor, el rendimiento base en Kg y los insumos necesarios para fabricar el helado.'
+        }}
+      </p>
+    </div>
+  </header>
+
+  @if (error()) {
+    <div class="alert alert-danger">
+      <span>{{ error() }}</span>
+      <button type="button" class="alert-close" (click)="error.set('')">✕</button>
+    </div>
+  }
+
+  <div class="form-card">
+    <form [formGroup]="form" (ngSubmit)="guardar()">
+      <!-- Datos principales de la fórmula -->
+      <div class="form-grid">
+        <div class="form-group">
+          <label for="flavorId">Sabor asociado *</label>
+          <select id="flavorId" formControlName="flavorId" (change)="alCambiarSabor()">
+            <option [ngValue]="null" disabled>Seleccioná un sabor...</option>
+            @for (s of sabores(); track s.id) {
+              <option [ngValue]="s.id">{{ s.nombre }}</option>
+            }
+          </select>
+          @if (form.controls.flavorId.touched && form.controls.flavorId.invalid) {
+            <small class="field-error">Debés seleccionar el sabor de la receta.</small>
+          }
+        </div>
+
+        <div class="form-group">
+          <label for="nombre">Nombre de la fórmula *</label>
+          <input
+            id="nombre"
+            type="text"
+            formControlName="nombre"
+            placeholder="Ej.: Base Dulce de Leche Granizado"
+            (input)="alEscribirNombre()"
+          />
+          @if (form.controls.nombre.touched && form.controls.nombre.hasError('required')) {
+            <small class="field-error">El nombre de la fórmula es obligatorio.</small>
+          }
+        </div>
+
+        <div class="form-group batch-group">
+          <label for="cantidadBase">Rendimiento base de la receta *</label>
+          <div class="input-with-unit">
+            <input
+              id="cantidadBase"
+              type="number"
+              min="0.1"
+              step="0.5"
+              formControlName="cantidadBase"
+            />
+            <span class="unit-tag">KG terminados</span>
+          </div>
+          <small class="field-hint">
+            Kilos de helado terminado que rinde esta fórmula base (se usa para escalar cantidades en fábrica).
+          </small>
+          @if (form.controls.cantidadBase.touched && form.controls.cantidadBase.invalid) {
+            <small class="field-error">El rendimiento base debe ser mayor a 0 Kg.</small>
+          }
+        </div>
+      </div>
+
+      <!-- Sección de Ingredientes -->
+      <div class="ingredients-section">
+        <div class="section-header">
+          <div>
+            <h2 class="section-title">Ingredientes de la fórmula</h2>
+            <p class="section-subtitle">
+              La unidad de medida se autocompleta automáticamente según el insumo elegido del inventario.
+            </p>
+          </div>
+
+          <button type="button" class="btn btn-outline" (click)="agregarIngrediente()">
+            + Agregar ingrediente
+          </button>
+        </div>
+
+        <div class="ingredients-list" formArrayName="ingredientes">
+          @for (item of ingredientes.controls; track $index; let i = $index) {
+            <div class="ingredient-row" [formGroupName]="i">
+              <div class="form-group col-insumo">
+                <label>Insumo #{{ i + 1 }} *</label>
+                <select formControlName="stockId">
+                  <option [ngValue]="null" disabled>Seleccioná un insumo...</option>
+                  @for (ins of insumos(); track ins.id) {
+                    <option [ngValue]="ins.id">
+                      {{ ins.nombre }} (Stock: {{ ins.stockActual }} {{ ins.unidad }})
+                    </option>
+                  }
+                </select>
+                @if (item.get('stockId')?.touched && item.get('stockId')?.invalid) {
+                  <small class="field-error">Elegí un insumo.</small>
+                }
+              </div>
+
+              <div class="form-group col-cantidad">
+                <label>Cantidad requerida *</label>
+                <input
+                  type="number"
+                  min="0.001"
+                  step="any"
+                  formControlName="cantidadRequerida"
+                  placeholder="Ej.: 4.5"
+                />
+                @if (
+                  item.get('cantidadRequerida')?.touched &&
+                  item.get('cantidadRequerida')?.invalid
+                ) {
+                  <small class="field-error">Ingresá una cantidad mayor a 0.</small>
+                }
+              </div>
+
+              <div class="form-group col-unidad">
+                <label>Unidad (autocompletada)</label>
+                <div class="readonly-unit" [class.readonly-unit-empty]="!item.value.stockId">
+                  {{ unidadDeFila(i) }}
+                </div>
+              </div>
+
+              <div class="col-remove">
+                <button
+                  type="button"
+                  class="remove-btn"
+                  (click)="quitarIngrediente(i)"
+                  [disabled]="ingredientes.length === 1"
+                  title="Quitar ingrediente"
+                >
+                  ✕
+                </button>
+              </div>
+            </div>
+          }
+        </div>
+      </div>
+
+      <div class="form-actions">
+        <button
+          type="button"
+          class="btn btn-secondary"
+          (click)="cancelar()"
+          [disabled]="guardando()"
+        >
+          Cancelar
+        </button>
+
+        <button type="submit" class="btn btn-primary" [disabled]="guardando()">
+          {{
+            guardando()
+              ? 'Guardando...'
+              : esEdicion()
+                ? 'Guardar cambios'
+                : 'Crear receta'
+          }}
+        </button>
+      </div>
+    </form>
+  </div>
+</section>

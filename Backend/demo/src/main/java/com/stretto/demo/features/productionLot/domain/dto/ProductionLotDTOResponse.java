@@ -21,14 +21,16 @@ public class ProductionLotDTOResponse {
 
     @Getter
     @Builder
-    public static class RecipeSummary{
+    public static class RecipeSummary {
         private Long id;
         private String name;
+        private Long flavorId;
+        private String flavorName;
     }
 
     @Getter
     @Builder
-    public static class InternalUserSummary{
+    public static class InternalUserSummary {
         private Long id;
         private String name;
     }

@@ -1,0 +1,36 @@
+<section class="page">
+  <header class="page-header">
+    <h1 class="page-title">{{ id() ? 'Modificar sabor' : 'Nuevo sabor' }}</h1>
+    <p class="page-subtitle">
+      {{ id() ? 'Actualizá los datos del sabor' : 'Completá los datos para agregar un sabor al catálogo' }}
+    </p>
+  </header>
+
+  <form class="form-card" (submit)="guardar($event)">
+    <div class="form-group">
+      <label class="form-label" for="nombre">Nombre</label>
+      <input
+        id="nombre"
+        type="text"
+        class="form-control"
+        placeholder="Ej: Frutilla a la crema"
+        [class.is-invalid]="f.nombre().touched() && f.nombre().invalid()"
+        [formField]="f.nombre"
+      />
+      @if (f.nombre().touched() && f.nombre().invalid()) {
+        <span class="field-error">El nombre es obligatorio (entre 2 y 60 caracteres)</span>
+      }
+    </div>
+
+    @if (error()) {
+      <div class="alert alert-danger">
+        <span class="alert-text">{{ error() }}</span>
+      </div>
+    }
+
+    <div class="form-actions">
+      <button type="button" class="btn btn-secondary" (click)="cancelar()">Cancelar</button>
+      <button type="submit" class="btn btn-primary" [disabled]="f().invalid()">Guardar</button>
+    </div>
+  </form>
+</section>

@@ -1,0 +1,207 @@
+<section class="page">
+  <header class="page-header">
+    <div>
+      <h1 class="page-title">Registrar Lote Producido</h1>
+      <p class="page-subtitle">
+        Cargá la producción elaborada en fábrica y obtené el código del lote para rotular tachos y cubetas
+      </p>
+    </div>
+
+    <a routerLink="/produccion" class="btn btn-secondary">
+      ← Ver Historial de Producción
+    </a>
+  </header>
+
+  @if (error()) {
+    <div class="alert alert-danger">
+      <span>{{ error() }}</span>
+      <button type="button" class="alert-close" (click)="error.set('')">✕</button>
+    </div>
+  }
+
+  <!-- Vista de Confirmación de Lote para Rotular (post-guardado) -->
+  @if (loteCreado(); as lote) {
+    <div class="confirmation-card">
+      <div class="confirm-banner">
+        <span class="confirm-check">✓</span>
+        <div>
+          <span class="confirm-kicker">PRODUCCIÓN REGISTRADA CON ÉXITO</span>
+          <h2 class="confirm-title">Lote listo para rotular y llevar a cámara</h2>
+        </div>
+      </div>
+
+      <!-- Etiqueta de Rótulo Física -->
+      <div class="label-ticket">
+        <div class="ticket-header">
+          <span class="ticket-brand">STRETTO GELATO · RÓTULO DE PRODUCCIÓN</span>
+          <span class="ticket-status">COMPLETADO</span>
+        </div>
+
+        <div class="ticket-lot-code">
+          <span class="lot-prefix">IDENTIFICADOR DE LOTE</span>
+          <strong class="lot-number">LOTE #{{ lote.id }}</strong>
+        </div>
+
+        <div class="ticket-grid">
+          <div class="ticket-field">
+            <span class="field-label">Sabor / Receta</span>
+            <strong class="field-value">{{ lote.saborNombre }}</strong>
+            <small class="field-sub">{{ lote.recetaNombre }}</small>
+          </div>
+
+          <div class="ticket-field">
+            <span class="field-label">Cantidad producida</span>
+            <strong class="field-value highlight">{{ lote.cantidadProducida | number: '1.0-2' }} Kg</strong>
+          </div>
+
+          <div class="ticket-field">
+            <span class="field-label">Fecha de elaboración</span>
+            <strong class="field-value">{{ formatearFechaLocal(lote.fechaProduccion) }}</strong>
+          </div>
+
+          <div class="ticket-field">
+            <span class="field-label">Operador / Rendimiento</span>
+            <strong class="field-value">{{ lote.usuarioNombre }}</strong>
+            <small class="field-sub">{{ lote.rendimientoPct | number: '1.0-1' }}% del rendimiento base</small>
+          </div>
+        </div>
+      </div>
+
+      <div class="confirm-actions">
+        <a routerLink="/produccion" class="btn btn-secondary">
+          Ver en Historial
+        </a>
+
+        <button type="button" class="btn btn-outline" (click)="copiarRotulo()">
+          {{ copiado() ? '✓ Rótulo copiado al portapapeles' : 'Copiar datos para rótulo' }}
+        </button>
+
+        <button type="button" class="btn btn-primary" (click)="nuevoRegistro()">
+          + Registrar otro lote
+        </button>
+      </div>
+    </div>
+  } @else {
+    <!-- Formulario de Carga de Lote -->
+    <div class="form-card">
+      <form [formGroup]="form" (ngSubmit)="registrarLote()">
+        <div class="form-grid">
+          <!-- Selección de Receta -->
+          <div class="form-group full-width">
+            <label for="recipeId">Receta / Sabor elaborado *</label>
+            <select
+              id="recipeId"
+              formControlName="recipeId"
+              (change)="alCambiarReceta()"
+            >
+              <option [ngValue]="null" disabled>
+                {{
+                  cargandoRecetas()
+                    ? 'Cargando recetas...'
+                    : 'Seleccioná la receta elaborada...'
+                }}
+              </option>
+              @for (r of recetas(); track r.id) {
+                <option [ngValue]="r.id">
+                  {{ r.saborNombre }} — {{ r.nombre }} (Base: {{ r.cantidadBase }} Kg)
+                </option>
+              }
+            </select>
+            @if (form.controls.recipeId.touched && form.controls.recipeId.invalid) {
+              <small class="field-error">Seleccioná la receta que se fabricó.</small>
+            }
+          </div>
+
+          @if (recetaSeleccionada(); as rec) {
+            <div class="recipe-preview-banner full-width">
+              <div>
+                <span class="preview-kicker">FÓRMULA SELECCIONADA</span>
+                <strong class="preview-name">{{ rec.nombre }} (Sabor: {{ rec.saborNombre }})</strong>
+              </div>
+              <div class="preview-meta">
+                <span>Rendimiento base: <strong>{{ rec.cantidadBase }} Kg</strong></span>
+                <a [routerLink]="['/recetas', rec.id]" class="preview-link">
+                  Ver ficha técnica →
+                </a>
+              </div>
+            </div>
+          }
+
+          <!-- Cantidad producida en Kg -->
+          <div class="form-group">
+            <label for="amountProduced">Cantidad producida (Kg) *</label>
+            <div class="input-with-unit">
+              <input
+                id="amountProduced"
+                type="number"
+                min="0.1"
+                step="0.5"
+                placeholder="Ej.: 10"
+                formControlName="amountProduced"
+              />
+              <span class="unit-tag">KG</span>
+            </div>
+
+            <div class="quick-kg-row">
+              <span class="quick-label">Carga rápida:</span>
+              @for (kg of presetsKg; track kg) {
+                <button
+                  type="button"
+                  class="quick-chip"
+                  [class.quick-chip-active]="form.value.amountProduced === kg"
+                  (click)="elegirKgRapido(kg)"
+                >
+                  {{ kg }} Kg
+                </button>
+              }
+            </div>
+
+            @if (
+              form.controls.amountProduced.touched &&
+              form.controls.amountProduced.invalid
+            ) {
+              <small class="field-error">
+                Ingresá una cantidad producida mayor a 0 Kg.
+              </small>
+            }
+
+            @if (rendimientoEstimado() !== null) {
+              <small class="field-hint">
+                Equivale al <strong>{{ rendimientoEstimado() }}%</strong> del rendimiento base de la receta.
+              </small>
+            }
+          </div>
+
+          <!-- Fecha de elaboración (precargada hoy) -->
+          <div class="form-group">
+            <label for="productionDate">Fecha de producción *</label>
+            <input
+              id="productionDate"
+              type="date"
+              formControlName="productionDate"
+            />
+            <small class="field-hint">
+              Precargada automáticamente con la fecha de hoy para agilizar el registro diario.
+            </small>
+            @if (
+              form.controls.productionDate.touched &&
+              form.controls.productionDate.invalid
+            ) {
+              <small class="field-error">La fecha de producción es obligatoria.</small>
+            }
+          </div>
+        </div>
+
+        <div class="form-actions">
+          <button
+            type="submit"
+            class="btn btn-primary btn-lg"
+            [disabled]="guardando()"
+          >
+            {{ guardando() ? 'Registrando lote...' : 'Confirmar y generar lote' }}
+          </button>
+        </div>
+      </form>
+    </div>
+  }
+</section>

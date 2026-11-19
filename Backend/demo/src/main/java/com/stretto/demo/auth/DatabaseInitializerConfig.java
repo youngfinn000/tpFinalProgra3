@@ -25,59 +25,49 @@ public class DatabaseInitializerConfig {
             PasswordEncoder passwordEncoder
     ) {
         return args -> {
-            if (permitRepository.count() > 0) return;
+            if (permitRepository.count() == 0) {
+                PermitEntity crearUsuario = permitRepository.save(PermitEntity.builder().permit(Permit.CREAR_USUARIO).build());
+                PermitEntity actualizarCuenta = permitRepository.save(PermitEntity.builder().permit(Permit.ACTUALIZAR_CUENTA).build());
+                PermitEntity eliminarUsuario = permitRepository.save(PermitEntity.builder().permit(Permit.ELIMINAR_USUARIO).build());
 
-            PermitEntity crearUsuario = permitRepository.save(PermitEntity.builder().permit(Permit.CREAR_USUARIO).build());
-            PermitEntity actualizarCuenta = permitRepository.save(PermitEntity.builder().permit(Permit.ACTUALIZAR_CUENTA).build());
-            PermitEntity eliminarUsuario = permitRepository.save(PermitEntity.builder().permit(Permit.ELIMINAR_USUARIO).build());
+                RoleEntity roleUser = new RoleEntity(Roles.ROLE_USER);
+                roleUser.getPermits().add(actualizarCuenta);
+                roleRepository.save(roleUser);
 
-            RoleEntity roleUser = new RoleEntity(Roles.ROLE_USER);
-            roleUser.getPermits().add(actualizarCuenta);
-            roleRepository.save(roleUser);
+                RoleEntity roleAdmin = new RoleEntity(Roles.ROLE_ADMIN);
+                roleAdmin.getPermits().add(crearUsuario);
+                roleAdmin.getPermits().add(actualizarCuenta);
+                roleAdmin.getPermits().add(eliminarUsuario);
+                roleRepository.save(roleAdmin);
 
-            RoleEntity roleAdmin = new RoleEntity(Roles.ROLE_ADMIN);
-            roleAdmin.getPermits().add(crearUsuario);
-            roleAdmin.getPermits().add(actualizarCuenta);
-            roleAdmin.getPermits().add(eliminarUsuario);
-            roleRepository.save(roleAdmin);
+                RoleEntity roleWholesale = new RoleEntity(Roles.ROLE_WHOLESALE);
+                roleWholesale.getPermits().add(actualizarCuenta);
+                roleRepository.save(roleWholesale);
+            }
 
-            RoleEntity roleWholesale = new RoleEntity(Roles.ROLE_WHOLESALE);
-            roleWholesale.getPermits().add(actualizarCuenta);
-            roleRepository.save(roleWholesale);
+            // Inicializar únicamente el usuario Administrador si no existe
+            if (credentialsRepository.findByUsername("admin").isEmpty()) {
+                RoleEntity roleAdmin = roleRepository.findByRole(Roles.ROLE_ADMIN)
+                        .orElseThrow(() -> new IllegalStateException("Rol ROLE_ADMIN no encontrado"));
 
-            String passwordEncriptada = passwordEncoder.encode("password123");
+                String passwordEncriptada = passwordEncoder.encode("password123");
 
-            InternalUserEntity adminUser = new InternalUserEntity();
-            adminUser.setName("Admin");
-            adminUser.setEmail("admin@stretto.com");
-            adminUser.setPasswordHash(passwordEncriptada);
-            adminUser.setActive(true);
-            adminUser.setRol(RolEnum.ADMIN);
-            userRepository.save(adminUser);
+                InternalUserEntity adminUser = new InternalUserEntity();
+                adminUser.setName("Admin");
+                adminUser.setEmail("admin@stretto.com");
+                adminUser.setPasswordHash(passwordEncriptada);
+                adminUser.setActive(true);
+                adminUser.setRol(RolEnum.ADMIN);
+                userRepository.save(adminUser);
 
-            CredentialsEntity adminCreds = new CredentialsEntity();
-            adminCreds.setUsername("admin");
-            adminCreds.setPassword(passwordEncriptada);
-            adminCreds.setEnabled(true);
-            adminCreds.setUsuario(adminUser);
-            adminCreds.getRoles().add(roleAdmin);
-            credentialsRepository.save(adminCreds);
-
-            InternalUserEntity employeeUser = new InternalUserEntity();
-            employeeUser.setName("Empleado");
-            employeeUser.setEmail("empleado@stretto.com");
-            employeeUser.setPasswordHash(passwordEncriptada);
-            employeeUser.setActive(true);
-            employeeUser.setRol(RolEnum.EMPLOYEE);
-            userRepository.save(employeeUser);
-
-            CredentialsEntity employeeCreds = new CredentialsEntity();
-            employeeCreds.setUsername("empleado");
-            employeeCreds.setPassword(passwordEncriptada);
-            employeeCreds.setEnabled(true);
-            employeeCreds.setUsuario(employeeUser);
-            employeeCreds.getRoles().add(roleUser);
-            credentialsRepository.save(employeeCreds);
+                CredentialsEntity adminCreds = new CredentialsEntity();
+                adminCreds.setUsername("admin");
+                adminCreds.setPassword(passwordEncriptada);
+                adminCreds.setEnabled(true);
+                adminCreds.setUsuario(adminUser);
+                adminCreds.getRoles().add(roleAdmin);
+                credentialsRepository.save(adminCreds);
+            }
         };
     }
 }

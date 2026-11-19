@@ -1,0 +1,325 @@
+<div class="container-page">
+  <!-- Encabezado de la página -->
+  <header class="page-header">
+    <div class="header-titles">
+      <h1 class="page-title">Clientes Mayoristas</h1>
+      <p class="page-subtitle">Gestión de cuentas comerciales, datos impositivos y solicitudes de presupuesto.</p>
+    </div>
+    <div class="header-buttons">
+      <a routerLink="/mis-solicitudes" class="btn btn-secondary">
+        Ver Todas las Solicitudes
+      </a>
+      <button type="button" class="btn btn-primary" (click)="abrirModalCrear()">
+        + Nuevo Cliente
+      </button>
+    </div>
+  </header>
+
+  <!-- Mensajes de Notificación -->
+  @if (mensajeExito()) {
+    <div class="alert alert-success">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+        <polyline points="22 4 12 14.01 9 11.01"></polyline>
+      </svg>
+      <span>{{ mensajeExito() }}</span>
+    </div>
+  }
+
+  @if (mensajeError()) {
+    <div class="alert alert-danger">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <circle cx="12" cy="12" r="10"></circle>
+        <line x1="15" y1="9" x2="9" y2="15"></line>
+        <line x1="9" y1="9" x2="15" y2="15"></line>
+      </svg>
+      <span>{{ mensajeError() }}</span>
+    </div>
+  }
+
+  <!-- Barra de Filtro y Contador -->
+  <div class="toolbar-card">
+    <div class="search-wrapper">
+      <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <circle cx="11" cy="11" r="8"></circle>
+        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+      </svg>
+      <input 
+        id="searchFilter"
+        type="text" 
+        class="search-input" 
+        placeholder="Buscar por Empresa, Contacto, CUIT o Email..." 
+        aria-label="Buscar clientes por Empresa, Contacto, CUIT o Email"
+        [ngModel]="terminoBusqueda()" 
+        (ngModelChange)="terminoBusqueda.set($event)"
+      />
+    </div>
+    <div class="toolbar-actions">
+      <button type="button" class="btn btn-secondary btn-icon-only" (click)="cargarClientes()" title="Recargar lista">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="btn-icon">
+          <polyline points="23 4 23 10 17 10"></polyline>
+          <polyline points="1 20 1 14 7 14"></polyline>
+          <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path>
+        </svg>
+      </button>
+      <div class="records-count">
+        Total: <strong>{{ clientesFiltrados().length }}</strong> cliente(s)
+      </div>
+    </div>
+  </div>
+
+  <!-- Tabla Principal de Clientes -->
+  <div class="table-card">
+    @if (cargando()) {
+      <div class="loading-state">
+        <span class="spinner-dark"></span>
+        <p>Cargando listado de clientes mayoristas...</p>
+      </div>
+    } @else {
+      <div class="table-responsive">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Empresa / ID</th>
+              <th>Contacto</th>
+              <th>CUIT</th>
+              <th>Email</th>
+              <th class="text-center">Estado</th>
+              <th class="text-center">Presupuestos</th>
+              <th class="text-right">Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (cliente of clientesFiltrados(); track cliente.id) {
+              <tr>
+                <td>
+                  <div class="client-info">
+                    <span class="client-name">{{ cliente.companyName }}</span>
+                    <span class="client-id">ID: #{{ cliente.id }}</span>
+                  </div>
+                </td>
+                <td>
+                  <strong>{{ cliente.contactName }}</strong>
+                </td>
+                <td>
+                  <span class="cuit-badge">{{ cliente.cuit || 'N/A' }}</span>
+                </td>
+                <td>
+                  <span>{{ cliente.email }}</span>
+                </td>
+                <td class="text-center">
+                  <span class="status-pill" [class.active]="cliente.active" [class.inactive]="!cliente.active">
+                    {{ cliente.active ? 'Activo' : 'Inactivo' }}
+                  </span>
+                </td>
+                <td class="text-center">
+                  <button type="button" class="btn-action-icon btn-presupuestos" title="Ver presupuestos" (click)="verPresupuestos(cliente)">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                      <polyline points="14 2 14 8 20 8"></polyline>
+                      <line x1="16" y1="13" x2="8" y2="13"></line>
+                      <line x1="16" y1="17" x2="8" y2="17"></line>
+                    </svg>
+                  </button>
+                </td>
+                <td class="text-right">
+                  <div class="actions-group">
+                    <button type="button" class="btn-action-icon btn-edit" title="Editar cliente" (click)="abrirModalEditar(cliente)">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                        <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                      </svg>
+                    </button>
+                    <button type="button" class="btn-action-icon btn-delete" title="Eliminar cliente" (click)="confirmarEliminar(cliente)">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="3 6 5 6 21 6"></polyline>
+                        <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                      </svg>
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            } @empty {
+              <tr>
+                <td colspan="7" class="empty-table">
+                  <p>No se encontraron clientes mayoristas que coincidan con la búsqueda.</p>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    }
+  </div>
+</div>
+
+<!-- Modal: Crear / Editar Cliente -->
+@if (modalFormularioAbierto()) {
+  <div class="modal-backdrop">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h2>{{ esEdicion() ? 'Editar Cliente Mayorista' : 'Nuevo Cliente Mayorista' }}</h2>
+        <button type="button" class="btn-close" (click)="cerrarModalFormulario()">✕</button>
+      </div>
+      <form [formGroup]="clienteForm" (ngSubmit)="guardarCliente()" class="modal-body">
+        <div class="form-grid">
+          <div class="form-group span-2">
+            <label for="companyName" class="form-label">Nombre de la Empresa / Razón Social *</label>
+            <input id="companyName" type="text" formControlName="companyName" class="form-control" placeholder="Ej: Distribuidora Helados S.A." />
+            @if (clienteForm.get('companyName')?.touched && clienteForm.get('companyName')?.invalid) {
+              <span class="field-error">Ingresá un nombre de empresa válido (mínimo 3 caracteres).</span>
+            }
+          </div>
+
+          <div class="form-group">
+            <label for="contactName" class="form-label">Persona de Contacto *</label>
+            <input id="contactName" type="text" formControlName="contactName" class="form-control" placeholder="Ej: Juan Pérez" />
+            @if (clienteForm.get('contactName')?.touched && clienteForm.get('contactName')?.invalid) {
+              <span class="field-error">El nombre de contacto es obligatorio.</span>
+            }
+          </div>
+
+          <div class="form-group">
+            <label for="cuit" class="form-label">CUIT (sin guiones)</label>
+            <input id="cuit" type="text" formControlName="cuit" class="form-control" placeholder="30712345678" maxlength="11" />
+            @if (clienteForm.get('cuit')?.touched && clienteForm.get('cuit')?.invalid) {
+              <span class="field-error">El CUIT debe contener 11 dígitos numéricos.</span>
+            }
+          </div>
+
+          <div class="form-group span-2">
+            <label for="email" class="form-label">Correo Electrónico *</label>
+            <input id="email" type="email" formControlName="email" class="form-control" placeholder="contacto@empresa.com" />
+            @if (clienteForm.get('email')?.touched && clienteForm.get('email')?.invalid) {
+              <span class="field-error">Ingresá un correo electrónico válido.</span>
+            }
+          </div>
+
+          <div class="form-group span-2">
+            <label for="password" class="form-label">Contraseña {{ esEdicion() ? '(Opcional para mantener la actual)' : '*' }}</label>
+            <div class="password-input-wrapper">
+              <input
+                id="password"
+                [type]="mostrarPassword() ? 'text' : 'password'"
+                formControlName="password"
+                class="form-control password-control"
+                placeholder="{{ esEdicion() ? 'Dejá en blanco para mantener la actual' : '••••••••' }}"
+              />
+              <button
+                type="button"
+                class="btn-toggle-password"
+                (click)="toggleMostrarPassword()"
+                [title]="mostrarPassword() ? 'Ocultar contraseña' : 'Ver contraseña'"
+              >
+                @if (mostrarPassword()) {
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path>
+                    <line x1="1" y1="1" x2="23" y2="23"></line>
+                  </svg>
+                } @else {
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                    <circle cx="12" cy="12" r="3"></circle>
+                  </svg>
+                }
+              </button>
+            </div>
+            @if (!esEdicion() && clienteForm.get('password')?.touched && clienteForm.get('password')?.invalid) {
+              <span class="field-error">La contraseña es obligatoria (mínimo 4 caracteres).</span>
+            }
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" (click)="cerrarModalFormulario()">Cancelar</button>
+          <button type="submit" class="btn btn-primary" [disabled]="guardando()">
+            @if (guardando()) {
+              <span class="spinner-light"></span>
+              <span>Guardando...</span>
+            } @else {
+              <span>{{ esEdicion() ? 'Actualizar Cliente' : 'Guardar Cliente' }}</span>
+            }
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+}
+
+<!-- Modal: Confirmar Eliminación -->
+@if (modalEliminarAbierto()) {
+  <div class="modal-backdrop">
+    <div class="modal-card modal-small">
+      <div class="modal-header">
+        <h2>Confirmar Eliminación</h2>
+        <button type="button" class="btn-close" (click)="cerrarModalEliminar()">✕</button>
+      </div>
+      <div class="modal-body">
+        <p>¿Estás seguro de que querés eliminar al cliente <strong>{{ clienteAEliminar()?.companyName }}</strong>?</p>
+        <p class="text-sm text-muted">Esta acción no se puede deshacer.</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" (click)="cerrarModalEliminar()">Cancelar</button>
+        <button type="button" class="btn btn-danger" (click)="ejecutarEliminacion()">Eliminar</button>
+      </div>
+    </div>
+  </div>
+}
+
+<!-- Modal: Presupuestos del Cliente -->
+@if (modalPresupuestosAbierto()) {
+  <div class="modal-backdrop">
+    <div class="modal-card modal-large">
+      <div class="modal-header">
+        <h2>Solicitudes de Presupuesto del Cliente</h2>
+        <button type="button" class="btn-close" (click)="cerrarModalPresupuestos()">✕</button>
+      </div>
+      <div class="modal-body">
+        @if (presupuestosCliente().length === 0) {
+          <p class="empty-state">Este cliente aún no registra solicitudes de presupuesto.</p>
+        } @else {
+          <div class="table-responsive">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th># Solicitud</th>
+                  <th>Fecha Solicitud</th>
+                  <th>Fecha Evento</th>
+                  <th>Cantidad</th>
+                  <th>Estado</th>
+                  <th>Cotización</th>
+                </tr>
+              </thead>
+              <tbody>
+                @for (req of presupuestosCliente(); track req.id) {
+                  <tr>
+                    <td><strong>#{{ req.id }}</strong></td>
+                    <td>{{ (req.requestDateTime || req.date) | date:'dd/MM/yyyy HH:mm' }}</td>
+                    <td>{{ req.eventDate | date:'dd/MM/yyyy' }}</td>
+                    <td><strong>{{ req.quantity }} Kg</strong></td>
+                    <td>
+                      <span class="status-badge" [class.badge-pending]="(req.stateRequestEnum || req.state) === 'PENDING'" [class.badge-confirmed]="(req.stateRequestEnum || req.state) === 'CONFIRMED'">
+                        {{ req.stateRequestEnum || req.state }}
+                      </span>
+                    </td>
+                    <td>
+                      <strong>
+                        {{ req.budget && req.budget > 0 ? ('$' + (req.budget | number:'1.2-2')) : 'Pendiente' }}
+                      </strong>
+                    </td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+        }
+      </div>
+      <div class="modal-footer">
+        <a routerLink="/mis-solicitudes" class="btn btn-secondary" (click)="cerrarModalPresupuestos()">
+          Ir a Gestión Completa de Presupuestos →
+        </a>
+        <button type="button" class="btn btn-secondary" (click)="cerrarModalPresupuestos()">Cerrar</button>
+      </div>
+    </div>
+  </div>
+}

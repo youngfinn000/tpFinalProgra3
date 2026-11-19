@@ -1,6 +1,5 @@
 package com.stretto.demo.features.requestBudget;
 
-
 import com.stretto.demo.features.requestBudget.domain.dto.RequestBudgetDtoRequest;
 import com.stretto.demo.features.requestBudget.domain.dto.RequestBudgetDtoResponse;
 import com.stretto.demo.features.requestBudget.domain.dto.RequestBudgetStateDto;
@@ -23,7 +22,7 @@ public class RequestBudgetController {
 
     @PostMapping
     public ResponseEntity<RequestBudgetDtoResponse> createRequestBudget(@Valid @RequestBody RequestBudgetDtoRequest request) {
-        return  ResponseEntity.status(HttpStatus.CREATED).body(requestBudgetService.createRequestBudget(request));
+        return ResponseEntity.status(HttpStatus.CREATED).body(requestBudgetService.createRequestBudget(request));
     }
 
     @GetMapping("/customer/{customerId}")
@@ -31,18 +30,18 @@ public class RequestBudgetController {
         return ResponseEntity.status(HttpStatus.OK).body(requestBudgetService.getRequestBudgetByCustomer(customerId));
     }
 
+    @GetMapping("/{id}")
+    public ResponseEntity<RequestBudgetDtoResponse> getRequestById(@PathVariable Long id) {
+        return ResponseEntity.status(HttpStatus.OK).body(requestBudgetService.getRequestById(id));
+    }
+
     @GetMapping
-    public ResponseEntity<List<RequestBudgetDtoResponse>> getAllRequest(@RequestParam(required = false) String state){
+    public ResponseEntity<List<RequestBudgetDtoResponse>> getAllRequest(@RequestParam(required = false) String state) {
         return ResponseEntity.status(HttpStatus.OK).body(requestBudgetService.getAllRequest(state));
     }
 
     @PatchMapping("/{id}/state")
     public ResponseEntity<RequestBudgetDtoResponse> updateState(@PathVariable Long id, @Valid @RequestBody RequestBudgetStateDto statedto) {
-        return  ResponseEntity.status(HttpStatus.OK).body(requestBudgetService.updateRequestBudget(id, statedto));
+        return ResponseEntity.status(HttpStatus.OK).body(requestBudgetService.updateRequestBudget(id, statedto));
     }
-
-
-
-
-
 }

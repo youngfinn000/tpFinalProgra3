@@ -8,6 +8,7 @@ import com.stretto.demo.features.requestBudget.domain.enums.StateRequestEnum;
 import com.stretto.demo.features.wholesaleCustomer.domain.WholesaleCustomerEntity;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Component
@@ -36,7 +37,7 @@ public class RequestBudgetMapper {
 
         return RequestBudgetEntity.builder()
                 .quantityKg(request.getQuantity())
-                .requestDateTime(request.getRequestDatetime())
+                .requestDateTime(request.getRequestDatetime() != null ? request.getRequestDatetime() : LocalDateTime.now())
                 .eventDate(request.getEventDate())
                 .advancePayment(request.isAdvancePayment())
                 .stateRequestEnum(StateRequestEnum.PENDING)

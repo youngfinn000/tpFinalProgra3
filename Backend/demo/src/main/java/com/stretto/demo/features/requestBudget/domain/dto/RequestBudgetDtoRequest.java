@@ -22,8 +22,6 @@ public class RequestBudgetDtoRequest {
     @DecimalMin("0.5")
     private int quantity;
 
-    @NotNull(message = "Time is required")
-    @FutureOrPresent(message = "Date must be in the present or future")
     private LocalDateTime requestDatetime;
 
     private boolean advancePayment;

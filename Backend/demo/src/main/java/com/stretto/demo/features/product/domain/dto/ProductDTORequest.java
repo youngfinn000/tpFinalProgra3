@@ -20,8 +20,7 @@ public class ProductDTORequest {
     private BigDecimal price;
 
     @NotNull(message = "Max flavors is required")
-    @Min(1)
-    @Max(4)
+    @Min(0)
     private Integer maxFlavors;
 
     @Min(0)

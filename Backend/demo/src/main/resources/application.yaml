@@ -32,3 +32,6 @@ spring:
 jwt:
   secret: ${jwt_secret}
   expiration: 86400000
+
+environment:
+  - TZ=America/Argentina/Buenos_Aires

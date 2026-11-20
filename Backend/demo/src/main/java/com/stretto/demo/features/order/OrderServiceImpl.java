@@ -211,7 +211,7 @@ public class OrderServiceImpl implements OrderService {
 
 
     //REPORTE DIARIO DE PEDIDOS PROGRAMADO
-    @Scheduled(cron = "0 */5 * * * *")
+    @Scheduled(cron = "0 59 23 * * *", zone = "America/Argentina/Buenos_Aires")
     public void scheduledDailyReport()
     {
         DailyReportDTO report = generateDailyReport();
@@ -228,7 +228,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     //REPORTE MENSUAL DE PEDIDOS PROGRAMADO
-    @Scheduled (cron = "0 0 0 1 * *")
+    @Scheduled (cron = "0 5 0 1 * *", zone = "America/Argentina/Buenos_Aires")
     public void scheduledMonthlyReport()
     {
         LocalDate previosMonth = LocalDate.now().minusMonths(1);
